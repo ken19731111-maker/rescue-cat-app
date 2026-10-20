@@ -1,1 +1,211 @@
 
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>保護ネコ支援プラットフォーム - RescuCat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap');
+        body { font-family: 'M PLUS Rounded 1c', sans-serif; }
+    </style>
+</head>
+<body class="bg-amber-50/40 text-stone-800 min-h-screen flex flex-col">
+
+    <!-- ヘッダー -->
+    <header class="bg-white border-b border-amber-100 sticky top-0 z-30 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="text-2xl">🐾</span>
+                <span class="font-extrabold text-xl text-amber-900 tracking-tight">RescuCat</span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button id="favHeaderBtn" class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-full font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-heart"></i> お気に入り <span id="favBadge" class="bg-rose-500 text-white rounded-full px-1.5 py-0.2 text-[10px]">0</span>
+                </button>
+                <button class="text-xs bg-amber-600 text-white px-3 py-1.5 rounded-full font-bold shadow-sm">ログイン</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- メインコンテンツ -->
+    <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
+
+        <!-- 全体目標・実績メーター -->
+        <section class="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-5 text-white shadow-md">
+            <div class="flex justify-between items-end mb-2">
+                <div>
+                    <span class="text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full uppercase tracking-wider">今月のプラットフォーム全体支援</span>
+                    <h2 class="text-2xl font-black mt-1">あなたのひと押しが、ネコの明日をつくる</h2>
+                </div>
+                <div class="text-right">
+                    <span class="text-xs opacity-90">目標: 200,000円</span>
+                    <p class="text-xl font-extrabold" id="globalAmount">125,000円</p>
+                </div>
+            </div>
+            <div class="w-full bg-black/20 rounded-full h-3 overflow-hidden">
+                <div id="globalProgressBar" class="bg-white h-full rounded-full transition-all duration-500" style="width: 62.5%"></div>
+            </div>
+        </section>
+
+        <!-- 絞り込みタグ -->
+        <section class="flex gap-2 overflow-x-auto pb-2 scrollbar-none text-sm font-medium">
+            <button onclick="filterCats('all')" class="filter-btn active-filter bg-amber-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm">すべて</button>
+            <button onclick="filterCats('video')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">🎥 動画あり</button>
+            <button onclick="filterCats('kitten')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🐱 子ネコ</button>
+            <button onclick="filterCats('urgent')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🚨 緊急支援</button>
+            <button onclick="filterCats('fav')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">♥ お気に入り</button>
+        </section>
+
+        <!-- 保護ネコカード一覧 -->
+        <section id="catGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- JavaScriptで動的生成されます -->
+        </section>
+
+    </main>
+
+    <!-- フッター -->
+    <footer class="bg-stone-800 text-stone-300 text-xs py-6 mt-12 border-t border-stone-700">
+        <div class="max-w-6xl mx-auto px-4 text-center space-y-2">
+            <p class="font-bold text-amber-400">🐾 保護ネコ応援プラットフォーム RescuCat</p>
+            <p class="text-stone-400">© 2026 RescuCat All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- モーダル: 投げ銭 -->
+    <div id="tipModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="tipCatTitle" class="font-bold text-lg text-stone-800">応援投げ銭を送る</h3>
+                <button onclick="closeModal('tipModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div>
+                <p class="text-xs text-stone-500 mb-2">金額を選択してください</p>
+                <div class="grid grid-cols-3 gap-2 mb-3">
+                    <button onclick="selectAmount(500)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 hover:bg-amber-100">500円</button>
+                    <button onclick="selectAmount(1000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 hover:bg-amber-100">1,000円</button>
+                    <button onclick="selectAmount(3000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 hover:bg-amber-100">3,000円</button>
+                </div>
+                <input type="number" id="customAmount" placeholder="金額を自由入力 (円)" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
+            </div>
+            <div>
+                <p class="text-xs text-stone-500 mb-1">応援メッセージ（任意）</p>
+                <textarea id="tipMessage" placeholder="保護主さんとネコちゃんへ温かいメッセージをどうぞ！" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm h-20 focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+            </div>
+            <button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">投げ銭を確定する</button>
+        </div>
+    </div>
+
+    <!-- JavaScriptデータ ＆ 処理 -->
+    <script>
+        const catsData = [
+            { id: 1, name: "ミケちゃん", age: "1歳", shelter: "○○保護ボランティア", msg: "おもちゃで遊ぶのが大好き！元気いっぱいです。", target: 20000, current: 12000, img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop", hasVideo: true, tags: ["kitten", "video"] },
+            { id: 2, name: "トラくん", age: "3歳", shelter: "個人保護主 Aさん", msg: "のんびり屋さんで撫でられるのが大好きです。", target: 15000, current: 5000, img: "https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=500&auto=format&fit=crop", hasVideo: false, tags: [] },
+            { id: 3, name: "ルナちゃん", age: "6ヶ月", shelter: "○○保護の会", msg: "緊急で医療費が必要です。食欲旺盛でがんばってます！", target: 50000, current: 35000, img: "https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=500&auto=format&fit=crop", hasVideo: true, tags: ["urgent", "video", "kitten"] }
+        ];
+
+        let favorites = [];
+        let currentCatId = null;
+        let globalCurrent = 125000;
+
+        function renderCats(cats) {
+            const grid = document.getElementById('catGrid');
+            grid.innerHTML = '';
+            cats.forEach(cat => {
+                const percent = Math.min(100, Math.round((cat.current / cat.target) * 100));
+                const isFav = favorites.includes(cat.id);
+                const card = `
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-amber-100 flex flex-col justify-between">
+                        <div class="relative">
+                            <img src="${cat.img}" alt="${cat.name}" class="w-full h-48 object-cover">
+                            ${cat.hasVideo ? '<span class="absolute top-3 left-3 bg-black/60 text-white text-[11px] px-2 py-0.5 rounded-full backdrop-blur-sm">🎥 動画あり</span>' : ''}
+                            <button onclick="toggleFav(${cat.id})" class="absolute top-3 right-3 bg-white/80 p-2 rounded-full text-rose-500 shadow-sm">
+                                <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                            </button>
+                        </div>
+                        <div class="p-4 space-y-3 flex-grow">
+                            <div class="flex justify-between items-baseline">
+                                <h3 class="font-extrabold text-lg text-stone-800">${cat.name} <span class="text-xs text-stone-500 font-normal">(${cat.age})</span></h3>
+                            </div>
+                            <p class="text-xs text-amber-900 font-medium bg-amber-50 inline-block px-2 py-1 rounded-md">🏠 ${cat.shelter}</p>
+                            <p class="text-xs text-stone-600 line-clamp-2">「${cat.msg}」</p>
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-stone-500">支援額</span>
+                                    <span class="text-amber-700">${cat.current.toLocaleString()}円 / ${cat.target.toLocaleString()}円</span>
+                                </div>
+                                <div class="w-full bg-stone-100 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-amber-500 h-full rounded-full" style="width: ${percent}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 pt-0">
+                            <button onclick="openTipModal(${cat.id})" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl shadow-sm text-sm transition flex items-center justify-center gap-1">
+                                <span>🐾 応援する (投げ銭)</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
+        function toggleFav(id) {
+            if (favorites.includes(id)) {
+                favorites = favorites.filter(fId => fId !== id);
+            } else {
+                favorites.push(id);
+            }
+            document.getElementById('favBadge').innerText = favorites.length;
+            renderCats(catsData);
+        }
+
+        function filterCats(type) {
+            if (type === 'all') renderCats(catsData);
+            else if (type === 'video') renderCats(catsData.filter(c => c.hasVideo));
+            else if (type === 'kitten') renderCats(catsData.filter(c => c.tags.includes('kitten')));
+            else if (type === 'urgent') renderCats(catsData.filter(c => c.tags.includes('urgent')));
+            else if (type === 'fav') renderCats(catsData.filter(c => favorites.includes(c.id)));
+        }
+
+        function openTipModal(id) {
+            currentCatId = id;
+            const cat = catsData.find(c => c.id === id);
+            document.getElementById('tipCatTitle').innerText = `${cat.name}ちゃんを応援`;
+            document.getElementById('tipModal').classList.remove('hidden');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+        }
+
+        function selectAmount(amt) {
+            document.getElementById('customAmount').value = amt;
+        }
+
+        function submitTip() {
+            const amt = parseInt(document.getElementById('customAmount').value);
+            if (!amt || amt <= 0) {
+                alert('金額を入力してください');
+                return;
+            }
+            const cat = catsData.find(c => c.id === currentCatId);
+            cat.current += amt;
+            globalCurrent += amt;
+            document.getElementById('globalAmount').innerText = globalCurrent.toLocaleString() + '円';
+            document.getElementById('globalProgressBar').style.width = Math.min(100, (globalCurrent / 200000) * 100) + '%';
+            
+            closeModal('tipModal');
+            document.getElementById('customAmount').value = '';
+            document.getElementById('tipMessage').value = '';
+            renderCats(catsData);
+            alert(`${cat.name}ちゃんへ ${amt.toLocaleString()}円の応援を送信しました！ありがとうニャ！🐾`);
+        }
+
+        // 初期表示
+        renderCats(catsData);
+    </script>
+</body>
+</html>
