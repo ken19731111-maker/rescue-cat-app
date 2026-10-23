@@ -104,8 +104,8 @@
     <!-- JavaScriptデータ ＆ 処理 -->
     <script>
         // 大文字・小文字どちらの環境変数でも読み込めるハイブリッド設定
-        const SUPABASE_URL = window.process?.env?.NEXT_PUBLIC_SUPABASE_URL || window.process?.env?.next_public_supabase_url || 'https://hoesxsdbbezzmgqipckv.supabase.co';
-        const SUPABASE_ANON_KEY = window.process?.env?.NEXT_PUBLIC_SUPABASE_ANON_KEY || window.process?.env?.next_public_supabase_anon_key || 'sb_publishable_-uX4NW-NQQADr1fzd_kIHA_W451CzXA';
+        const SUPABASE_URL = 'https://hoesxsdbbezzmgqipckv.supabase.co';
+        const SUPABASE_ANON_KEY ='sb_publishable_-uX4NW-NQQADr1fzd_kIHA_W451CzXA';
 
         // Supabaseクライアントの初期化
         let supabaseClient = null;
