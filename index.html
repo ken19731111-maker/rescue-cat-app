@@ -273,14 +273,14 @@
         // ページ読み込み時にSupabaseからデータを取得
         fetchCatsFromSupabase();
     </script>
-    <!-- 管理者ログイン付きフッター -->
+   <!-- 管理者ログイン付きフッター -->
 <footer style="margin-top: 50px; padding: 20px; text-align: center; color: #888; font-size: 0.85rem; border-top: 1px solid #eee;">
     <p>&copy; 2026 rescue-cat-app</p>
     
-    <!-- 控えめなリンク -->
-    <a href="javascript:void(0);" onclick="toggleAuthForm(event)" style="color: #aaa; text-decoration: underline; font-size: 0.8rem; cursor: pointer;">
-    ボランティア・管理者ログイン
-</a>
+    <!-- リンクではなく「文字ボタン」にする（これならジャンプせず確実に開きます） -->
+    <button onclick="toggleAuthForm()" style="background: none; border: none; color: #888; text-decoration: underline; font-size: 0.8rem; cursor: pointer; padding: 5px;">
+        ボランティア・管理者ログイン
+    </button>
 
     <!-- クリックでパッと開くフォーム -->
     <div id="auth-section" style="display: none; margin: 20px auto; max-width: 320px; padding: 15px; background: #fff; border: 1px solid #ddd; border-radius: 8px; text-align: left; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
