@@ -69,10 +69,34 @@
 
     </main>
 
-    <!-- フッター -->
+    <!-- フッター（管理者ログイン機能付き） -->
     <footer class="bg-stone-800 text-stone-300 text-xs py-6 mt-12 border-t border-stone-700">
-        <div class="max-w-6xl mx-auto px-4 text-center space-y-2">
+        <div class="max-w-6xl mx-auto px-4 text-center space-y-3">
             <p class="font-bold text-amber-400">🐾 保護ネコ応援プラットフォーム RescuCat</p>
+            
+            <!-- 管理者ログインボタン -->
+            <div>
+                <button onclick="toggleAuthForm()" style="background: none; border: none; color: #a8a29e; text-decoration: underline; font-size: 0.8rem; cursor: pointer; padding: 5px;">
+                    ボランティア・管理者ログイン
+                </button>
+            </div>
+
+            <!-- クリックでパッと開くフォーム -->
+            <div id="auth-section" style="display: none; margin: 20px auto; max-width: 320px; padding: 15px; background: #fff; border: 1px solid #444; border-radius: 8px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.3); color: #333;">
+                <h4 style="margin-top: 0; font-size: 0.95rem; color: #333; font-weight: bold;">管理者ログイン</h4>
+                
+                <div id="login-form">
+                    <input type="email" id="login-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+                    <input type="password" id="login-password" placeholder="パスワード" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+                    <button id="login-btn" onclick="handleLogin()" style="width: 100%; padding: 8px; background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
+                </div>
+
+                <div id="logout-section" style="display: none; text-align: center;">
+                    <p style="color: #2b6cb0; font-weight: bold; margin-bottom: 10px;">ログイン中 🐾</p>
+                    <button id="logout-btn" onclick="handleLogout()" style="padding: 6px 12px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer;">ログアウト</button>
+                </div>
+            </div>
+
             <p class="text-stone-400">© 2026 RescuCat All Rights Reserved.</p>
         </div>
     </footer>
@@ -101,176 +125,82 @@
         </div>
     </div>
 
-    <!-- JavaScriptデータ ＆ 処理 -->
-            renderCats(catsData);
-        }
+    <!-- JavaScript 処理まとめ -->
+    <script>
+        // Supabaseクライアントの初期化（ご自身のURLとAnon Keyに書き換えてください）
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        function updateGlobalMeter() {
-            globalCurrent = catsData.reduce((sum, cat) => sum + (cat.current_amount || 0), 0);
-            document.getElementById('globalAmount').innerText = globalCurrent.toLocaleString() + '円';
-            const percent = Math.min(100, Math.round((globalCurrent / 200000) * 100));
-            document.getElementById('globalProgressBar').style.width = percent + '%';
-        }
+        let favorites = [];
+        let catsData = [];
 
-        function renderCats(cats) {
-            const grid = document.getElementById('catGrid');
-            grid.innerHTML = '';
+        // 1. フォームの開閉
+        window.toggleAuthForm = function() {
+            const form = document.getElementById('auth-section');
+            if (!form) return;
+            
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+            } else {
+                form.style.display = 'none';
+            }
+        };
 
-            if (cats.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center py-12 text-stone-400 font-bold">まだネコちゃんが登録されていません 🐾</div>';
+        // 2. ログイン処理
+        window.handleLogin = async function() {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!email || !password) {
+                alert('メールアドレスとパスワードを入力してください');
                 return;
             }
 
-            cats.forEach(cat => {
-                const target = cat.target_amount || 20000;
-                const current = cat.current_amount || 0;
-                const percent = Math.min(100, Math.round((current / target) * 100));
-                const isFav = favorites.includes(cat.id);
-                const card = `
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-amber-100 flex flex-col justify-between">
-                        <div class="relative">
-                            <img src="${cat.image_url || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop'}" alt="${cat.name}" class="w-full h-48 object-cover">
-                            ${cat.has_video ? '<span class="absolute top-3 left-3 bg-black/60 text-white text-[11px] px-2 py-0.5 rounded-full backdrop-blur-sm">🎥 動画あり</span>' : ''}
-                            <button onclick="toggleFav(${cat.id})" class="absolute top-3 right-3 bg-white/80 p-2 rounded-full text-rose-500 shadow-sm">
-                                <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
-                            </button>
-                        </div>
-                        <div class="p-4 space-y-3 flex-grow">
-                            <div class="flex justify-between items-baseline">
-                                <h3 class="font-extrabold text-lg text-stone-800">${cat.name} <span class="text-xs text-stone-500 font-normal">(${cat.age || '不明'})</span></h3>
-                            </div>
-                            <p class="text-xs text-amber-900 font-medium bg-amber-50 inline-block px-2 py-1 rounded-md">🏠 ${cat.shelter || '保護活動者'}</p>
-                            <p class="text-xs text-stone-600 line-clamp-2">「${cat.message || ''}」</p>
-                            <div class="space-y-1">
-                                <div class="flex justify-between text-xs font-bold">
-                                    <span class="text-stone-500">支援額</span>
-                                    <span class="text-amber-700">${current.toLocaleString()}円 / ${target.toLocaleString()}円</span>
-                                </div>
-                                <div class="w-full bg-stone-100 rounded-full h-2 overflow-hidden">
-                                    <div class="bg-amber-500 h-full rounded-full" style="width: ${percent}%"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4 pt-0">
-                            <button onclick="openTipModal(${cat.id})" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl shadow-sm text-sm transition flex items-center justify-center gap-1">
-                                <span>🐾 応援する (投げ銭)</span>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                grid.innerHTML += card;
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email: email,
+                password: password,
             });
-        }
 
-        function toggleFav(id) {
-            if (favorites.includes(id)) {
-                favorites = favorites.filter(fId => fId !== id);
+            if (error) {
+                alert('ログイン失敗: ' + error.message);
             } else {
-                favorites.push(id);
+                alert('ログインに成功しました！🐾');
+                checkUserSession();
             }
-            document.getElementById('favBadge').innerText = favorites.length;
-            renderCats(catsData);
+        };
+
+        // 3. ログアウト処理
+        window.handleLogout = async function() {
+            const { error } = await supabase.auth.signOut();
+            if (error) {
+                alert('ログアウト失敗: ' + error.message);
+            } else {
+                alert('ログアウトしました');
+                checkUserSession();
+            }
+        };
+
+        // 4. ログイン状態の確認と表示切り替え
+        async function checkUserSession() {
+            const { data: { session } } = await supabase.auth.getSession();
+            const loginForm = document.getElementById('login-form');
+            const logoutSection = document.getElementById('logout-section');
+
+            if (session) {
+                if (loginForm) loginForm.style.display = 'none';
+                if (logoutSection) logoutSection.style.display = 'block';
+            } else {
+                if (loginForm) loginForm.style.display = 'block';
+                if (logoutSection) logoutSection.style.display = 'none';
+            }
         }
 
-        function filterCats(type) {
-            if (type === 'all') renderCats(catsData);
-            else if (type === 'video') renderCats(catsData.filter(c => c.has_video));
-            else if (type === 'kitten') renderCats(catsData.filter(c => c.is_kitten));
-// ==========================================
-// 管理者ログイン関連のスクリプト（完全版）
-// ==========================================
-<script>
-
-// 1. フォームの開閉（ボタンから確実に呼び出せるようにする）
-window.toggleAuthForm = function() {
-    const form = document.getElementById('auth-section');
-    if (!form) return;
-    
-    if (form.style.display === 'none' || form.style.display === '') {
-        form.style.display = 'block';
-    } else {
-        form.style.display = 'none';
-    }
-};
-
-// 2. ログイン処理
-window.handleLogin = async function() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-
-    if (!email || !password) {
-        alert('メールアドレスとパスワードを入力してください');
-        return;
-    }
-
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password,
-    });
-
-    if (error) {
-        alert('ログイン失敗: ' + error.message);
-    } else {
-        alert('ログインに成功しました！🐾');
-        checkUserSession();
-    }
-};
-
-// 3. ログアウト処理
-window.handleLogout = async function() {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-        alert('ログアウト失敗: ' + error.message);
-    } else {
-        alert('ログアウトしました');
-        checkUserSession();
-    }
-};
-
-// 4. ログイン状態の確認と表示切り替え
-async function checkUserSession() {
-    const { data: { session } } = await supabase.auth.getSession();
-    const loginForm = document.getElementById('login-form');
-    const logoutSection = document.getElementById('logout-section');
-
-    if (session) {
-        if (loginForm) loginForm.style.display = 'none';
-        if (logoutSection) logoutSection.style.display = 'block';
-    } else {
-        if (loginForm) loginForm.style.display = 'block';
-        if (logoutSection) logoutSection.style.display = 'none';
-    }
-}
-
-// ページ読み込み時にログイン状態を判定
-window.addEventListener('DOMContentLoaded', () => {
-    checkUserSession();
-});
-</script>
-   <!-- 管理者ログイン付きフッター -->
-<footer style="margin-top: 50px; padding: 20px; text-align: center; color: #888; font-size: 0.85rem; border-top: 1px solid #eee;">
-    <p>&copy; 2026 rescue-cat-app</p>
-    
-    <!-- リンクではなく「文字ボタン」にする（これならジャンプせず確実に開きます） -->
-    <button onclick="toggleAuthForm()" style="background: none; border: none; color: #888; text-decoration: underline; font-size: 0.8rem; cursor: pointer; padding: 5px;">
-        ボランティア・管理者ログイン
-    </button>
-
-    <!-- クリックでパッと開くフォーム -->
-    <div id="auth-section" style="display: none; margin: 20px auto; max-width: 320px; padding: 15px; background: #fff; border: 1px solid #ddd; border-radius: 8px; text-align: left; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-        <h4 style="margin-top: 0; font-size: 0.95rem; color: #333;">管理者ログイン</h4>
-        
-        <div id="login-form">
-            <input type="email" id="login-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-            <input type="password" id="login-password" placeholder="パスワード" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-            <button id="login-btn" onclick="handleLogin()" style="width: 100%; padding: 8px; background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
-        </div>
-
-        <div id="logout-section" style="display: none; text-align: center;">
-            <p style="color: #2b6cb0; font-weight: bold; margin-bottom: 10px;">ログイン中 🐾</p>
-            <button id="logout-btn" onclick="handleLogout()" style="padding: 6px 12px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer;">ログアウト</button>
-        </div>
-    </div>
-</footer>
+        // ページ読み込み時にログイン状態を判定
+        window.addEventListener('DOMContentLoaded', () => {
+            checkUserSession();
+            // catsDataの読み込み処理があればここに入ります
+        });
+    </script>
 </body>
 </html>
