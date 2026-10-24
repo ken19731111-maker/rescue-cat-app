@@ -102,47 +102,7 @@
     </div>
 
     <!-- JavaScriptデータ ＆ 処理 -->
-    <script>
-        // 大文字・小文字どちらの環境変数でも読み込めるハイブリッド設定
-        const SUPABASE_URL = 'https://hoesxsdbbezzmgqipckv.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_-uX4NW-NQQADr1fzd_kIHA_W451CzXA';
-
-        // Supabaseクライアントの初期化
-        let supabaseClient = null;
-        if (typeof supabase !== 'undefined' && SUPABASE_URL) {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        }
-
-        let catsData = [];
-        let favorites = [];
-        let currentCatId = null;
-        let globalCurrent = 0;
-
-        // Supabaseからデータを取得する関数
-        async function fetchCatsFromSupabase() {
-            if (!supabaseClient) {
-                console.warn('Supabaseクライアント未設定。サンプルデータで表示します。');
-                catsData = [
-                    { id: 1, name: "たまちゃん (Supabase未接続時サンプル)", age: "2ヶ月", shelter: "保護ボランティアA", msg: "Vercelの環境変数設定を完了すると、本物のデータベースから表示されます。", target_amount: 30000, current_amount: 5000, image_url: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop", has_video: true, is_kitten: true, is_urgent: false }
-                ];
-                updateGlobalMeter();
-                renderCats(catsData);
-                return;
-            }
-
-            try {
-                const { data, error } = await supabaseClient.from('cats').select('*').order('id', { ascending: true });
-                if (error) throw error;
-
-                if (data && data.length > 0) {
-                    catsData = data;
-                } else {
-                    catsData = [];
-                }
-            } catch (err) {
-                console.error('Supabase読み込みエラー:', err);
-            }
-            updateGlobalMeter();
+   ();
             renderCats(catsData);
         }
 
@@ -217,62 +177,77 @@
             if (type === 'all') renderCats(catsData);
             else if (type === 'video') renderCats(catsData.filter(c => c.has_video));
             else if (type === 'kitten') renderCats(catsData.filter(c => c.is_kitten));
-            else if (type === 'urgent') renderCats(catsData.filter(c => c.is_urgent));
-            else if (type === 'fav') renderCats(catsData.filter(c => favorites.includes(c.id)));
-        }
+// ==========================================
+// 管理者ログイン関連のスクリプト（完全版）
+// ==========================================
+    <script>
 
-        function openTipModal(id) {
-            currentCatId = id;
-            const cat = catsData.find(c => c.id === id);
-            document.getElementById('tipCatTitle').innerText = `${cat.name}ちゃんを応援`;
-            document.getElementById('tipModal').classList.remove('hidden');
-        }
+// 1. フォームの開閉（ボタンから確実に呼び出せるようにする）
+window.toggleAuthForm = function() {
+    const form = document.getElementById('auth-section');
+    if (!form) return;
+    
+    if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'block';
+    } else {
+        form.style.display = 'none';
+    }
+};
 
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
+// 2. ログイン処理
+window.handleLogin = async function() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
 
-        function selectAmount(amt) {
-            document.getElementById('customAmount').value = amt;
-        }
+    if (!email || !password) {
+        alert('メールアドレスとパスワードを入力してください');
+        return;
+    }
 
-        async function submitTip() {
-            const amt = parseInt(document.getElementById('customAmount').value);
-            if (!amt || amt <= 0) {
-                alert('金額を入力してください');
-                return;
-            }
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password,
+    });
 
-            const cat = catsData.find(c => c.id === currentCatId);
-            const newAmount = (cat.current_amount || 0) + amt;
+    if (error) {
+        alert('ログイン失敗: ' + error.message);
+    } else {
+        alert('ログインに成功しました！🐾');
+        checkUserSession();
+    }
+};
 
-            // Supabaseのデータベースを更新
-            if (supabaseClient) {
-                try {
-                    const { error } = await supabaseClient
-                        .from('cats')
-                        .update({ current_amount: newAmount })
-                        .eq('id', currentCatId);
+// 3. ログアウト処理
+window.handleLogout = async function() {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+        alert('ログアウト失敗: ' + error.message);
+    } else {
+        alert('ログアウトしました');
+        checkUserSession();
+    }
+};
 
-                    if (error) throw error;
-                } catch (err) {
-                    console.error('更新エラー:', err);
-                }
-            }
+// 4. ログイン状態の確認と表示切り替え
+async function checkUserSession() {
+    const { data: { session } } = await supabase.auth.getSession();
+    const loginForm = document.getElementById('login-form');
+    const logoutSection = document.getElementById('logout-section');
 
-            cat.current_amount = newAmount;
-            closeModal('tipModal');
-            document.getElementById('customAmount').value = '';
-            document.getElementById('tipMessage').value = '';
-            
-            updateGlobalMeter();
-            renderCats(catsData);
-            alert(`${cat.name}ちゃんへ ${amt.toLocaleString()}円の応援を送信しました！ありがとうニャ！🐾`);
-        }
+    if (session) {
+        if (loginForm) loginForm.style.display = 'none';
+        if (logoutSection) logoutSection.style.display = 'block';
+    } else {
+        if (loginForm) loginForm.style.display = 'block';
+        if (logoutSection) logoutSection.style.display = 'none';
+    }
+}
 
-        // ページ読み込み時にSupabaseからデータを取得
-        fetchCatsFromSupabase();
-    </script>
+// ページ読み込み時にログイン状態を判定
+window.addEventListener('DOMContentLoaded', () => {
+    checkUserSession();
+});
+
    <!-- 管理者ログイン付きフッター -->
 <footer style="margin-top: 50px; padding: 20px; text-align: center; color: #888; font-size: 0.85rem; border-top: 1px solid #eee;">
     <p>&copy; 2026 rescue-cat-app</p>
@@ -297,6 +272,7 @@
             <button id="logout-btn" onclick="handleLogout()" style="padding: 6px 12px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer;">ログアウト</button>
         </div>
     </div>
+       </script>
 </footer>
 </body>
 </html>
