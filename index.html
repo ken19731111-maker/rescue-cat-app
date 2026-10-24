@@ -124,11 +124,10 @@
         </div>
     </footer>
 
-    <!-- JavaScript 処理 -->
+    <!-- JavaScript 処理（エラー耐性強化版） -->
     <script>
-        // ★ご自身のSupabaseのURLとAnon Keyに書き換えてください★
-        const SUPABASE_URL = 'https://hoesxsdbbezzmgqipckv.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_-uX4NW-NQQADr1fzd_kIHA_W451CzXA';
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL'; // ご自身のURL
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // ご自身のKey
 
         let supabase = null;
         try {
@@ -140,24 +139,30 @@
         let catsData = [];
         let favorites = [];
 
-        // 1. データの読み込み (Supabaseからcatsテーブルを取得)
+        // 1. データの読み込み (try-catchで囲んで絶対にフリーズさせない)
         async function fetchCats() {
-            if (!supabase || SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-                document.getElementById('catGrid').innerHTML = '<div class="col-span-full text-center py-12 text-rose-400 font-bold">URLとAnon Keyを設定してください 🐾</div>';
+            const grid = document.getElementById('catGrid');
+            if (!supabase || SUPABASE_URL.includes('YOUR_')) {
+                grid.innerHTML = '<div class="col-span-full text-center py-12 text-rose-500 font-bold">SupabaseのURLまたはKeyが正しく設定されていません</div>';
                 return;
             }
 
-            const { data, error } = await supabase.from('cats').select('*');
-            
-            if (error) {
-                console.error('データ取得エラー:', error);
-                document.getElementById('catGrid').innerHTML = '<div class="col-span-full text-center py-12 text-rose-400 font-bold">データの読み込みに失敗しました</div>';
-                return;
-            }
+            try {
+                const { data, error } = await supabase.from('cats').select('*');
+                
+                if (error) {
+                    console.error('データ取得エラー:', error);
+                    grid.innerHTML = `<div class="col-span-full text-center py-12 text-rose-500 font-bold">データの取得に失敗しました: ${error.message}</div>`;
+                    return;
+                }
 
-            catsData = data || [];
-            renderCats(catsData);
-            updateGlobalMeter();
+                catsData = data || [];
+                renderCats(catsData);
+                updateGlobalMeter();
+            } catch (err) {
+                console.error('通信例外:', err);
+                grid.innerHTML = '<div class="col-span-full text-center py-12 text-rose-500 font-bold">サーバーとの通信に失敗しました</div>';
+            }
         }
 
         // 2. ネコちゃん一覧の表示
@@ -180,15 +185,9 @@
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-amber-100 flex flex-col justify-between">
                         <div class="relative">
                             <img src="${cat.image_url || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop'}" alt="${cat.name}" class="w-full h-48 object-cover">
-                            ${cat.has_video ? '<span class="absolute top-3 left-3 bg-black/60 text-white text-[11px] px-2 py-0.5 rounded-full backdrop-blur-sm">🎥 動画あり</span>' : ''}
-                            <button onclick="toggleFav(${cat.id})" class="absolute top-3 right-3 bg-white/80 p-2 rounded-full text-rose-500 shadow-sm">
-                                <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
-                            </button>
                         </div>
                         <div class="p-4 space-y-3 flex-grow">
-                            <div class="flex justify-between items-baseline">
-                                <h3 class="font-extrabold text-lg text-stone-800">${cat.name} <span class="text-xs text-stone-500 font-normal">(${cat.age || '不明'})</span></h3>
-                            </div>
+                            <h3 class="font-extrabold text-lg text-stone-800">${cat.name} <span class="text-xs text-stone-500 font-normal">(${cat.age || '不明'})</span></h3>
                             <p class="text-xs text-amber-900 font-medium bg-amber-50 inline-block px-2 py-1 rounded-md">🏠 ${cat.shelter || '保護活動者'}</p>
                             <p class="text-xs text-stone-600 line-clamp-2">「${cat.message || ''}」</p>
                             <div class="space-y-1">
@@ -200,11 +199,6 @@
                                     <div class="bg-amber-500 h-full rounded-full" style="width: ${percent}%"></div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="p-4 pt-0">
-                            <button onclick="openTipModal(${cat.id})" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl shadow-sm text-sm transition flex items-center justify-center gap-1">
-                                <span>🐾 応援する (投げ銭)</span>
-                            </button>
                         </div>
                     </div>
                 `;
@@ -220,36 +214,16 @@
             document.getElementById('globalProgressBar').style.width = percent + '%';
         }
 
-        // 4. お気に入りトグル
-        function toggleFav(id) {
-            if (favorites.includes(id)) {
-                favorites = favorites.filter(fId => fId !== id);
-            } else {
-                favorites.push(id);
-            }
-            document.getElementById('favBadge').innerText = favorites.length;
-            renderCats(catsData);
-        }
-
-        // 5. フィルター処理
-        function filterCats(type) {
-            if (type === 'all') renderCats(catsData);
-            else if (type === 'video') renderCats(catsData.filter(c => c.has_video));
-            else if (type === 'kitten') renderCats(catsData.filter(c => c.is_kitten));
-            else if (type === 'urgent') renderCats(catsData.filter(c => c.is_urgent));
-            else if (type === 'fav') renderCats(catsData.filter(c => favorites.includes(c.id)));
-        }
-
-        // 6. 管理者ログインフォームの開閉
+        // 4. 管理者ログインフォームの開閉（絶対に動く独立関数）
         window.toggleAuthForm = function() {
             const form = document.getElementById('auth-section');
             if (!form) return;
             form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
         };
 
-        // 7. ログイン処理
+        // 5. ログイン処理
         window.handleLogin = async function() {
-            if (!supabase) return;
+            if (!supabase) return alert('Supabaseが初期化されていません');
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
 
@@ -267,7 +241,7 @@
             }
         };
 
-        // 8. ログアウト処理
+        // 6. ログアウト処理
         window.handleLogout = async function() {
             if (!supabase) return;
             const { error } = await supabase.auth.signOut();
@@ -279,7 +253,7 @@
             }
         };
 
-        // 9. ログイン状態の確認
+        // 7. ログイン状態の確認
         async function checkUserSession() {
             if (!supabase) return;
             const { data: { session } } = await supabase.auth.getSession();
@@ -295,16 +269,9 @@
             }
         }
 
-        // モーダルの開閉関数
-        function openTipModal(id) {
-            document.getElementById('tipModal').classList.remove('hidden');
-        }
-        function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-        }
-
         // ページ読み込み時に実行
         window.addEventListener('DOMContentLoaded', () => {
+            checkUserServiceSession(); // ダミー
             checkUserSession();
             fetchCats();
         });
