@@ -180,7 +180,7 @@
 // ==========================================
 // 管理者ログイン関連のスクリプト（完全版）
 // ==========================================
-    <script>
+<script>
 
 // 1. フォームの開閉（ボタンから確実に呼び出せるようにする）
 window.toggleAuthForm = function() {
@@ -247,7 +247,7 @@ async function checkUserSession() {
 window.addEventListener('DOMContentLoaded', () => {
     checkUserSession();
 });
-
+</script>
    <!-- 管理者ログイン付きフッター -->
 <footer style="margin-top: 50px; padding: 20px; text-align: center; color: #888; font-size: 0.85rem; border-top: 1px solid #eee;">
     <p>&copy; 2026 rescue-cat-app</p>
@@ -272,7 +272,6 @@ window.addEventListener('DOMContentLoaded', () => {
             <button id="logout-btn" onclick="handleLogout()" style="padding: 6px 12px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer;">ログアウト</button>
         </div>
     </div>
-       </script>
 </footer>
 </body>
 </html>
