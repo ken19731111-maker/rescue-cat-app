@@ -26,7 +26,6 @@
                 <button id="favHeaderBtn" class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-full font-bold flex items-center gap-1">
                     <i class="fa-solid fa-heart"></i> お気に入り <span id="favBadge" class="bg-rose-500 text-white rounded-full px-1.5 py-0.2 text-[10px]">0</span>
                 </button>
-                <button class="text-xs bg-amber-600 text-white px-3 py-1.5 rounded-full font-bold shadow-sm">ログイン</button>
             </div>
         </div>
     </header>
@@ -101,45 +100,26 @@
         </div>
     </footer>
 
-    <!-- モーダル: 投げ銭 -->
-    <div id="tipModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 id="tipCatTitle" class="font-bold text-lg text-stone-800">応援投げ銭を送る</h3>
-                <button onclick="closeModal('tipModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <div>
-                <p class="text-xs text-stone-500 mb-2">金額を選択してください</p>
-                <div class="grid grid-cols-3 gap-2 mb-3">
-                    <button onclick="selectAmount(500)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 hover:bg-amber-100">500円</button>
-                    <button onclick="selectAmount(1000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 hover:bg-amber-100">1,000円</button>
-                    <button onclick="selectAmount(3000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 hover:bg-amber-100">3,000円</button>
-                </div>
-                <input type="number" id="customAmount" placeholder="金額を自由入力 (円)" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-            </div>
-            <div>
-                <p class="text-xs text-stone-500 mb-1">応援メッセージ（任意）</p>
-                <textarea id="tipMessage" placeholder="保護主さんとネコちゃんへ温かいメッセージをどうぞ！" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm h-20 focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
-            </div>
-            <button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">投げ銭を確定する</button>
-        </div>
-    </div>
-
-    <!-- JavaScript 処理まとめ -->
+    <!-- JavaScript 処理 -->
     <script>
-        // Supabaseクライアントの初期化（ご自身のURLとAnon Keyに書き換えてください）
+        // ※ご自身の環境ですでに設定されているSupabaseのURLとAnon Keyに書き換えてください
         const SUPABASE_URL = 'https://hoesxsdbbezzmgqipckv.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_-uX4NW-NQQADr1fzd_kIHA_W451CzXA';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let supabase = null;
+        try {
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch (e) {
+            console.error("Supabase初期化エラー:", e);
+        }
 
-        let favorites = [];
         let catsData = [];
+        let favorites = [];
 
-        // 1. フォームの開閉
+        // 1. フォームの開閉（確実に動くように設定）
         window.toggleAuthForm = function() {
             const form = document.getElementById('auth-section');
             if (!form) return;
-            
             if (form.style.display === 'none' || form.style.display === '') {
                 form.style.display = 'block';
             } else {
@@ -149,6 +129,7 @@
 
         // 2. ログイン処理
         window.handleLogin = async function() {
+            if (!supabase) return alert('Supabaseが初期化されていません');
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
 
@@ -157,11 +138,7 @@
                 return;
             }
 
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email: email,
-                password: password,
-            });
-
+            const { data, error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) {
                 alert('ログイン失敗: ' + error.message);
             } else {
@@ -172,6 +149,7 @@
 
         // 3. ログアウト処理
         window.handleLogout = async function() {
+            if (!supabase) return;
             const { error } = await supabase.auth.signOut();
             if (error) {
                 alert('ログアウト失敗: ' + error.message);
@@ -181,8 +159,9 @@
             }
         };
 
-        // 4. ログイン状態の確認と表示切り替え
+        // 4. セッション確認
         async function checkUserSession() {
+            if (!supabase) return;
             const { data: { session } } = await supabase.auth.getSession();
             const loginForm = document.getElementById('login-form');
             const logoutSection = document.getElementById('logout-section');
@@ -196,10 +175,80 @@
             }
         }
 
-        // ページ読み込み時にログイン状態を判定
+        // 5. ネコちゃんデータの読み込み
+        async function fetchCats() {
+            if (!supabase) return;
+            const { data, error } = await supabase.from('cats').select('*');
+            if (error) {
+                console.error('データ取得エラー:', error);
+                document.getElementById('catGrid').innerHTML = '<div class="col-span-full text-center py-12 text-rose-400 font-bold">データの読み込みに失敗しました</div>';
+                return;
+            }
+            catsData = data || [];
+            renderCats(catsData);
+            updateGlobalMeter();
+        }
+
+        // 6. ネコちゃん一覧の描画
+        function renderCats(cats) {
+            const grid = document.getElementById('catGrid');
+            grid.innerHTML = '';
+
+            if (cats.length === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-12 text-stone-400 font-bold">まだネコちゃんが登録されていません 🐾</div>';
+                return;
+            }
+
+            cats.forEach(cat => {
+                const target = cat.target_amount || 20000;
+                const current = cat.current_amount || 0;
+                const percent = Math.min(100, Math.round((current / target) * 100));
+                
+                const card = `
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-amber-100 flex flex-col justify-between">
+                        <div class="relative">
+                            <img src="${cat.image_url || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop'}" alt="${cat.name}" class="w-full h-48 object-cover">
+                        </div>
+                        <div class="p-4 space-y-3 flex-grow">
+                            <h3 class="font-extrabold text-lg text-stone-800">${cat.name} <span class="text-xs text-stone-500 font-normal">(${cat.age || '不明'})</span></h3>
+                            <p class="text-xs text-amber-900 font-medium bg-amber-50 inline-block px-2 py-1 rounded-md">🏠 ${cat.shelter || '保護活動者'}</p>
+                            <p class="text-xs text-stone-600 line-clamp-2">「${cat.message || ''}」</p>
+                            <div class="space-y-1">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-stone-500">支援額</span>
+                                    <span class="text-amber-700">${current.toLocaleString()}円 / ${target.toLocaleString()}円</span>
+                                </div>
+                                <div class="w-full bg-stone-100 rounded-full h-2 overflow-hidden">
+                                    <div class="bg-amber-500 h-full rounded-full" style="width: ${percent}%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                grid.innerHTML += card;
+            });
+        }
+
+        // 7. 全体メーターの更新
+        function updateGlobalMeter() {
+            const globalCurrent = catsData.reduce((sum, cat) => sum + (cat.current_amount || 0), 0);
+            document.getElementById('globalAmount').innerText = globalCurrent.toLocaleString() + '円';
+            const percent = Math.min(100, Math.round((globalCurrent / 200000) * 100));
+            document.getElementById('globalProgressBar').style.width = percent + '%';
+        }
+
+        // フィルター用
+        function filterCats(type) {
+            if (type === 'all') renderCats(catsData);
+            else if (type === 'video') renderCats(catsData.filter(c => c.has_video));
+            else if (type === 'kitten') renderCats(catsData.filter(c => c.is_kitten));
+            else if (type === 'urgent') renderCats(catsData.filter(c => c.is_urgent));
+        }
+
+        // ページ読み込み時に実行
         window.addEventListener('DOMContentLoaded', () => {
             checkUserSession();
-            // catsDataの読み込み処理があればここに入ります
+            fetchCats();
         });
     </script>
 </body>
