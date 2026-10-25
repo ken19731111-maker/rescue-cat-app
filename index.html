@@ -1178,6 +1178,31 @@ window.submitTip = function() {
             fetchCats();
             fetchNews();
         });
+        // 支援金管理モーダルを開く
+window.openPayoutManagerModal = function() {
+    const modal = document.getElementById('payoutManagerModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+    } else {
+        alert("支援金管理のモーダル要素がHTMLに見つかりません。");
+    }
+};
+
+// 支援金管理モーダルを閉じる
+window.closePayoutManagerModal = function() {
+    const modal = document.getElementById('payoutManagerModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+};
+
+// 管理者が「振込完了」ボタンを押したときの処理
+window.processPayout = function(requestId) {
+    if (confirm("この申請の振込を完了として処理しますか？（※実際にご自身の銀行口座から相手へお振込みを済ませてから押してください）")) {
+        alert("振込完了ステータスに変更しました。データベースの記録が更新されます。");
+        // TODO: Supabaseのデータを「paid (振込済み)」に更新する処理をここに繋げます
+    }
+};
     </script>
 </body>
 </html>
