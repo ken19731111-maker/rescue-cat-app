@@ -1422,6 +1422,99 @@ window.processPayout = function(requestId) {
         // TODO: Supabaseのデータを「paid (振込済み)」に更新する処理をここに繋げます
     }
 };
+        // パスコード認証付きで管理者モーダルを開く
+window.openPayoutManagerModal = function() {
+    const ADMIN_PASS = "7777"; // 💡 ご自身の好きなパスコードに変更可能
+    const input = prompt("【管理者認証】パスコードを入力してください:");
+    
+    if (input === ADMIN_PASS) {
+        document.getElementById('payoutManagerModal').classList.remove('hidden');
+        // Supabaseから届いている最新の振込申請一覧を取得して表示
+        fetchAdminPayoutRequests();
+    } else if (input !== null) {
+        alert("パスコードが正しくありません。");
+    }
+};
+
+// 支援金管理モーダルを閉じる
+window.closePayoutManagerModal = function() {
+    document.getElementById('payoutManagerModal').classList.add('hidden');
+};
+
+// Supabaseの `payout_requests` テーブルから未処理・処理済みの申請を取得して表示
+async function fetchAdminPayoutRequests() {
+    const listEl = document.getElementById('adminPayoutList');
+    if (!listEl || !window.supabaseClient) return;
+
+    listEl.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-stone-400">データを取得中...</td></tr>';
+
+    // 最新の申請順に取得
+    const { data, error } = await window.supabaseClient
+        .from('payout_requests')
+        .select('*')
+        .order('id', { ascending: false });
+
+    if (error) {
+        listEl.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-rose-500 font-bold">取得エラー: ${error.message}</td></tr>`;
+        return;
+    }
+
+    const requests = data || [];
+
+    if (requests.length === 0) {
+        listEl.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-stone-400">現在、届いている振込申請はありません 🐾</td></tr>';
+        return;
+    }
+
+    listEl.innerHTML = '';
+    requests.forEach(req => {
+        const dateStr = new Date(req.created_at).toLocaleString('ja-JP');
+        const isPending = req.status === 'pending';
+
+        listEl.innerHTML += `
+            <tr class="${isPending ? 'bg-amber-50/30' : 'bg-stone-50'}">
+                <td class="p-3 font-medium">
+                    ${req.volunteer_name}<br>
+                    <span class="text-[10px] text-stone-400">${req.volunteer_email || ''}</span>
+                </td>
+                <td class="p-3 text-xs text-stone-500">${dateStr}</td>
+                <td class="p-3 font-bold">${req.requested_amount.toLocaleString()}円</td>
+                <td class="p-3 font-bold text-amber-700">${req.final_amount.toLocaleString()}円</td>
+                <td class="p-3 text-xs whitespace-pre-wrap">${req.bank_info}</td>
+                <td class="p-3 text-center">
+                    ${isPending ? `
+                        <button onclick="processPayout(${req.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
+                            振込完了にする
+                        </button>
+                    ` : `
+                        <span class="bg-stone-200 text-stone-600 text-xs font-bold px-2.5 py-1 rounded-full">振込対応済み</span>
+                    `}
+                </td>
+            </tr>
+        `;
+    });
+}
+
+// 振込完了処理 (Supabaseのステータスを 'paid' に更新)
+window.processPayout = async function(requestId) {
+    if (!confirm("この申請を「振込完了」に更新しますか？\n（※ご自身の銀行口座等でお振込みを完了した後に実行してください）")) {
+        return;
+    }
+
+    if (!window.supabaseClient) return;
+
+    const { error } = await window.supabaseClient
+        .from('payout_requests')
+        .update({ status: 'paid' })
+        .eq('id', requestId);
+
+    if (error) {
+        alert("更新エラー: " + error.message);
+    } else {
+        alert("🎉 振込完了として記録しました！");
+        fetchAdminPayoutRequests(); // 一覧を再読み込み
+    }
+};
     </script>
 </body>
 </html>
