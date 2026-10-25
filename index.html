@@ -454,7 +454,7 @@
         <button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">投げ銭を確定する</button>
     </div>
 </div>
-    <!-- モーダル: 管理者用・支援金請求管理 -->
+  <!-- モーダル: 支援金請求・申請管理 -->
 <div id="payoutManagerModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-4xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
         
@@ -462,20 +462,14 @@
         <div class="flex justify-between items-center border-b pb-3">
             <div class="flex items-center gap-2">
                 <i class="fa-solid fa-shield-halved text-amber-600 text-xl"></i>
-                <h3 class="font-bold text-lg text-stone-800">ボランティア支援金・請求管理</h3>
+                <h3 class="font-bold text-lg text-stone-800">支援金の振込申請・管理</h3>
             </div>
             <button onclick="closePayoutManagerModal()" class="text-stone-400 hover:text-stone-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
         </div>
 
-        <p class="text-xs text-stone-500">ボランティアからの振込申請の確認と管理を行います（手数料設定: 20%）</p>
-
-        <!-- 総プール残高表示 -->
-        <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 flex justify-between items-center">
-            <span class="text-xs text-stone-600 font-medium">総プール残高（未処理）</span>
-            <span class="font-bold text-lg text-amber-800" id="adminTotalPool">124,500円</span>
-        </div>
+        <p class="text-xs text-stone-500">条件（20,000円以上）を満たした支援金の振込申請を管理者にメールで送信します（手数料設定: 20%）</p>
 
         <!-- 申請一覧テーブル -->
         <div class="overflow-x-auto">
@@ -503,8 +497,9 @@
                             (ネコ タロウ)
                         </td>
                         <td class="p-3 text-center">
-                            <button onclick="processPayout('req_001')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
-                                振込完了にする
+                            <!-- 💡 ボタンを押すと、あなたのメール宛に申請内容が自動作成されて飛ぶ仕組み -->
+                            <button onclick="sendPayoutEmail('山田 花子', '25,400円', '20,320円', '〇〇銀行 渋谷支店 普通 1234567 (ネコ タロウ)')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center justify-center gap-1 mx-auto">
+                                <i class="fa-solid fa-paper-plane"></i> 振込申請を送信する
                             </button>
                         </td>
                     </tr>
@@ -512,6 +507,38 @@
             </table>
         </div>
 
+        <!-- 閉じるボタン -->
+        <div class="pt-3 border-t border-stone-200 flex justify-end">
+            <button onclick="closePayoutManagerModal()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 text-sm font-bold px-5 py-2 rounded-xl transition">
+                閉じる
+            </button>
+        </div>
+
+    </div>
+</div>
+    <script>
+// 💡 ボタンが押されたら、あなたのメールアドレス宛てに申請内容を記載したメールソフトを起動する関数
+function sendPayoutEmail(name, requestedAmount, finalAmount, bankInfo) {
+    // 👇 ここに「あなたのメールアドレス」を入れてください
+    const myEmail = "ken.c.1173.surf@gmail.com"; // 例: ご自身のメールアドレスに変更してください
+    
+    const subject = encodeURIComponent("【保護猫アプリ】支援金の振込申請がありました");
+    const body = encodeURIComponent(
+        `管理者様\n\n` +
+        `ボランティアさんから支援金の振込申請が届きました。\n\n` +
+        `----------------------------------------\n` +
+        `■ ボランティア名: ${name}\n` +
+        `■ 申請額: ${requestedAmount}\n` +
+        `■ お振込予定額 (手数料20%控除後): ${finalAmount}\n` +
+        `■ 振込先口座:\n${bankInfo}\n` +
+        `----------------------------------------\n\n` +
+        `内容を確認の上、ご自身の銀行口座からお振込みの手続きをお願いいたします。`
+    );
+
+    // メーラー（メールソフト）を自動で立ち上げる
+    window.location.href = `mailto:${myEmail}?subject=${subject}&body=${body}`;
+}
+</script>
         <!-- 閉じるボタン -->
         <div class="pt-3 border-t border-stone-200 flex justify-end">
             <button onclick="closePayoutManagerModal()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 text-sm font-bold px-5 py-2 rounded-xl transition">
