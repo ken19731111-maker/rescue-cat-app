@@ -33,7 +33,7 @@
     <!-- メインコンテンツ -->
     <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full space-y-6">
 
-        <!-- 全体目標・実績メーター ＆ ボランティア活動ダッシュボード (ログイン時表示) -->
+        <!-- 全体目標・実績メーター ＆ ボランティア活動ダッシュボード -->
         <section class="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-5 text-white shadow-md space-y-4">
             <div class="flex justify-between items-end">
                 <div>
@@ -70,7 +70,7 @@
             </div>
         </section>
 
-        <!-- 管理者・ボランティア専用：新規ネコちゃん登録フォーム（ログイン中のみ表示） -->
+        <!-- 管理者・ボランティア専用：新規ネコちゃん登録フォーム -->
         <section id="admin-add-cat-section" class="bg-white rounded-2xl p-5 shadow-sm border border-amber-200 hidden space-y-4">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 class="font-extrabold text-amber-900 text-base flex items-center gap-2">
@@ -84,22 +84,18 @@
                     <label class="block text-stone-600 mb-1">ネコちゃんの名前 <span class="text-rose-500">*</span></label>
                     <input type="text" id="cat-name" required placeholder="例: たまちゃん" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none">
                 </div>
-
                 <div>
                     <label class="block text-stone-600 mb-1">所属団体・グループ名 <span class="text-rose-500">*</span></label>
                     <input type="text" id="cat-shelter" required placeholder="例: 〇〇保護ネコの会" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none">
                 </div>
-
                 <div>
                     <label class="block text-stone-600 mb-1">年齢・推定月齢</label>
                     <input type="text" id="cat-age" placeholder="例: 推定2歳 / 生後3ヶ月" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none">
                 </div>
-
                 <div>
                     <label class="block text-stone-600 mb-1">支援目標金額 (円)</label>
                     <input type="number" id="cat-target" placeholder="20000" value="20000" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none">
                 </div>
-
                 <div>
                     <label class="block text-stone-600 mb-1">里親ステータス</label>
                     <select id="cat-status" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none bg-white">
@@ -108,19 +104,16 @@
                         <option value="譲渡決定">🎉 正式譲渡決定</option>
                     </select>
                 </div>
-
                 <div>
-                    <label class="block text-stone-600 mb-1">写真選択 (自動リサイズ・圧縮機能付き) <span class="text-rose-500">*</span></label>
+                    <label class="block text-stone-600 mb-1">写真選択 (自動圧縮) <span class="text-rose-500">*</span></label>
                     <input type="file" id="cat-image-file" accept="image/*" onchange="processImage(event, 'cat-image-url', 'compress-status')" class="w-full text-xs text-stone-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
                     <input type="hidden" id="cat-image-url">
                     <p id="compress-status" class="text-[10px] text-amber-700 font-bold mt-1"></p>
                 </div>
-
                 <div class="md:col-span-2">
                     <label class="block text-stone-600 mb-1">保護主からのメッセージ・紹介文</label>
-                    <textarea id="cat-message" rows="2" placeholder="ネコちゃんの性格や保護された経緯などを記載してください" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+                    <textarea id="cat-message" rows="2" placeholder="ネコちゃんの性格や保護された経緯など" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
                 </div>
-
                 <div class="flex items-center space-x-6 md:col-span-2 py-1">
                     <label class="flex items-center space-x-1.5 cursor-pointer">
                         <input type="checkbox" id="cat-has-video" class="rounded text-amber-600 focus:ring-amber-500">
@@ -135,7 +128,6 @@
                         <span class="text-rose-600 font-bold">🚨 緊急支援が必要</span>
                     </label>
                 </div>
-
                 <div class="md:col-span-2">
                     <button type="submit" id="submitCatBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2.5 rounded-xl shadow transition">
                         🐾 このネコちゃんを登録・公開する
@@ -154,7 +146,6 @@
                 <button onclick="filterCats('adopted')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🎉 譲渡決定</button>
                 <button onclick="filterCats('fav')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">♥ お気に入り</button>
             </div>
-            
             <div id="shelterFilterContainer" class="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-stone-600">
                 <span class="font-bold whitespace-nowrap text-amber-900">🏠 団体別:</span>
                 <div id="shelterButtons" class="flex gap-1 overflow-x-auto"></div>
@@ -170,12 +161,12 @@
 
     </main>
 
-    <!-- モーダル: 近況報告 ＆ 応援コメント ＆ SNSシェア -->
+    <!-- モーダル: 近況報告 ＆ 応援コメント ＆ 里親応募 ＆ SNSシェア -->
     <div id="updatesModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-5 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
                 <div>
-                    <h3 id="modalCatName" class="font-bold text-lg text-stone-800">たまちゃんの近況報告</h3>
+                    <h3 id="modalCatName" class="font-bold text-lg text-stone-800">たまちゃんの詳細</h3>
                     <div class="flex items-center gap-2 mt-0.5">
                         <p class="text-xs text-amber-800 font-medium" id="modalCatShelter">〇〇保護ネコの会</p>
                         <span id="modalCatStatusBadge" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">募集中</span>
@@ -184,7 +175,7 @@
                 <button onclick="closeModal('updatesModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
-            <!-- ステータス変更（管理者専用・ログイン時のみ） -->
+            <!-- ステータス変更（管理者専用） -->
             <div id="admin-status-box" class="bg-stone-50 p-3 rounded-xl border border-stone-200 flex items-center justify-between text-xs hidden">
                 <span class="font-bold text-stone-700">🏠 ステータス変更:</span>
                 <div class="flex gap-2">
@@ -199,10 +190,10 @@
 
             <!-- SNSシェアボタンエリア -->
             <div class="bg-amber-50/60 p-3 rounded-xl border border-amber-200 flex items-center justify-between text-xs">
-                <span class="font-bold text-amber-900"><i class="fa-solid fa-share-nodes"></i> この子をSNSで応援シェア:</span>
+                <span class="font-bold text-amber-900"><i class="fa-solid fa-share-nodes"></i> SNSで応援シェア:</span>
                 <div class="flex gap-2">
                     <button onclick="shareSNS('twitter')" class="bg-stone-900 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-black">
-                        <i class="fa-brands fa-x-twitter"></i> Xでシェア
+                        <i class="fa-brands fa-x-twitter"></i> X
                     </button>
                     <button onclick="shareSNS('line')" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-emerald-700">
                         <i class="fa-brands fa-line"></i> LINE
@@ -214,27 +205,24 @@
             <div id="admin-add-update-box" class="bg-amber-50/80 p-4 rounded-xl border border-amber-200 space-y-3 hidden">
                 <h4 class="text-xs font-extrabold text-amber-900">✍️ 新しい近況報告（日記）を追加</h4>
                 <form id="addUpdateForm" onsubmit="handleCreateUpdate(event)" class="space-y-3 text-xs">
-                    <textarea id="update-message" rows="2" required placeholder="今日の様子やご飯の食べ具合などを記入..." class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none bg-white"></textarea>
+                    <textarea id="update-message" rows="2" required placeholder="今日の様子など..." class="w-full border border-stone-300 rounded-lg p-2 outline-none bg-white"></textarea>
                     <div>
                         <label class="block text-stone-600 mb-1">写真を追加 (自動圧縮)</label>
                         <input type="file" id="update-image-file" accept="image/*" onchange="processImage(event, 'update-image-url', 'update-compress-status')" class="w-full text-[11px] text-stone-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-amber-100 file:text-amber-800">
                         <input type="hidden" id="update-image-url">
                         <p id="update-compress-status" class="text-[10px] text-amber-700 font-bold mt-0.5"></p>
                     </div>
-                    <div>
-                        <label class="block text-stone-600 mb-1">動画リンク (YouTube等)</label>
-                        <input type="url" id="update-video-url" placeholder="https://..." class="w-full border border-stone-300 rounded-lg p-2 outline-none bg-white">
-                    </div>
                     <button type="submit" id="submitUpdateBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg shadow transition">
-                        🐾 この近況を投稿する
+                        🐾 近況を投稿する
                     </button>
                 </form>
             </div>
 
-            <!-- タブ切り替え（近況報告 ⇔ 応援コメント） -->
+            <!-- タブ切り替え（近況報告 ⇔ 応援コメント ⇔ 里親応募） -->
             <div class="flex border-b border-stone-200 text-xs font-bold text-center">
-                <button onclick="switchModalTab('updates')" id="modalTabUpdates" class="flex-1 pb-2 border-b-2 border-amber-600 text-amber-900">📖 近況報告・日記</button>
-                <button onclick="switchModalTab('comments')" id="modalTabComments" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400">💬 応援コメント板</button>
+                <button onclick="switchModalTab('updates')" id="modalTabUpdates" class="flex-1 pb-2 border-b-2 border-amber-600 text-amber-900">📖 近況報告</button>
+                <button onclick="switchModalTab('comments')" id="modalTabComments" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400">💬 応援コメント</button>
+                <button onclick="switchModalTab('apply')" id="modalTabApply" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400">🏠 里親・お見合い応募</button>
             </div>
 
             <!-- 報告タイムライン一覧 -->
@@ -246,13 +234,49 @@
             <div id="commentsSection" class="space-y-4 hidden">
                 <form onsubmit="handleCreateComment(event)" class="bg-stone-50 p-3 rounded-xl border border-stone-200 space-y-2 text-xs">
                     <p class="font-bold text-stone-700">✨ 温かい応援メッセージを送る</p>
-                    <input type="text" id="comment-username" required placeholder="お名前（ニックネーム可）" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
-                    <textarea id="comment-message" rows="2" required placeholder="頑張ってね！応援しています！" class="w-full border border-stone-300 rounded p-2 bg-white outline-none"></textarea>
-                    <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 rounded shadow transition">❤️ 応援メッセージを投稿する</button>
+                    <input type="text" id="comment-username" required placeholder="お名前" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                    <textarea id="comment-message" rows="2" required placeholder="頑張ってね！" class="w-full border border-stone-300 rounded p-2 bg-white outline-none"></textarea>
+                    <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 rounded shadow transition">❤️ 応援メッセージを送る</button>
                 </form>
                 <div id="commentsList" class="space-y-2">
                     <p class="text-xs text-stone-400 text-center py-2">コメント読み込み中...</p>
                 </div>
+            </div>
+
+            <!-- 里親・お見合い応募フォーム -->
+            <div id="applySection" class="space-y-4 hidden">
+                <form onsubmit="handleCreateApplication(event)" class="bg-amber-50/50 p-4 rounded-xl border border-amber-200 space-y-3 text-xs">
+                    <p class="font-extrabold text-amber-900">🏠 この猫ちゃんとの里親・お見合いエントリー</p>
+                    <p class="text-[11px] text-stone-600">保護主より折り返しご連絡いたします。お気軽にご応募ください。</p>
+                    <div>
+                        <label class="block text-stone-600 mb-1">お名前 <span class="text-rose-500">*</span></label>
+                        <input type="text" id="apply-name" required placeholder="山田 太郎" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-stone-600 mb-1">メールアドレス <span class="text-rose-500">*</span></label>
+                        <input type="email" id="apply-email" required placeholder="example@email.com" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-stone-600 mb-1">お電話番号 <span class="text-rose-500">*</span></label>
+                        <input type="tel" id="apply-phone" required placeholder="090-0000-0000" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-stone-600 mb-1">お住まいの住宅環境</label>
+                        <select id="apply-housing" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                            <option value="持ち家一戸建て">持ち家（一戸建て）</option>
+                            <option value="持ち家マンション">持ち家（マンション・ペット可）</option>
+                            <option value="賃貸一戸建て">賃貸（一戸建て・ペット可）</option>
+                            <option value="賃貸マンション">賃貸（マンション・ペット可）</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-stone-600 mb-1">ご家族構成や飼育経験・メッセージ</label>
+                        <textarea id="apply-message" rows="3" placeholder="ご家族の人数や留守番時間、これまでのペット飼育経験などをご記入ください" class="w-full border border-stone-300 rounded p-2 bg-white outline-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2.5 rounded-lg shadow transition">
+                        🐾 里親・お見合い応募を送信する
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -267,58 +291,45 @@
             <div>
                 <p class="text-xs text-stone-500 mb-2">金額を選択してください</p>
                 <div class="grid grid-cols-3 gap-2 mb-3">
-                    <button onclick="selectAmount(500)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 hover:bg-amber-100">500円</button>
-                    <button onclick="selectAmount(1000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 hover:bg-amber-100">1,000円</button>
-                    <button onclick="selectAmount(3000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 hover:bg-amber-100">3,000円</button>
+                    <button onclick="selectAmount(500)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">500円</button>
+                    <button onclick="selectAmount(1000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">1,000円</button>
+                    <button onclick="selectAmount(3000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">3,000円</button>
                 </div>
-                <input type="number" id="customAmount" placeholder="金額を自由入力 (円)" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500">
-            </div>
-            <div>
-                <p class="text-xs text-stone-500 mb-1">応援メッセージ（任意）</p>
-                <textarea id="tipMessage" placeholder="保護主さんとネコちゃんへ温かいメッセージをどうぞ！" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm h-20 focus:outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                <input type="number" id="customAmount" placeholder="金額を自由入力 (円)" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm outline-none">
             </div>
             <button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">投げ銭を確定する</button>
         </div>
     </div>
 
-    <!-- 管理者ログイン・新規登録付きフッター -->
+    <!-- フッター (管理者認証付き) -->
     <footer class="bg-stone-800 text-stone-300 text-xs py-6 mt-12 border-t border-stone-700">
         <div class="max-w-6xl mx-auto px-4 text-center space-y-3">
             <p class="font-bold text-amber-400">🐾 保護ネコ応援プラットフォーム RescuCat</p>
-            
             <div>
                 <button onclick="toggleAuthForm()" style="background: none; border: none; color: #a8a29e; text-decoration: underline; font-size: 0.8rem; cursor: pointer; padding: 5px;">
                     ボランティア・管理者ログイン / 登録
                 </button>
             </div>
-
-            <div id="auth-section" style="display: none; margin: 20px auto; max-width: 320px; padding: 15px; background: #fff; border: 1px solid #444; border-radius: 8px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.3); color: #333;">
-                
+            <div id="auth-section" style="display: none; margin: 20px auto; max-width: 320px; padding: 15px; background: #fff; border: 1px solid #444; border-radius: 8px; text-align: left; color: #333;">
                 <div style="display: flex; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
                     <button onclick="switchAuthTab('login')" id="tabLoginBtn" style="flex: 1; background: none; border: none; font-weight: bold; color: #3182ce; cursor: pointer; font-size: 0.85rem;">ログイン</button>
-                    <button onclick="switchAuthTab('signup')" id="tabSignupBtn" style="flex: 1; background: none; border: none; font-weight: normal; color: #718096; cursor: pointer; font-size: 0.85rem;">新規登録</button>
+                    <button onclick="switchAuthTab('signup')" id="tabSignupBtn" style="flex: 1; background: none; border: none; color: #718096; cursor: pointer; font-size: 0.85rem;">新規登録</button>
                 </div>
-
                 <div id="login-form-container">
-                    <h4 style="margin-top: 0; font-size: 0.9rem; color: #333; font-weight: bold; margin-bottom: 8px;">管理者ログイン</h4>
                     <input type="email" id="login-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
                     <input type="password" id="login-password" placeholder="パスワード" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
                     <button onclick="handleLogin()" style="width: 100%; padding: 8px; background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
                 </div>
-
                 <div id="signup-form-container" style="display: none;">
-                    <h4 style="margin-top: 0; font-size: 0.9rem; color: #333; font-weight: bold; margin-bottom: 8px;">ボランティア新規登録</h4>
                     <input type="email" id="signup-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
                     <input type="password" id="signup-password" placeholder="パスワード (6文字以上)" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
                     <button onclick="handleSignUp()" style="width: 100%; padding: 8px; background: #38a169; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">新規登録する</button>
                 </div>
-
                 <div id="logout-section" style="display: none; text-align: center;">
                     <p style="color: #2b6cb0; font-weight: bold; margin-bottom: 10px;">ログイン中 🐾</p>
                     <button onclick="handleLogout()" style="padding: 6px 12px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer;">ログアウト</button>
                 </div>
             </div>
-
             <p class="text-stone-400">© 2026 RescuCat All Rights Reserved.</p>
         </div>
     </footer>
@@ -326,7 +337,7 @@
     <!-- JavaScript 処理 -->
     <script>
         const SUPABASE_URL = 'https://hoesxsdbbezzmgqipckv.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_-uX4NW-NQQADr1fzd_kIHA_W451CzXA';
+        const SUPABASE_ANON_KEY = 'sb_publishable_-uX4NW-NQQADr1fzd_kIHA_W451CzXA'; // ご自身のキーに置き換えてください
 
         window.supabaseClient = null;
         try {
@@ -340,22 +351,14 @@
         let currentSelectedCatId = null;
         let isLoggedIn = false;
 
-        // 1. データ読み込み
         async function fetchCats() {
             const grid = document.getElementById('catGrid');
-            if (!window.supabaseClient || SUPABASE_URL === 'YOUR_SUPABASE_URL') {
-                grid.innerHTML = '<div class="col-span-full text-center py-12 text-rose-500 font-bold">SupabaseのURLとKeyを設定してください 🐾</div>';
-                return;
-            }
-
+            if (!window.supabaseClient) return;
             const { data, error } = await window.supabaseClient.from('cats').select('*').order('id', { ascending: false });
-            
             if (error) {
-                console.error('データ取得エラー:', error);
                 grid.innerHTML = '<div class="col-span-full text-center py-12 text-rose-500 font-bold">データの読み込みに失敗しました</div>';
                 return;
             }
-
             catsData = data || [];
             renderCats(catsData);
             renderShelterFilters();
@@ -363,16 +366,13 @@
             updateDashboardStats();
         }
 
-        // 2. 一覧表示
         function renderCats(cats) {
             const grid = document.getElementById('catGrid');
             grid.innerHTML = '';
-
             if (cats.length === 0) {
                 grid.innerHTML = '<div class="col-span-full text-center py-12 text-stone-400 font-bold">まだ該当するネコちゃんが登録されていません 🐾</div>';
                 return;
             }
-
             cats.forEach(cat => {
                 const target = cat.target_amount || 20000;
                 const current = cat.current_amount || 0;
@@ -385,7 +385,7 @@
                 if (status === 'トライアル中') statusBadgeClass = "bg-orange-100 text-orange-700";
                 if (status === '譲渡決定') statusBadgeClass = "bg-emerald-100 text-emerald-800";
 
-                const card = `
+                grid.innerHTML += `
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-amber-100 flex flex-col justify-between">
                         <div class="relative">
                             <img src="${cat.image_url || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop'}" alt="${cat.name}" class="w-full h-48 object-cover">
@@ -402,15 +402,12 @@
                                 <h3 class="font-extrabold text-lg text-stone-800">${cat.name} <span class="text-xs text-stone-500 font-normal">(${cat.age || '不明'})</span></h3>
                                 ${cat.is_urgent ? '<span class="bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded">🚨 緊急</span>' : ''}
                             </div>
-                            
                             <div>
                                 <button onclick="filterCatsByShelter('${shelterName}')" class="text-xs text-amber-900 font-bold bg-amber-50 hover:bg-amber-100 border border-amber-200 px-2.5 py-1 rounded-lg transition flex items-center gap-1">
                                     <i class="fa-solid fa-house-chimney"></i> ${shelterName} の猫を見る
                                 </button>
                             </div>
-
                             <p class="text-xs text-stone-600 line-clamp-2">「${cat.message || ''}」</p>
-                            
                             <div class="space-y-1">
                                 <div class="flex justify-between text-xs font-bold">
                                     <span class="text-stone-500">支援額</span>
@@ -423,7 +420,7 @@
                         </div>
                         <div class="p-4 pt-0 space-y-2">
                             <button onclick="openUpdatesModal(${cat.id})" class="w-full bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-1">
-                                <i class="fa-solid fa-book-open"></i> 近況・応援コメントを見る
+                                <i class="fa-solid fa-book-open"></i> 詳細・里親応募・近況を見る
                             </button>
                             <button onclick="openTipModal(${cat.id})" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl shadow-sm text-sm transition flex items-center justify-center gap-1">
                                 <span>🐾 応援する (投げ銭)</span>
@@ -431,11 +428,9 @@
                         </div>
                     </div>
                 `;
-                grid.innerHTML += card;
             });
         }
 
-        // 3. 団体フィルター
         function renderShelterFilters() {
             const container = document.getElementById('shelterButtons');
             if (!container) return;
@@ -454,12 +449,10 @@
             renderCats(catsData.filter(c => c.shelter === shelterName));
         }
 
-        // 4. 画像圧縮
         window.processImage = function(event, targetInputId, statusId) {
             const file = event.target.files[0];
             const statusEl = document.getElementById(statusId);
             if (!file) return;
-
             statusEl.innerText = "⏳ 圧縮中...";
             const reader = new FileReader();
             reader.onload = function(e) {
@@ -475,46 +468,38 @@
                     }
                     canvas.width = width;
                     canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
-                    document.getElementById(targetInputId).value = compressedDataUrl;
-                    statusEl.innerText = "✨ 準備完了！";
+                    canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                    document.getElementById(targetInputId).value = canvas.toDataURL('image/jpeg', 0.7);
+                    statusEl.innerText = "✨ 圧縮完了！";
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         };
 
-        // 5. 新規ネコ登録
         window.handleCreateCat = async function(event) {
             event.preventDefault();
             if (!window.supabaseClient) return;
-
             const submitBtn = document.getElementById('submitCatBtn');
             submitBtn.disabled = true;
             submitBtn.innerText = "🐾 登録中...";
 
-            const name = document.getElementById('cat-name').value;
-            const shelter = document.getElementById('cat-shelter').value;
-            const age = document.getElementById('cat-age').value;
-            const target_amount = parseInt(document.getElementById('cat-target').value) || 20000;
-            const status = document.getElementById('cat-status').value;
-            const image_url = document.getElementById('cat-image-url').value;
-            const message = document.getElementById('cat-message').value;
-            const has_video = document.getElementById('cat-has-video').checked;
-            const is_kitten = document.getElementById('cat-is-kitten').checked;
-            const is_urgent = document.getElementById('cat-is-urgent').checked;
-
             const { error } = await window.supabaseClient.from('cats').insert([{
-                name, shelter, age, target_amount, current_amount: 0,
-                status, image_url, has_video, message, is_kitten, is_urgent
+                name: document.getElementById('cat-name').value,
+                shelter: document.getElementById('cat-shelter').value,
+                age: document.getElementById('cat-age').value,
+                target_amount: parseInt(document.getElementById('cat-target').value) || 20000,
+                current_amount: 0,
+                status: document.getElementById('cat-status').value,
+                image_url: document.getElementById('cat-image-url').value,
+                message: document.getElementById('cat-message').value,
+                has_video: document.getElementById('cat-has-video').checked,
+                is_kitten: document.getElementById('cat-is-kitten').checked,
+                is_urgent: document.getElementById('cat-is-urgent').checked
             }]);
 
-            if (error) {
-                alert("登録エラー: " + error.message);
-            } else {
+            if (error) alert("登録エラー: " + error.message);
+            else {
                 alert("🎉 新しいネコちゃんを登録しました！");
                 document.getElementById('addCatForm').reset();
                 document.getElementById('compress-status').innerText = "";
@@ -524,16 +509,14 @@
             submitBtn.innerText = "🐾 このネコちゃんを登録・公開する";
         };
 
-        // 6. モーダル操作 (近況 & コメント & ステータス)
         window.openUpdatesModal = async function(catId) {
             currentSelectedCatId = catId;
             const cat = catsData.find(c => c.id === catId);
             if (!cat) return;
 
-            document.getElementById('modalCatName').innerText = cat.name + ' の近況・応援';
+            document.getElementById('modalCatName').innerText = cat.name + ' の詳細・応募';
             document.getElementById('modalCatShelter').innerText = '🏠 ' + (cat.shelter || '保護団体');
-            const badge = document.getElementById('modalCatStatusBadge');
-            badge.innerText = cat.status || '募集中';
+            document.getElementById('modalCatStatusBadge').innerText = cat.status || '募集中';
             document.getElementById('updatesModal').classList.remove('hidden');
 
             const adminUpdateBox = document.getElementById('admin-add-update-box');
@@ -555,72 +538,64 @@
         window.switchModalTab = function(tab) {
             const updatesTimeline = document.getElementById('updatesTimeline');
             const commentsSection = document.getElementById('commentsSection');
+            const applySection = document.getElementById('applySection');
             const btnUpdates = document.getElementById('modalTabUpdates');
             const btnComments = document.getElementById('modalTabComments');
+            const btnApply = document.getElementById('modalTabApply');
+
+            updatesTimeline.classList.add('hidden');
+            commentsSection.classList.add('hidden');
+            applySection.classList.add('hidden');
+            btnUpdates.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400";
+            btnComments.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400";
+            btnApply.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400";
 
             if (tab === 'updates') {
                 updatesTimeline.classList.remove('hidden');
-                commentsSection.classList.add('hidden');
-                btnUpdates.className = "flex-1 pb-2 border-b-2 border-amber-600 text-amber-900";
-                btnComments.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400";
-            } else {
-                updatesTimeline.classList.add('hidden');
+                btnUpdates.className = "flex-1 pb-2 border-b-2 border-amber-600 text-amber-900 font-bold";
+            } else if (tab === 'comments') {
                 commentsSection.classList.remove('hidden');
-                btnComments.className = "flex-1 pb-2 border-b-2 border-rose-500 text-rose-600";
-                btnUpdates.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400";
+                btnComments.className = "flex-1 pb-2 border-b-2 border-rose-500 text-rose-600 font-bold";
+            } else if (tab === 'apply') {
+                applySection.classList.remove('hidden');
+                btnApply.className = "flex-1 pb-2 border-b-2 border-amber-600 text-amber-900 font-bold";
             }
         };
 
-        // ステータス更新（管理者）
         window.updateCatStatus = async function() {
             if (!window.supabaseClient || !currentSelectedCatId) return;
             const newStatus = document.getElementById('modalStatusSelect').value;
-
             const { error } = await window.supabaseClient.from('cats').update({ status: newStatus }).eq('id', currentSelectedCatId);
-            if (error) {
-                alert('更新エラー: ' + error.message);
-            } else {
+            if (error) alert('更新エラー: ' + error.message);
+            else {
                 alert('🎉 ステータスを「' + newStatus + '」に更新しました！');
                 fetchCats();
                 openUpdatesModal(currentSelectedCatId);
             }
         };
 
-        // SNSシェア機能
         window.shareSNS = function(platform) {
             const cat = catsData.find(c => c.id === currentSelectedCatId);
             if (!cat) return;
-            const text = `保護ネコ支援プラットフォーム RescuCatで「${cat.name}」ちゃんを応援中！🐾 みんなで温かい支援を届けよう！`;
+            const text = `保護ネコ支援プラットフォーム RescuCatで「${cat.name}」ちゃんを応援中！🐾`;
             const url = window.location.href;
-
-            if (platform === 'twitter') {
-                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
-            } else if (platform === 'line') {
-                window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
-            }
+            if (platform === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+            else if (platform === 'line') window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
         };
 
-        // 近況報告の取得・投稿
         async function fetchUpdates(catId) {
             const timeline = document.getElementById('updatesTimeline');
-            timeline.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">読み込み中...</p>';
-
-            const { data, error } = await window.supabaseClient.from('cat_updates').select('*').eq('cat_id', catId).order('id', { ascending: false });
-
-            if (error || !data || data.length === 0) {
-                timeline.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">まだ近況報告がありません。新しい情報を待ちましょう！🐾</p>';
+            const { data } = await window.supabaseClient.from('cat_updates').select('*').eq('cat_id', catId).order('id', { ascending: false });
+            if (!data || data.length === 0) {
+                timeline.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">まだ近況報告がありません。</p>';
                 return;
             }
-
             timeline.innerHTML = '';
             data.forEach(upd => {
-                const dateStr = new Date(upd.created_at || Date.now()).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
                 timeline.innerHTML += `
                     <div class="bg-amber-50/50 border border-amber-100 rounded-xl p-3 space-y-2 text-xs">
-                        <span class="text-[10px] text-stone-400"><i class="fa-regular fa-clock"></i> ${dateStr}</span>
                         <p class="text-stone-700 whitespace-pre-wrap">${upd.message || ''}</p>
                         ${upd.image_url ? `<img src="${upd.image_url}" class="rounded-lg w-full h-40 object-cover mt-2">` : ''}
-                        ${upd.video_url ? `<a href="${upd.video_url}" target="_blank" class="block text-rose-600 font-bold underline mt-1">🎥 関連動画リンクを見る</a>` : ''}
                     </div>
                 `;
             });
@@ -629,41 +604,32 @@
         window.handleCreateUpdate = async function(event) {
             event.preventDefault();
             if (!window.supabaseClient || !currentSelectedCatId) return;
-
-            const message = document.getElementById('update-message').value;
-            const image_url = document.getElementById('update-image-url').value;
-            const video_url = document.getElementById('update-video-url').value;
-
-            const { error } = await window.supabaseClient.from('cat_updates').insert([{ cat_id: currentSelectedCatId, message, image_url, video_url }]);
+            const { error } = await window.supabaseClient.from('cat_updates').insert([{
+                cat_id: currentSelectedCatId,
+                message: document.getElementById('update-message').value,
+                image_url: document.getElementById('update-image-url').value
+            }]);
             if (error) alert("投稿エラー: " + error.message);
             else {
                 alert("🎉 近況報告を投稿しました！");
                 document.getElementById('addUpdateForm').reset();
-                document.getElementById('update-compress-status').innerText = "";
                 await fetchUpdates(currentSelectedCatId);
             }
         };
 
-        // 応援コメントの取得・投稿
         async function fetchComments(catId) {
             const list = document.getElementById('commentsList');
-            list.innerHTML = '<p class="text-xs text-stone-400 text-center py-2">読み込み中...</p>';
-
-            const { data, error } = await window.supabaseClient.from('cat_comments').select('*').eq('cat_id', catId).order('id', { ascending: false });
-
-            if (error || !data || data.length === 0) {
-                list.innerHTML = '<p class="text-xs text-stone-400 text-center py-2">まだ応援コメントがありません。最初のメッセージを送ろう！❤️</p>';
+            const { data } = await window.supabaseClient.from('cat_comments').select('*').eq('cat_id', catId).order('id', { ascending: false });
+            if (!data || data.length === 0) {
+                list.innerHTML = '<p class="text-xs text-stone-400 text-center py-2">まだ応援コメントがありません。</p>';
                 return;
             }
-
             list.innerHTML = '';
             data.forEach(c => {
-                const dateStr = new Date(c.created_at || Date.now()).toLocaleDateString('ja-JP', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' });
                 list.innerHTML += `
                     <div class="bg-rose-50/40 border border-rose-100 rounded-lg p-2.5 space-y-1 text-xs">
                         <div class="flex justify-between font-bold text-rose-900">
                             <span>💬 ${c.user_name}</span>
-                            <span class="text-[10px] text-stone-400 font-normal">${dateStr}</span>
                         </div>
                         <p class="text-stone-700 whitespace-pre-wrap">${c.message}</p>
                     </div>
@@ -674,35 +640,53 @@
         window.handleCreateComment = async function(event) {
             event.preventDefault();
             if (!window.supabaseClient || !currentSelectedCatId) return;
-
-            const user_name = document.getElementById('comment-username').value;
-            const message = document.getElementById('comment-message').value;
-
-            const { error } = await window.supabaseClient.from('cat_comments').insert([{ cat_id: currentSelectedCatId, user_name, message }]);
-            if (error) alert("コメント投稿エラー: " + error.message);
+            const { error } = await window.supabaseClient.from('cat_comments').insert([{
+                cat_id: currentSelectedCatId,
+                user_name: document.getElementById('comment-username').value,
+                message: document.getElementById('comment-message').value
+            }]);
+            if (error) alert("エラー: " + error.message);
             else {
-                alert("❤️ 温かい応援メッセージを送信しました！");
+                alert("❤️ 応援メッセージを送信しました！");
                 document.getElementById('comment-message').value = '';
                 await fetchComments(currentSelectedCatId);
             }
         };
 
-        // 7. ダッシュボード ＆ フィルター
+        // 里親応募送信処理
+        window.handleCreateApplication = async function(event) {
+            event.preventDefault();
+            if (!window.supabaseClient || !currentSelectedCatId) return;
+
+            const { error } = await window.supabaseClient.from('adoption_applications').insert([{
+                cat_id: currentSelectedCatId,
+                applicant_name: document.getElementById('apply-name').value,
+                applicant_email: document.getElementById('apply-email').value,
+                applicant_phone: document.getElementById('apply-phone').value,
+                housing_type: document.getElementById('apply-housing').value,
+                message: document.getElementById('apply-message').value
+            }]);
+
+            if (error) {
+                alert("応募送信エラー: " + error.message);
+            } else {
+                alert("🎉 里親・お見合い応募を受け付けました！保護主からの連絡をお待ちください。");
+                document.getElementById('applySection').querySelector('form').reset();
+                switchModalTab('updates');
+            }
+        };
+
         function updateGlobalMeter() {
             const globalCurrent = catsData.reduce((sum, cat) => sum + (cat.current_amount || 0), 0);
             document.getElementById('globalAmount').innerText = globalCurrent.toLocaleString() + '円';
-            const percent = Math.min(100, Math.round((globalCurrent / 200000) * 100));
-            document.getElementById('globalProgressBar').style.width = percent + '%';
+            document.getElementById('globalProgressBar').style.width = Math.min(100, Math.round((globalCurrent / 200000) * 100)) + '%';
         }
 
         function updateDashboardStats() {
             document.getElementById('dashCatCount').innerText = catsData.length + '頭';
-            const total = catsData.reduce((sum, c) => sum + (c.current_amount || 0), 0);
-            document.getElementById('dashTotalAmount').innerText = total.toLocaleString() + '円';
-            const adopted = catsData.filter(c => c.status === '譲渡決定').length;
-            document.getElementById('dashAdoptedCount').innerText = adopted + '匹';
-            const urgent = catsData.filter(c => c.is_urgent).length;
-            document.getElementById('dashUrgentCount').innerText = urgent + '件';
+            document.getElementById('dashTotalAmount').innerText = catsData.reduce((sum, c) => sum + (c.current_amount || 0), 0).toLocaleString() + '円';
+            document.getElementById('dashAdoptedCount').innerText = catsData.filter(c => c.status === '譲渡決定').length + '匹';
+            document.getElementById('dashUrgentCount').innerText = catsData.filter(c => c.is_urgent).length + '件';
         }
 
         function toggleFav(id) {
@@ -723,53 +707,42 @@
 
         window.toggleAuthForm = function() {
             const form = document.getElementById('auth-section');
-            if (!form) return;
             form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
         };
 
         window.switchAuthTab = function(mode) {
             const loginForm = document.getElementById('login-form-container');
             const signupForm = document.getElementById('signup-form-container');
-            const tabLoginBtn = document.getElementById('tabLoginBtn');
-            const tabSignupBtn = document.getElementById('tabSignupBtn');
-
             if (mode === 'login') {
                 loginForm.style.display = 'block';
                 signupForm.style.display = 'none';
-                tabLoginBtn.style.fontWeight = 'bold';
-                tabLoginBtn.style.color = '#3182ce';
-                tabSignupBtn.style.fontWeight = 'normal';
-                tabSignupBtn.style.color = '#718096';
             } else {
                 loginForm.style.display = 'none';
                 signupForm.style.display = 'block';
-                tabSignupBtn.style.fontWeight = 'bold';
-                tabSignupBtn.style.color = '#38a169';
-                tabLoginBtn.style.fontWeight = 'normal';
-                tabLoginBtn.style.color = '#718096';
             }
         };
 
         window.handleLogin = async function() {
             if (!window.supabaseClient) return;
-            const email = document.getElementById('login-email').value;
-            const password = document.getElementById('login-password').value;
-            const { error } = await window.supabaseClient.auth.signInWithPassword({ email, password });
+            const { error } = await window.supabaseClient.auth.signInWithPassword({
+                email: document.getElementById('login-email').value,
+                password: document.getElementById('login-password').value
+            });
             if (error) alert('ログイン失敗: ' + error.message);
             else { alert('ログイン成功！🐾'); checkUserSession(); }
         };
 
         window.handleSignUp = async function() {
             if (!window.supabaseClient) return;
-            const email = document.getElementById('signup-email').value;
-            const password = document.getElementById('signup-password').value;
-            const { error } = await window.supabaseClient.auth.signUp({ email, password });
+            const { error } = await window.supabaseClient.auth.signUp({
+                email: document.getElementById('signup-email').value,
+                password: document.getElementById('signup-password').value
+            });
             if (error) alert('新規登録失敗: ' + error.message);
-            else { alert('新規登録完了！そのままログインできます🐾'); checkUserSession(); }
+            else { alert('新規登録完了！'); checkUserSession(); }
         };
 
         window.handleLogout = async function() {
-            if (!window.supabaseClient) return;
             await window.supabaseClient.auth.signOut();
             alert('ログアウトしました');
             checkUserSession();
@@ -779,27 +752,11 @@
             if (!window.supabaseClient) return;
             const { data: { session } } = await window.supabaseClient.auth.getSession();
             isLoggedIn = !!session;
-            const adminSection = document.getElementById('admin-add-cat-section');
-            const dash = document.getElementById('volunteerDashboard');
-            const loginForm = document.getElementById('login-form-container');
-            const signupForm = document.getElementById('signup-form-container');
-            const tabContainer = loginForm ? loginForm.previousElementSibling : null;
-            const logoutSection = document.getElementById('logout-section');
-
-            if (session) {
-                if (adminSection) adminSection.classList.remove('hidden');
-                if (dash) dash.classList.remove('hidden');
-                if (loginForm) loginForm.style.display = 'none';
-                if (signupForm) signupForm.style.display = 'none';
-                if (tabContainer) tabContainer.style.display = 'none';
-                if (logoutSection) logoutSection.style.display = 'block';
-            } else {
-                if (adminSection) adminSection.classList.add('hidden');
-                if (dash) dash.classList.add('hidden');
-                if (tabContainer) tabContainer.style.display = 'flex';
-                switchAuthTab('login');
-                if (logoutSection) logoutSection.style.display = 'none';
-            }
+            document.getElementById('admin-add-cat-section').classList.toggle('hidden', !session);
+            document.getElementById('volunteerDashboard').classList.toggle('hidden', !session);
+            document.getElementById('login-form-container').style.display = session ? 'none' : 'block';
+            document.getElementById('signup-form-container').style.display = 'none';
+            document.getElementById('logout-section').style.display = session ? 'block' : 'none';
         }
 
         function openTipModal(id) { document.getElementById('tipModal').classList.remove('hidden'); }
