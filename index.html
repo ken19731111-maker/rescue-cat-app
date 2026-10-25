@@ -92,7 +92,7 @@
         </div>
     </div>
 
-    <!-- 管理者ログイン付きフッター -->
+    <!-- 管理者ログイン・新規登録付きフッター -->
     <footer class="bg-stone-800 text-stone-300 text-xs py-6 mt-12 border-t border-stone-700">
         <div class="max-w-6xl mx-auto px-4 text-center space-y-3">
             <p class="font-bold text-amber-400">🐾 保護ネコ応援プラットフォーム RescuCat</p>
@@ -100,23 +100,39 @@
             <!-- 管理者ログインボタン -->
             <div>
                 <button onclick="toggleAuthForm()" style="background: none; border: none; color: #a8a29e; text-decoration: underline; font-size: 0.8rem; cursor: pointer; padding: 5px;">
-                    ボランティア・管理者ログイン
+                    ボランティア・管理者ログイン / 登録
                 </button>
             </div>
 
-            <!-- 開閉フォーム -->
+            <!-- 開閉フォーム（ログイン & 新規登録切り替え式） -->
             <div id="auth-section" style="display: none; margin: 20px auto; max-width: 320px; padding: 15px; background: #fff; border: 1px solid #444; border-radius: 8px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.3); color: #333;">
-                <h4 style="margin-top: 0; font-size: 0.95rem; color: #333; font-weight: bold;">管理者ログイン</h4>
                 
-                <div id="login-form">
-                    <input type="email" id="login-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-                    <input type="password" id="login-password" placeholder="パスワード" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-                    <button id="login-btn" onclick="handleLogin()" style="width: 100%; padding: 8px; background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
+                <!-- タブ切り替え -->
+                <div style="display: flex; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
+                    <button onclick="switchAuthTab('login')" id="tabLoginBtn" style="flex: 1; background: none; border: none; font-weight: bold; color: #3182ce; cursor: pointer; font-size: 0.85rem;">ログイン</button>
+                    <button onclick="switchAuthTab('signup')" id="tabSignupBtn" style="flex: 1; background: none; border: none; font-weight: normal; color: #718096; cursor: pointer; font-size: 0.85rem;">新規登録</button>
                 </div>
 
+                <!-- ログインフォーム -->
+                <div id="login-form-container">
+                    <h4 style="margin-top: 0; font-size: 0.9rem; color: #333; font-weight: bold; margin-bottom: 8px;">管理者ログイン</h4>
+                    <input type="email" id="login-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+                    <input type="password" id="login-password" placeholder="パスワード" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+                    <button onclick="handleLogin()" style="width: 100%; padding: 8px; background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
+                </div>
+
+                <!-- 新規登録フォーム（初期状態は非表示） -->
+                <div id="signup-form-container" style="display: none;">
+                    <h4 style="margin-top: 0; font-size: 0.9rem; color: #333; font-weight: bold; margin-bottom: 8px;">ボランティア新規登録</h4>
+                    <input type="email" id="signup-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+                    <input type="password" id="signup-password" placeholder="パスワード (6文字以上)" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+                    <button onclick="handleSignUp()" style="width: 100%; padding: 8px; background: #38a169; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">新規登録する</button>
+                </div>
+
+                <!-- ログイン中の表示 -->
                 <div id="logout-section" style="display: none; text-align: center;">
                     <p style="color: #2b6cb0; font-weight: bold; margin-bottom: 10px;">ログイン中 🐾</p>
-                    <button id="logout-btn" onclick="handleLogout()" style="padding: 6px 12px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer;">ログアウト</button>
+                    <button onclick="handleLogout()" style="padding: 6px 12px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer;">ログアウト</button>
                 </div>
             </div>
 
@@ -130,7 +146,6 @@
         const SUPABASE_URL = 'https://hoesxsdbbezzmgqipckv.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_-uX4NW-NQQADr1fzd_kIHA_W451CzXA';
 
-        // 重複宣言を防ぐため window に持たせる
         window.supabaseClient = null;
         try {
             window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -247,7 +262,31 @@
             form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
         };
 
-        // 7. ログイン処理
+        // 7. ログイン/新規登録タブの切り替え
+        window.switchAuthTab = function(mode) {
+            const loginForm = document.getElementById('login-form-container');
+            const signupForm = document.getElementById('signup-form-container');
+            const tabLoginBtn = document.getElementById('tabLoginBtn');
+            const tabSignupBtn = document.getElementById('tabSignupBtn');
+
+            if (mode === 'login') {
+                loginForm.style.display = 'block';
+                signupForm.style.display = 'none';
+                tabLoginBtn.style.fontWeight = 'bold';
+                tabLoginBtn.style.color = '#3182ce';
+                tabSignupBtn.style.fontWeight = 'normal';
+                tabSignupBtn.style.color = '#718096';
+            } else {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'block';
+                tabSignupBtn.style.fontWeight = 'bold';
+                tabSignupBtn.style.color = '#38a169';
+                tabLoginBtn.style.fontWeight = 'normal';
+                tabLoginBtn.style.color = '#718096';
+            }
+        };
+
+        // 8. ログイン処理
         window.handleLogin = async function() {
             if (!window.supabaseClient) return;
             const email = document.getElementById('login-email').value;
@@ -267,7 +306,27 @@
             }
         };
 
-        // 8. ログアウト処理
+        // 9. 新規登録処理（サインアップ）
+        window.handleSignUp = async function() {
+            if (!window.supabaseClient) return;
+            const email = document.getElementById('signup-email').value;
+            const password = document.getElementById('signup-password').value;
+
+            if (!email || !password) {
+                alert('メールアドレスとパスワードを入力してください');
+                return;
+            }
+
+            const { data, error } = await window.supabaseClient.auth.signUp({ email, password });
+            if (error) {
+                alert('新規登録失敗: ' + error.message);
+            } else {
+                alert('新規登録が完了しました！そのままログインできます🐾');
+                checkUserSession();
+            }
+        };
+
+        // 10. ログアウト処理
         window.handleLogout = async function() {
             if (!window.supabaseClient) return;
             const { error } = await window.supabaseClient.auth.signOut();
@@ -279,18 +338,23 @@
             }
         };
 
-        // 9. ログイン状態の確認
+        // 11. ログイン状態の確認
         async function checkUserSession() {
             if (!window.supabaseClient) return;
             const { data: { session } } = await window.supabaseClient.auth.getSession();
-            const loginForm = document.getElementById('login-form');
+            const loginForm = document.getElementById('login-form-container');
+            const signupForm = document.getElementById('signup-form-container');
+            const tabContainer = loginForm.previousElementSibling; // タブ部分
             const logoutSection = document.getElementById('logout-section');
 
             if (session) {
                 if (loginForm) loginForm.style.display = 'none';
+                if (signupForm) signupForm.style.display = 'none';
+                if (tabContainer) tabContainer.style.display = 'none';
                 if (logoutSection) logoutSection.style.display = 'block';
             } else {
-                if (loginForm) loginForm.style.display = 'block';
+                if (tabContainer) tabContainer.style.display = 'flex';
+                switchAuthTab('login'); // デフォルトはログインタブを表示
                 if (logoutSection) logoutSection.style.display = 'none';
             }
         }
