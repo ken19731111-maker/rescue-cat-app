@@ -1098,7 +1098,46 @@
             alert('ログアウトしました');
             checkUserSession();
         };
+// プレビューの金額を選択する関数（もし無ければ追加しておくと便利です）
+let selectedTipAmount = 1000;
+window.selectAmount = function(amount) {
+    selectedTipAmount = amount;
+    document.getElementById('customAmount').value = amount;
+};
 
+// 選択された金額を記憶する変数（初期値は1000円）
+let selectedTipAmount = 1000;
+
+window.selectAmount = function(amount) {
+    selectedTipAmount = amount;
+    document.getElementById('customAmount').value = amount;
+};
+
+// 投げ銭を確定するボタンの処理（金額に応じてStripeのリンクを切り替える）
+window.submitTip = function() {
+    const customAmountInput = document.getElementById('customAmount');
+    let amount = customAmountInput.value ? parseInt(customAmountInput.value) : selectedTipAmount;
+
+    // 💡 ここに、Stripeで作った3つの「決済リンクのURL」をそれぞれの金額に合わせて貼り付けてください！
+    const stripeLinks = {
+        500: "https://dashboard.stripe.com/acct_1UUKlnHJh5iDdQ3C/test/products/prod_VVLy8uSgwEdlg5",
+        1000: "https://dashboard.stripe.com/acct_1UUKlnHJh5iDdQ3C/test/products/prod_VVLz9AwyD53lVo",
+        3000: "https://dashboard.stripe.com/acct_1UUKlnHJh5iDdQ3C/test/products/prod_VVM0zsOo70fN57"
+    };
+
+    // ユーザーが選んだ（または入力した）金額にぴったりのリンクを探す
+    let targetUrl = stripeLinks[amount];
+
+    // もしぴったり一致する金額が無い場合（自由入力で5000円などにした場合）は、一番近い金額（または基本の1000円）に飛ばす
+    if (!targetUrl) {
+        targetUrl = stripeLinks[1000]; // デフォルトのリンク
+    }
+
+    alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
+    
+    // 選ばれた金額のStripe決済画面へジャンプ！
+    window.location.href = targetUrl;
+};
         async function checkUserSession() {
             if (!window.supabaseClient) return;
             const { data: { session } } = await window.supabaseClient.auth.getSession();
