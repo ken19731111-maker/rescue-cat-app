@@ -478,62 +478,72 @@
         };
 
         window.handleCreateCat = async function(event) {
-            event.preventDefault();
-            if (!window.supabaseClient) return;
-            const submitBtn = document.getElementById('submitCatBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerText = "🐾 登録中...";
+    event.preventDefault();
+    if (!window.supabaseClient) return;
+    const submitBtn = document.getElementById('submitCatBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = "🐾 登録中...";
 
-            const { error } = await window.supabaseClient.from('cats').insert([{
-                name: document.getElementById('cat-name').value,
-                shelter: document.getElementById('cat-shelter').value,
-                age: document.getElementById('cat-age').value,
-                target_amount: parseInt(document.getElementById('cat-target').value) || 20000,
-                current_amount: 0,
-                status: document.getElementById('cat-status').value,
-                image_url: document.getElementById('cat-image-url').value,
-                message: document.getElementById('cat-message').value,
-                has_video: document.getElementById('cat-has-video').checked,
-                is_kitten: document.getElementById('cat-is-kitten').checked,
-                is_urgent: document.getElementById('cat-is-urgent').checked
-            }]);
+    // ログイン中のボランティアユーザー情報を取得
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
 
-            if (error) alert("登録エラー: " + error.message);
-            else {
-                alert("🎉 新しいネコちゃんを登録しました！");
-                document.getElementById('addCatForm').reset();
-                document.getElementById('compress-status').innerText = "";
-                fetchCats();
-            }
-            submitBtn.disabled = false;
-            submitBtn.innerText = "🐾 このネコちゃんを登録・公開する";
-        };
+    const { error } = await window.supabaseClient.from('cats').insert([{
+        name: document.getElementById('cat-name').value,
+        shelter: document.getElementById('cat-shelter').value,
+        age: document.getElementById('cat-age').value,
+        target_amount: parseInt(document.getElementById('cat-target').value) || 20000,
+        current_amount: 0,
+        status: document.getElementById('cat-status').value,
+        image_url: document.getElementById('cat-image-url').value,
+        message: document.getElementById('cat-message').value,
+        has_video: document.getElementById('cat-has-video').checked,
+        is_kitten: document.getElementById('cat-is-kitten').checked,
+        is_urgent: document.getElementById('cat-is-urgent').checked,
+        user_id: user ? user.id : null // 登録したボランティアのIDを自動保存！
+    }]);
 
+    if (error) alert("登録エラー: " + error.message);
+    else {
+        alert("🎉 新しいネコちゃんを登録しました！");
+        document.getElementById('addCatForm').reset();
+        document.getElementById('compress-status').innerText = "";
+        fetchCats();
+    }
+    submitBtn.disabled = false;
+    submitBtn.innerText = "🐾 このネコちゃんを登録・公開する";
+};
         window.openUpdatesModal = async function(catId) {
-            currentSelectedCatId = catId;
-            const cat = catsData.find(c => c.id === catId);
-            if (!cat) return;
+    currentSelectedCatId = catId;
+    const cat = catsData.find(c => c.id === catId);
+    if (!cat) return;
 
-            document.getElementById('modalCatName').innerText = cat.name + ' の詳細・応募';
-            document.getElementById('modalCatShelter').innerText = '🏠 ' + (cat.shelter || '保護団体');
-            document.getElementById('modalCatStatusBadge').innerText = cat.status || '募集中';
-            document.getElementById('updatesModal').classList.remove('hidden');
+    document.getElementById('modalCatName').innerText = cat.name + ' の詳細・応募';
+    document.getElementById('modalCatShelter').innerText = '🏠 ' + (cat.shelter || '保護団体');
+    document.getElementById('modalCatStatusBadge').innerText = cat.status || '募集中';
+    document.getElementById('updatesModal').classList.remove('hidden');
 
-            const adminUpdateBox = document.getElementById('admin-add-update-box');
-            const adminStatusBox = document.getElementById('admin-status-box');
-            if (isLoggedIn) {
-                adminUpdateBox.classList.remove('hidden');
-                adminStatusBox.classList.remove('hidden');
-                document.getElementById('modalStatusSelect').value = cat.status || '募集中';
-            } else {
-                adminUpdateBox.classList.add('hidden');
-                adminStatusBox.classList.add('hidden');
-            }
+    const adminUpdateBox = document.getElementById('admin-add-update-box');
+    const adminStatusBox = document.getElementById('admin-status-box');
 
-            switchModalTab('updates');
-            await fetchUpdates(catId);
-            await fetchComments(catId);
-        };
+    // 現在ログイン中のユーザー情報を取得
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
+
+    // 「ログイン中」かつ「自分が登録した猫 (user_idが一致)」の時だけ編集エリアを表示！
+    const isOwner = user && cat.user_id && user.id === cat.user_id;
+
+    if (isOwner) {
+        adminUpdateBox.classList.remove('hidden');
+        adminStatusBox.classList.remove('hidden');
+        document.getElementById('modalStatusSelect').value = cat.status || '募集中';
+    } else {
+        adminUpdateBox.classList.add('hidden');
+        adminStatusBox.classList.add('hidden');
+    }
+
+    switchModalTab('updates');
+    await fetchUpdates(catId);
+    await fetchComments(catId);
+};
 
         window.switchModalTab = function(tab) {
             const updatesTimeline = document.getElementById('updatesTimeline');
