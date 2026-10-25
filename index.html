@@ -50,13 +50,89 @@
             </div>
         </section>
 
-        <!-- 絞り込みタグ -->
-        <section class="flex gap-2 overflow-x-auto pb-2 scrollbar-none text-sm font-medium">
-            <button onclick="filterCats('all')" class="filter-btn active-filter bg-amber-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm">すべて</button>
-            <button onclick="filterCats('video')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">🎥 動画あり</button>
-            <button onclick="filterCats('kitten')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🐱 子ネコ</button>
-            <button onclick="filterCats('urgent')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🚨 緊急支援</button>
-            <button onclick="filterCats('fav')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">♥ お気に入り</button>
+        <!-- 管理者・ボランティア専用：新規ネコちゃん登録フォーム（ログイン中のみ表示） -->
+        <section id="admin-add-cat-section" class="bg-white rounded-2xl p-5 shadow-sm border border-amber-200 hidden space-y-4">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-extrabold text-amber-900 text-base flex items-center gap-2">
+                    <span>🐾 管理者メニュー：新しい保護ネコちゃんを登録</span>
+                </h3>
+                <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-full">ボランティア認証済</span>
+            </div>
+
+            <form id="addCatForm" onsubmit="handleCreateCat(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-medium">
+                <div>
+                    <label class="block text-stone-600 mb-1">ネコちゃんの名前 <span class="text-rose-500">*</span></label>
+                    <input type="text" id="cat-name" required placeholder="例: たまちゃん" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-stone-600 mb-1">所属団体・グループ名 <span class="text-rose-500">*</span></label>
+                    <input type="text" id="cat-shelter" required placeholder="例: 〇〇保護ネコの会" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-stone-600 mb-1">年齢・推定月齢</label>
+                    <input type="text" id="cat-age" placeholder="例: 推定2歳 / 生後3ヶ月" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-stone-600 mb-1">支援目標金額 (円)</label>
+                    <input type="number" id="cat-target" placeholder="20000" defaultValue="20000" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-stone-600 mb-1">写真選択 (自動リサイズ・圧縮機能付き) <span class="text-rose-500">*</span></label>
+                    <input type="file" id="cat-image-file" accept="image/*" onchange="processImage(event)" class="w-full text-xs text-stone-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
+                    <input type="hidden" id="cat-image-url">
+                    <p id="compress-status" class="text-[10px] text-amber-700 font-bold mt-1"></p>
+                </div>
+
+                <div>
+                    <label class="block text-stone-600 mb-1">動画URL (YouTube, TikTok, Instagram等)</label>
+                    <input type="url" id="cat-video-url" placeholder="https://www.youtube.com/watch?v=..." class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none">
+                </div>
+
+                <div class="md:col-span-2">
+                    <label class="block text-stone-600 mb-1">保護主からのメッセージ・紹介文</label>
+                    <textarea id="cat-message" rows="2" placeholder="ネコちゃんの性格や保護された経緯などを記載してください" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
+                </div>
+
+                <div class="flex items-center space-x-4 md:col-span-2 py-1">
+                    <label class="flex items-center space-x-1.5 cursor-pointer">
+                        <input type="checkbox" id="cat-is-kitten" class="rounded text-amber-600 focus:ring-amber-500">
+                        <span>子ネコ</span>
+                    </label>
+                    <label class="flex items-center space-x-1.5 cursor-pointer">
+                        <input type="checkbox" id="cat-is-urgent" class="rounded text-amber-600 focus:ring-amber-500">
+                        <span class="text-rose-600 font-bold">🚨 緊急支援が必要</span>
+                    </label>
+                </div>
+
+                <div class="md:col-span-2">
+                    <button type="submit" id="submitCatBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2.5 rounded-xl shadow transition">
+                        🐾 このネコちゃんを登録・公開する
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <!-- 絞り込みタグ ＆ 団体フィルター -->
+        <section class="space-y-2">
+            <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none text-sm font-medium">
+                <button onclick="filterCats('all')" class="filter-btn active-filter bg-amber-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm">すべて</button>
+                <button onclick="filterCats('video')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">🎥 動画あり</button>
+                <button onclick="filterCats('kitten')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🐱 子ネコ</button>
+                <button onclick="filterCats('urgent')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🚨 緊急支援</button>
+                <button onclick="filterCats('fav')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">♥ お気に入り</button>
+            </div>
+            
+            <!-- 団体グループフィルター（自動生成） -->
+            <div id="shelterFilterContainer" class="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-stone-600">
+                <span class="font-bold whitespace-nowrap text-amber-900">🏠 団体別:</span>
+                <div id="shelterButtons" class="flex gap-1 overflow-x-auto">
+                    <!-- 動的にボランティア団体ボタンが入ります -->
+                </div>
+            </div>
         </section>
 
         <!-- 保護ネコカード一覧 -->
@@ -104,16 +180,14 @@
                 </button>
             </div>
 
-            <!-- 開閉フォーム（ログイン & 新規登録切り替え式） -->
+            <!-- 開閉フォーム -->
             <div id="auth-section" style="display: none; margin: 20px auto; max-width: 320px; padding: 15px; background: #fff; border: 1px solid #444; border-radius: 8px; text-align: left; box-shadow: 0 4px 12px rgba(0,0,0,0.3); color: #333;">
                 
-                <!-- タブ切り替え -->
                 <div style="display: flex; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
                     <button onclick="switchAuthTab('login')" id="tabLoginBtn" style="flex: 1; background: none; border: none; font-weight: bold; color: #3182ce; cursor: pointer; font-size: 0.85rem;">ログイン</button>
                     <button onclick="switchAuthTab('signup')" id="tabSignupBtn" style="flex: 1; background: none; border: none; font-weight: normal; color: #718096; cursor: pointer; font-size: 0.85rem;">新規登録</button>
                 </div>
 
-                <!-- ログインフォーム -->
                 <div id="login-form-container">
                     <h4 style="margin-top: 0; font-size: 0.9rem; color: #333; font-weight: bold; margin-bottom: 8px;">管理者ログイン</h4>
                     <input type="email" id="login-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
@@ -121,7 +195,6 @@
                     <button onclick="handleLogin()" style="width: 100%; padding: 8px; background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
                 </div>
 
-                <!-- 新規登録フォーム（初期状態は非表示） -->
                 <div id="signup-form-container" style="display: none;">
                     <h4 style="margin-top: 0; font-size: 0.9rem; color: #333; font-weight: bold; margin-bottom: 8px;">ボランティア新規登録</h4>
                     <input type="email" id="signup-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
@@ -129,7 +202,6 @@
                     <button onclick="handleSignUp()" style="width: 100%; padding: 8px; background: #38a169; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">新規登録する</button>
                 </div>
 
-                <!-- ログイン中の表示 -->
                 <div id="logout-section" style="display: none; text-align: center;">
                     <p style="color: #2b6cb0; font-weight: bold; margin-bottom: 10px;">ログイン中 🐾</p>
                     <button onclick="handleLogout()" style="padding: 6px 12px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer;">ログアウト</button>
@@ -164,7 +236,7 @@
                 return;
             }
 
-            const { data, error } = await window.supabaseClient.from('cats').select('*');
+            const { data, error } = await window.supabaseClient.from('cats').select('*').order('id', { ascending: false });
             
             if (error) {
                 console.error('データ取得エラー:', error);
@@ -174,6 +246,7 @@
 
             catsData = data || [];
             renderCats(catsData);
+            renderShelterFilters();
             updateGlobalMeter();
         }
 
@@ -183,7 +256,7 @@
             grid.innerHTML = '';
 
             if (cats.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center py-12 text-stone-400 font-bold">まだネコちゃんが登録されていません 🐾</div>';
+                grid.innerHTML = '<div class="col-span-full text-center py-12 text-stone-400 font-bold">まだ該当するネコちゃんが登録されていません 🐾</div>';
                 return;
             }
 
@@ -192,18 +265,26 @@
                 const current = cat.current_amount || 0;
                 const percent = Math.min(100, Math.round((current / target) * 100));
                 const isFav = favorites.includes(cat.id);
+                const hasVideo = cat.has_video || (cat.video_url && cat.video_url.length > 5);
 
                 const card = `
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-amber-100 flex flex-col justify-between">
                         <div class="relative">
                             <img src="${cat.image_url || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop'}" alt="${cat.name}" class="w-full h-48 object-cover">
-                            ${cat.has_video ? '<span class="absolute top-3 left-3 bg-black/60 text-white text-[11px] px-2 py-0.5 rounded-full backdrop-blur-sm">🎥 動画あり</span>' : ''}
+                            ${hasVideo ? `
+                                <a href="${cat.video_url || '#'}" target="_blank" class="absolute top-3 left-3 bg-rose-600 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow backdrop-blur-sm flex items-center gap-1 hover:bg-rose-700">
+                                    <i class="fa-solid fa-play"></i> 動画を見る
+                                </a>
+                            ` : ''}
                             <button onclick="toggleFav(${cat.id})" class="absolute top-3 right-3 bg-white/80 p-2 rounded-full text-rose-500 shadow-sm">
                                 <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
                             </button>
                         </div>
                         <div class="p-4 space-y-3 flex-grow">
-                            <h3 class="font-extrabold text-lg text-stone-800">${cat.name} <span class="text-xs text-stone-500 font-normal">(${cat.age || '不明'})</span></h3>
+                            <div class="flex justify-between items-start">
+                                <h3 class="font-extrabold text-lg text-stone-800">${cat.name} <span class="text-xs text-stone-500 font-normal">(${cat.age || '不明'})</span></h3>
+                                ${cat.is_urgent ? '<span class="bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded">🚨 緊急</span>' : ''}
+                            </div>
                             <p class="text-xs text-amber-900 font-medium bg-amber-50 inline-block px-2 py-1 rounded-md">🏠 ${cat.shelter || '保護活動者'}</p>
                             <p class="text-xs text-stone-600 line-clamp-2">「${cat.message || ''}」</p>
                             <div class="space-y-1">
@@ -227,7 +308,103 @@
             });
         }
 
-        // 3. 全体目標メーターの更新
+        // 3. ボランティア団体フィルターボタンの動的生成
+        function renderShelterFilters() {
+            const container = document.getElementById('shelterButtons');
+            if (!container) return;
+            
+            const shelters = [...new Set(catsData.map(c => c.shelter).filter(Boolean))];
+            if (shelters.length === 0) {
+                container.innerHTML = '<span class="text-stone-400">登録団体なし</span>';
+                return;
+            }
+
+            container.innerHTML = `<button onclick="filterCats('all')" class="bg-stone-100 text-stone-700 px-2 py-0.5 rounded hover:bg-stone-200">全員</button>`;
+            shelters.forEach(s => {
+                container.innerHTML += `<button onclick="filterCatsByShelter('${s}')" class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-medium hover:bg-amber-200">${s}</button>`;
+            });
+        }
+
+        function filterCatsByShelter(shelterName) {
+            renderCats(catsData.filter(c => c.shelter === shelterName));
+        }
+
+        // 4. 画像の自動圧縮 & リサイズ (HTML5 Canvas)
+        window.processImage = function(event) {
+            const file = event.target.files[0];
+            const statusEl = document.getElementById('compress-status');
+            if (!file) return;
+
+            statusEl.innerText = "⏳ 画像を軽量化・圧縮中...";
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    const maxWidth = 800; // 横幅最大800pxに縮小
+
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // JPEG 70%の画質で圧縮
+                    const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    document.getElementById('cat-image-url').value = compressedDataUrl;
+                    statusEl.innerText = "✨ 画像の最適化・準備完了！";
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // 5. 新規ネコちゃんの登録処理（Supabaseへ保存）
+        window.handleCreateCat = async function(event) {
+            event.preventDefault();
+            if (!window.supabaseClient) return;
+
+            const submitBtn = document.getElementById('submitCatBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "🐾 登録処理中...";
+
+            const name = document.getElementById('cat-name').value;
+            const shelter = document.getElementById('cat-shelter').value;
+            const age = document.getElementById('cat-age').value;
+            const target_amount = parseInt(document.getElementById('cat-target').value) || 20000;
+            const image_url = document.getElementById('cat-image-url').value;
+            const video_url = document.getElementById('cat-video-url').value;
+            const message = document.getElementById('cat-message').value;
+            const is_kitten = document.getElementById('cat-is-kitten').checked;
+            const is_urgent = document.getElementById('cat-is-urgent').checked;
+            const has_video = video_url.length > 5;
+
+            const { data, error } = await window.supabaseClient.from('cats').insert([{
+                name, shelter, age, target_amount, current_amount: 0,
+                image_url, video_url, has_video, message, is_kitten, is_urgent
+            }]);
+
+            if (error) {
+                alert("登録エラー: " + error.message);
+            } else {
+                alert("🎉 新しいネコちゃんを登録しました！");
+                document.getElementById('addCatForm').reset();
+                document.getElementById('compress-status').innerText = "";
+                fetchCats(); // 一覧更新
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.innerText = "🐾 このネコちゃんを登録・公開する";
+        };
+
+        // 6. 全体目標メーターの更新
         function updateGlobalMeter() {
             const globalCurrent = catsData.reduce((sum, cat) => sum + (cat.current_amount || 0), 0);
             document.getElementById('globalAmount').innerText = globalCurrent.toLocaleString() + '円';
@@ -235,7 +412,7 @@
             document.getElementById('globalProgressBar').style.width = percent + '%';
         }
 
-        // 4. お気に入りトグル
+        // 7. お気に入りトグル
         function toggleFav(id) {
             if (favorites.includes(id)) {
                 favorites = favorites.filter(fId => fId !== id);
@@ -246,23 +423,23 @@
             renderCats(catsData);
         }
 
-        // 5. フィルター処理
+        // 8. フィルター処理
         function filterCats(type) {
             if (type === 'all') renderCats(catsData);
-            else if (type === 'video') renderCats(catsData.filter(c => c.has_video));
+            else if (type === 'video') renderCats(catsData.filter(c => c.has_video || (c.video_url && c.video_url.length > 5)));
             else if (type === 'kitten') renderCats(catsData.filter(c => c.is_kitten));
             else if (type === 'urgent') renderCats(catsData.filter(c => c.is_urgent));
             else if (type === 'fav') renderCats(catsData.filter(c => favorites.includes(c.id)));
         }
 
-        // 6. 管理者ログインフォームの開閉
+        // 9. 管理者ログインフォームの開閉
         window.toggleAuthForm = function() {
             const form = document.getElementById('auth-section');
             if (!form) return;
             form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
         };
 
-        // 7. ログイン/新規登録タブの切り替え
+        // 10. ログイン/新規登録タブ切り替え
         window.switchAuthTab = function(mode) {
             const loginForm = document.getElementById('login-form-container');
             const signupForm = document.getElementById('signup-form-container');
@@ -286,7 +463,7 @@
             }
         };
 
-        // 8. ログイン処理
+        // 11. ログイン処理
         window.handleLogin = async function() {
             if (!window.supabaseClient) return;
             const email = document.getElementById('login-email').value;
@@ -306,7 +483,7 @@
             }
         };
 
-        // 9. 新規登録処理（サインアップ）
+        // 12. 新規登録処理（サインアップ）
         window.handleSignUp = async function() {
             if (!window.supabaseClient) return;
             const email = document.getElementById('signup-email').value;
@@ -326,7 +503,7 @@
             }
         };
 
-        // 10. ログアウト処理
+        // 13. ログアウト処理
         window.handleLogout = async function() {
             if (!window.supabaseClient) return;
             const { error } = await window.supabaseClient.auth.signOut();
@@ -338,23 +515,28 @@
             }
         };
 
-        // 11. ログイン状態の確認
+        // 14. ログイン状態のチェック & 管理画面の表示コントロール
         async function checkUserSession() {
             if (!window.supabaseClient) return;
             const { data: { session } } = await window.supabaseClient.auth.getSession();
+            const adminSection = document.getElementById('admin-add-cat-section');
             const loginForm = document.getElementById('login-form-container');
             const signupForm = document.getElementById('signup-form-container');
-            const tabContainer = loginForm.previousElementSibling; // タブ部分
+            const tabContainer = loginForm ? loginForm.previousElementSibling : null;
             const logoutSection = document.getElementById('logout-section');
 
             if (session) {
+                // ログイン中：ネコちゃん登録フォームを表示
+                if (adminSection) adminSection.classList.remove('hidden');
                 if (loginForm) loginForm.style.display = 'none';
                 if (signupForm) signupForm.style.display = 'none';
                 if (tabContainer) tabContainer.style.display = 'none';
                 if (logoutSection) logoutSection.style.display = 'block';
             } else {
+                // ログアウト中：登録フォームを非表示
+                if (adminSection) adminSection.classList.add('hidden');
                 if (tabContainer) tabContainer.style.display = 'flex';
-                switchAuthTab('login'); // デフォルトはログインタブを表示
+                switchAuthTab('login');
                 if (logoutSection) logoutSection.style.display = 'none';
             }
         }
