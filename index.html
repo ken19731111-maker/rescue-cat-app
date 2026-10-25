@@ -69,20 +69,68 @@
                         <p class="text-lg font-black" id="dashUrgentCount">0件</p>
                     </div>
                 </div>
-<!-- メインのコンテンツや猫ちゃんリストなど -->
-<main class="container mx-auto px-4 py-8 space-y-8">
-    <!-- (ここに猫ちゃんの一覧などがある) -->
-</main>
+<!-- 管理者用ダッシュボード：ボランティア支援金・請求管理セクション -->
+<div class="bg-white rounded-2xl p-6 shadow-md border border-stone-200 space-y-6 max-w-4xl mx-auto my-6">
+    <div class="flex justify-between items-center border-b pb-4">
+        <div>
+            <h3 class="font-bold text-xl text-stone-800 flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-amber-600"></i> ボランティア支援金・請求管理
+            </h3>
+            <p class="text-xs text-stone-500 mt-1">ボランティアからの振込申請の確認と管理を行います（手数料設定: 20%）</p>
+        </div>
+        <div class="bg-amber-50 px-4 py-2 rounded-xl border border-amber-200 text-right">
+            <span class="text-xs text-stone-500 block">総プール残高（未処理）</span>
+            <span class="font-bold text-lg text-amber-800" id="adminTotalPool">124,500円</span>
+        </div>
+    </div>
 
-<!-- 🐱 ここに「管理者用ダッシュボードパネル」を置く！ -->
-<div class="bg-white rounded-2xl p-6 shadow-md ...">
-    <!-- 先ほどの管理者パネルのコード -->
+    <!-- 申請一覧テーブル（Supabaseから取得したデータをここに表示） -->
+    <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-sm">
+            <thead>
+                <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
+                    <th class="p-3">ボランティア名</th>
+                    <th class="p-3">担当猫 / 概要</th>
+                    <th class="p-3">申請額</th>
+                    <th class="p-3">振込予定額 (20%引)</th>
+                    <th class="p-3">振込先口座</th>
+                    <th class="p-3 text-center">ステータス / 操作</th>
+                </tr>
+            </thead>
+            <tbody id="adminPayoutList" class="divide-y divide-stone-200 text-stone-700">
+                <!-- サンプルデータ（後ほどSupabaseからの動的表示に置き換え可能） -->
+                <tr>
+                    <td class="p-3 font-medium">山田 花子</td>
+                    <td class="p-3 text-xs text-stone-500">たまちゃん 保護活動</td>
+                    <td class="p-3 font-bold">25,400円</td>
+                    <td class="p-3 font-bold text-amber-700">20,320円</td>
+                    <td class="p-3 text-xs">
+                        〇〇銀行 渋谷支店<br>
+                        普通 1234567<br>
+                        (ネコ タロウ)
+                    </td>
+                    <td class="p-3 text-center">
+                        <button onclick="processPayout('req_001')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
+                            振込完了にする
+                        </button>
+                    </td>
+                </tr>
+                <!-- 申請が無い場合の例 -->
+                <!-- <tr><td colspan="6" class="p-6 text-center text-stone-400">現在、未処理の請求申請はありません。</td></tr> -->
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<!-- フッター -->
-<footer class="bg-stone-800 text-white p-6 text-center ...">
-    <p>&copy; 2026 Rescue Cat App</p>
-</footer>
+<script>
+// 管理者が「振込完了」ボタンを押したときの処理
+function processPayout(requestId) {
+    if (confirm("この申請の振込を完了として処理しますか？（※実際にご自身の銀行口座から相手へお振込みを済ませてから押してください）")) {
+        alert("振込完了ステータスに変更しました。データベースの記録が更新されます。");
+        // ここでSupabaseのデータを「paid (振込済み)」に更新するコードを繋げられます
+    }
+}
+</script>
                 <!-- ボランティア専用 受信トレイ（里親応募一覧 ＆ ステータス管理） -->
                 <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3">
                     <div class="flex justify-between items-center">
