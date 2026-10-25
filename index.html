@@ -1115,19 +1115,18 @@ function closeModal(id) {
     if (modal) modal.classList.add('hidden'); 
 }
 
-// windowオブジェクトを使うことで、重複エラーを完全に防ぎます
-if (typeof window.selectedTipAmount === 'undefined') {
-    window.selectedTipAmount = 1000;
+// 完全に重複しない独自のグローバル変数名に変更！
+if (typeof window.rescueCatDonationAmount === 'undefined') {
+    window.rescueCatDonationAmount = 1000;
 }
 
 window.selectAmount = function(amount) {
-    window.selectedTipAmount = amount;
-    // 隠してある入力欄があれば、そこにも値を連動させておく
+    window.rescueCatDonationAmount = amount;
     const input = document.getElementById('customAmount');
     if (input) input.value = amount;
 };
 
-// 投げ銭を確定するボタンの処理（選んだ金額のStripeリンクへ飛ぶ）
+// 投げ銭を確定するボタンの処理（Stripeの決済リンクへ飛ぶ）
 window.submitTip = function() {
     // 💡 Stripeで作った3つの固定金額の決済リンクURLをここにそれぞれ貼り付けてください
     const stripeLinks = {
@@ -1136,7 +1135,7 @@ window.submitTip = function() {
         3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
     };
 
-    let amount = window.selectedTipAmount || 1000;
+    let amount = window.rescueCatDonationAmount || 1000;
     let targetUrl = stripeLinks[amount] || stripeLinks[1000];
 
     alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
