@@ -422,28 +422,28 @@
         </div>
     </div>
 
-    <!-- モーダル: 投げ銭 -->
-    <div id="tipModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-lg text-stone-800">応援投げ銭を送る</h3>
-                <button onclick="closeModal('tipModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+   <!-- モーダル: 投げ銭 -->
+<div id="tipModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
+        <div class="flex justify-between items-center border-b pb-3">
+            <h3 class="font-bold text-lg text-stone-800">応援投げ銭を送る</h3>
+            <button onclick="closeModal('tipModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+        </div>
+        <div>
+            <p class="text-xs text-stone-500 mb-2">金額を選択してください</p>
+            <div class="grid grid-cols-3 gap-2 mb-3">
+                <button onclick="selectAmount(500)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">500円</button>
+                <button onclick="selectAmount(1000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">1,000円</button>
+                <button onclick="selectAmount(3000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">3,000円</button>
             </div>
-            <div>
-                <p class="text-xs text-stone-500 mb-2">金額を選択してください</p>
-                <div class="grid grid-cols-3 gap-2 mb-3">
-                    <button onclick="selectAmount(500)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">500円</button>
-                    <button onclick="selectAmount(1000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">1,000円</button>
-                    <button onclick="selectAmount(3000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">3,000円</button>
-                </div>
-                <!-- hidden を追加すると、画面からきれいに消えます -->
-<div class="hidden">
+            <!-- 非表示の自由入力欄 -->
+            <div class="hidden">
                 <input type="number" id="customAmount" placeholder="金額を自由入力 (円)" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm outline-none">
             </div>
-            <button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">投げ銭を確定する</button>
-        </div>
+        </div> <!-- 💡 ここに閉じタグを追加しました！ -->
+        <button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">投げ銭を確定する</button>
     </div>
-
+</div>
     <!-- フッター (新規登録の隣にマニュアルボタン追加) -->
     <footer class="bg-stone-800 text-stone-300 text-xs py-8 mt-12 border-t border-stone-700">
         <div class="max-w-6xl mx-auto px-4 text-center space-y-4">
