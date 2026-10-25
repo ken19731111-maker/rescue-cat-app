@@ -70,31 +70,30 @@
                     </div>
                 </div>
 
-               <!-- ボランティア専用 受信トレイ（里親応募一覧 ＆ ステータス管理） -->
-<div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3">
-    <div class="flex justify-between items-center">
-        <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
-            <i class="fa-solid fa-inbox"></i> 届いた里親・お見合い応募 受信トレイ <span id="appCountBadge" class="bg-white text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black">0件</span>
-        </h4>
-        
-      <!-- 💡 右側のボタンを並べるエリア -->
-        <div class="flex items-center gap-1.5">
-            <!-- ボランティア本人用：振込申請フォームを開く -->
-            <button onclick="openVolunteerPayoutModal()" class="text-[11px] bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded transition font-bold flex items-center gap-1">
-    <i class="fa-solid fa-yen-sign"></i> 支援金を申請する
-</button>
-            
-            <!-- もともとの「更新」ボタン -->
-            <button onclick="fetchApplications()" class="text-[11px] bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded transition font-bold">
-                <i class="fa-solid fa-rotate"></i> 画面更新
-            </button>
-        </div>
-    </div>
-    
-    <div id="volunteerApplicationsList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-        <p class="text-xs text-white/70 text-center py-2">応募データを読み込んでいます...</p>
-    </div>
-</div>
+                <!-- ボランティア専用 受信トレイ（里親応募一覧 ＆ ステータス管理） -->
+                <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-inbox"></i> 届いた里親・お見合い応募 受信トレイ <span id="appCountBadge" class="bg-white text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black">0件</span>
+                        </h4>
+                        
+                        <!-- 💡 右側のボタンエリア：ボランティア専用の申請ボタンに設定 -->
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="openVolunteerPayoutModal()" class="text-[11px] bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded transition font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-yen-sign"></i> 支援金を申請する
+                            </button>
+                            
+                            <button onclick="fetchApplications()" class="text-[11px] bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded transition font-bold">
+                                <i class="fa-solid fa-rotate"></i> 更新
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="volunteerApplicationsList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                        <p class="text-xs text-white/70 text-center py-2">応募データを読み込んでいます...</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
         <!-- 全体活動レポート・お知らせセクション 📰 -->
@@ -377,9 +376,7 @@
                 <h3 id="policyModalTitle" class="font-bold text-lg text-stone-800">利用規約・プライバシーポリシー</h3>
                 <button onclick="closeModal('policyModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-            <div id="policyModalContent" class="text-xs text-stone-700 leading-relaxed space-y-3 whitespace-pre-wrap">
-                <!-- JavaScriptで動的生成 -->
-            </div>
+            <div id="policyModalContent" class="text-xs text-stone-700 leading-relaxed space-y-3 whitespace-pre-wrap"></div>
             <div class="pt-2 border-t text-right">
                 <button onclick="closeModal('policyModal')" class="bg-stone-800 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-stone-700 transition">閉じる</button>
             </div>
@@ -400,30 +397,13 @@
                     <p class="font-bold text-amber-900">保護活動へのご参加ありがとうございます！</p>
                     <p class="text-[11px] text-amber-800 mt-1">RescuCatを使って、猫ちゃんの登録や里親募集をスムーズに行う手順をご案内します。</p>
                 </div>
-
                 <div class="space-y-1.5 border-b pb-3">
                     <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span> ログイン方法</h4>
-                    <p class="pl-6 text-stone-600">フッター（ページ最下部）にある **「ボランティア・管理者ログイン / 登録」** を押し、メールアドレスとパスワードを入力してログインします。成功するとダッシュボードと登録画面が現れます。</p>
+                    <p class="pl-6 text-stone-600">フッターにある **「ボランティア・管理者ログイン / 登録」** を押し、ログインします。</p>
                 </div>
-
                 <div class="space-y-1.5 border-b pb-3">
                     <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span> 新しい猫ちゃんの登録手順</h4>
-                    <p class="pl-6 text-stone-600">**「管理者メニュー：新しい保護ネコちゃんを登録」** フォームから名前・団体名・推定年齢・写真などを入力します。写真は自動圧縮されます。「登録・公開する」を押すと即座に掲載されます。</p>
-                </div>
-
-                <div class="space-y-1.5 border-b pb-3">
-                    <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">3</span> 近況報告（写真日記）の投稿 ＆ ステータス更新</h4>
-                    <p class="pl-6 text-stone-600">猫ちゃんカードの **「📖 詳細・里親応募・近況を見る」** をタップすると、近況投稿やステータス変更（募集中／トライアル中／譲渡決定）が行えます。</p>
-                </div>
-
-                <div class="space-y-1.5 border-b pb-3">
-                    <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">4</span> 届いた里親・お見合い応募の確認と対応</h4>
-                    <p class="pl-6 text-stone-600">ログイン後、上部オレンジ枠内の **「📨 受信トレイ」** で応募者の情報が確認できます。右上のドロップダウンで **「🔴 未対応 → 🟡 面談調整中 → 🔵 トライアル決定 → 🟢 譲渡完了」** と進捗を切り替えて管理します。</p>
-                </div>
-
-                <div class="space-y-1.5">
-                    <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">5</span> 団体全体の活動レポート・お知らせの投稿</h4>
-                    <p class="pl-6 text-stone-600">**「📰 活動レポート・団体からのお知らせ」** 枠の右上にある **「✍️ お知らせを投稿する」** から、譲渡会開催や収支報告などを投稿できます。</p>
+                    <p class="pl-6 text-stone-600">**「新しい保護ネコちゃんを登録」** フォームから入力して公開します。</p>
                 </div>
             </div>
             <div class="pt-2 border-t text-right">
@@ -432,269 +412,143 @@
         </div>
     </div>
 
-   <!-- モーダル: 投げ銭 -->
-<div id="tipModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
-        <div class="flex justify-between items-center border-b pb-3">
-            <h3 class="font-bold text-lg text-stone-800">応援投げ銭を送る</h3>
-            <button onclick="closeModal('tipModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-        </div>
-        <div>
-            <p class="text-xs text-stone-500 mb-2">金額を選択してください</p>
-            <div class="grid grid-cols-3 gap-2 mb-3">
-                <button onclick="selectAmount(500)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">500円</button>
-                <button onclick="selectAmount(1000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">1,000円</button>
-                <button onclick="selectAmount(3000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">3,000円</button>
+    <!-- モーダル: 投げ銭 -->
+    <div id="tipModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-stone-800">応援投げ銭を送る</h3>
+                <button onclick="closeModal('tipModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-            <!-- 非表示の自由入力欄 -->
-            <div class="hidden">
-                <input type="number" id="customAmount" placeholder="金額を自由入力 (円)" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm outline-none">
-            </div>
-        </div> <!-- 💡 ここに閉じタグを追加しました！ -->
-        <button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">投げ銭を確定する</button>
-    </div>
-</div>
-  <!-- モーダル: 支援金請求・申請管理 -->
-<div id="payoutManagerModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-4xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
-        
-        <!-- モーダルヘッダー -->
-        <div class="flex justify-between items-center border-b pb-3">
-            <div class="flex items-center gap-2">
-                <i class="fa-solid fa-shield-halved text-amber-600 text-xl"></i>
-                <h3 class="font-bold text-lg text-stone-800">支援金の振込申請・管理</h3>
-            </div>
-            <button onclick="closePayoutManagerModal()" class="text-stone-400 hover:text-stone-600">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-        </div>
-<!-- モーダル: ボランティア専用・支援金振込申請フォーム -->
-<div id="volunteerPayoutApplyModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-4">
-        
-        <div class="flex justify-between items-center border-b pb-3">
-            <h3 class="font-bold text-lg text-stone-800 flex items-center gap-2">
-                <i class="fa-solid fa-hand-holding-dollar text-amber-600"></i>
-                <span>支援金の振込申請</span>
-            </h3>
-            <button onclick="closeVolunteerPayoutModal()" class="text-stone-400 hover:text-stone-600">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-        </div>
-
-        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 space-y-1">
-            <p class="font-bold">💡 振込申請のルール</p>
-            <p>・累計獲得支援金額が <strong>20,000円</strong> を超えた場合に申請可能です。</p>
-            <p>・振込時には手数料（20%）が控除されます。</p>
-        </div>
-
-        <form onsubmit="handleVolunteerPayoutSubmit(event)" class="space-y-3 text-xs font-medium">
             <div>
-                <label class="block text-stone-600 mb-1">お名前 (ボランティア名) <span class="text-rose-500">*</span></label>
-                <input type="text" id="payout-volunteer-name" required placeholder="例: 山田 花子" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
-            </div>
-
-            <div>
-                <label class="block text-stone-600 mb-1">ご連絡先メールアドレス <span class="text-rose-500">*</span></label>
-                <input type="email" id="payout-volunteer-email" required placeholder="example@email.com" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-stone-600 mb-1">申請額 (円) <span class="text-rose-500">*</span></label>
-                    <input type="number" id="payout-requested-amount" required min="20000" placeholder="20000" oninput="calculateFinalAmount()" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+                <p class="text-xs text-stone-500 mb-2">金額を選択してください</p>
+                <div class="grid grid-cols-3 gap-2 mb-3">
+                    <button onclick="selectAmount(500)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">500円</button>
+                    <button onclick="selectAmount(1000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">1,000円</button>
+                    <button onclick="selectAmount(3000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">3,000円</button>
                 </div>
-                <div>
-                    <label class="block text-stone-600 mb-1">お振込予定額 (20%引)</label>
-                    <input type="text" id="payout-final-amount" readonly value="0円" class="w-full border border-stone-200 bg-stone-100 font-bold text-amber-700 rounded-lg p-2.5 outline-none">
+                <div class="hidden">
+                    <input type="number" id="customAmount" placeholder="金額を自由入力 (円)" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm outline-none">
                 </div>
             </div>
-
-            <div>
-                <label class="block text-stone-600 mb-1">振込先銀行口座情報 <span class="text-rose-500">*</span></label>
-                <textarea id="payout-bank-info" rows="3" required placeholder="〇〇銀行 渋谷支店&#10;普通 1234567&#10;口座名義: ネコ タロウ" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500"></textarea>
-            </div>
-
-            <button type="submit" id="submitPayoutBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-3 rounded-xl shadow transition">
-                🚀 この内容で振込申請を送信する
-            </button>
-        </form>
-
+            <button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">投げ銭を確定する</button>
+        </div>
     </div>
-</div>
-        <p class="text-xs text-stone-500">条件（20,000円以上）を満たした支援金の振込申請を管理者にメールで送信します（手数料設定: 20%）</p>
-<!-- モーダル: ボランティア専用・支援金振込申請フォーム -->
-<div id="volunteerPayoutApplyModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-4">
-        
-        <div class="flex justify-between items-center border-b pb-3">
-            <h3 class="font-bold text-lg text-stone-800 flex items-center gap-2">
-                <i class="fa-solid fa-hand-holding-dollar text-amber-600"></i>
-                <span>支援金の振込申請</span>
-            </h3>
-            <button onclick="closeVolunteerPayoutModal()" class="text-stone-400 hover:text-stone-600">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-        </div>
 
-        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 space-y-1">
-            <p class="font-bold">💡 振込申請のルール</p>
-            <p>・累計獲得支援金額が <strong>20,000円</strong> を超えた場合に申請可能です。</p>
-            <p>・振込時には手数料（20%）が控除されます。</p>
-        </div>
-
-        <form onsubmit="handleVolunteerPayoutSubmit(event)" class="space-y-3 text-xs font-medium">
-            <div>
-                <label class="block text-stone-600 mb-1">お名前 (ボランティア名) <span class="text-rose-500">*</span></label>
-                <input type="text" id="payout-volunteer-name" required placeholder="例: 山田 花子" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+    <!-- モーダル: ボランティア専用・支援金振込申請フォーム (新規追加) -->
+    <div id="volunteerPayoutApplyModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-stone-800 flex items-center gap-2">
+                    <i class="fa-solid fa-hand-holding-dollar text-amber-600"></i>
+                    <span>支援金の振込申請</span>
+                </h3>
+                <button onclick="closeVolunteerPayoutModal()" class="text-stone-400 hover:text-stone-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
             </div>
-
-            <div>
-                <label class="block text-stone-600 mb-1">ご連絡先メールアドレス <span class="text-rose-500">*</span></label>
-                <input type="email" id="payout-volunteer-email" required placeholder="example@email.com" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 space-y-1">
+                <p class="font-bold">💡 振込申請のルール</p>
+                <p>・累計獲得支援金額が <strong>20,000円</strong> を超えた場合に申請可能です。</p>
+                <p>・振込時には手数料（20%）が控除されます。</p>
             </div>
-
-            <div class="grid grid-cols-2 gap-3">
+            <form onsubmit="handleVolunteerPayoutSubmit(event)" class="space-y-3 text-xs font-medium">
                 <div>
-                    <label class="block text-stone-600 mb-1">申請額 (円) <span class="text-rose-500">*</span></label>
-                    <input type="number" id="payout-requested-amount" required min="20000" placeholder="20000" oninput="calculateFinalAmount()" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+                    <label class="block text-stone-600 mb-1">お名前 (ボランティア名) <span class="text-rose-500">*</span></label>
+                    <input type="text" id="payout-volunteer-name" required placeholder="例: 山田 花子" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
                 </div>
                 <div>
-                    <label class="block text-stone-600 mb-1">お振込予定額 (20%引)</label>
-                    <input type="text" id="payout-final-amount" readonly value="0円" class="w-full border border-stone-200 bg-stone-100 font-bold text-amber-700 rounded-lg p-2.5 outline-none">
+                    <label class="block text-stone-600 mb-1">ご連絡先メールアドレス <span class="text-rose-500">*</span></label>
+                    <input type="email" id="payout-volunteer-email" required placeholder="example@email.com" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
                 </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-stone-600 mb-1">申請額 (円) <span class="text-rose-500">*</span></label>
+                        <input type="number" id="payout-requested-amount" required min="20000" placeholder="20000" oninput="calculateFinalAmount()" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+                    </div>
+                    <div>
+                        <label class="block text-stone-600 mb-1">お振込予定額 (20%引)</label>
+                        <input type="text" id="payout-final-amount" readonly value="0円" class="w-full border border-stone-200 bg-stone-100 font-bold text-amber-700 rounded-lg p-2.5 outline-none">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">振込先銀行口座情報 <span class="text-rose-500">*</span></label>
+                    <textarea id="payout-bank-info" rows="3" required placeholder="〇〇銀行 渋谷支店&#10;普通 1234567&#10;口座名義: ネコ タロウ" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                </div>
+                <button type="submit" id="submitPayoutBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-3 rounded-xl shadow transition">
+                    🚀 この内容で振込申請を送信する
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- モーダル: 管理者専用・支援金申請管理ダッシュボード -->
+    <div id="payoutManagerModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-4xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-shield-halved text-amber-600 text-xl"></i>
+                    <h3 class="font-bold text-lg text-stone-800">【管理者】支援金振込申請 一覧</h3>
+                </div>
+                <button onclick="closePayoutManagerModal()" class="text-stone-400 hover:text-stone-600">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
             </div>
-
-            <div>
-                <label class="block text-stone-600 mb-1">振込先銀行口座情報 <span class="text-rose-500">*</span></label>
-                <textarea id="payout-bank-info" rows="3" required placeholder="〇〇銀行 渋谷支店&#10;普通 1234567&#10;口座名義: ネコ タロウ" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+            <p class="text-xs text-stone-500">ボランティアからの振込申請をリアルタイムで確認・振込完了処理を行います。</p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
+                            <th class="p-3">ボランティア名</th>
+                            <th class="p-3">申請日時</th>
+                            <th class="p-3">申請額</th>
+                            <th class="p-3">振込予定額 (20%引)</th>
+                            <th class="p-3">振込先口座</th>
+                            <th class="p-3 text-center">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminPayoutList" class="divide-y divide-stone-200 text-stone-700">
+                        <tr><td colspan="6" class="p-4 text-center text-stone-400">データを取得中...</td></tr>
+                    </tbody>
+                </table>
             </div>
-
-            <button type="submit" id="submitPayoutBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-3 rounded-xl shadow transition">
-                🚀 この内容で振込申請を送信する
-            </button>
-        </form>
-
-    </div>
-</div>
-        
-        <!-- 申請一覧テーブル -->
-        <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-sm">
-                <thead>
-                    <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
-                        <th class="p-3">ボランティア名</th>
-                        <th class="p-3">担当猫 / 概要</th>
-                        <th class="p-3">申請額</th>
-                        <th class="p-3">振込予定額 (20%引)</th>
-                        <th class="p-3">振込先口座</th>
-                        <th class="p-3 text-center">操作</th>
-                    </tr>
-                </thead>
-                <tbody id="adminPayoutList" class="divide-y divide-stone-200 text-stone-700">
-                    <!-- サンプルデータ -->
-                    <tr>
-                        <td class="p-3 font-medium">山田 花子</td>
-                        <td class="p-3 text-xs text-stone-500">たまちゃん 保護活動</td>
-                        <td class="p-3 font-bold">25,400円</td>
-                        <td class="p-3 font-bold text-amber-700">20,320円</td>
-                        <td class="p-3 text-xs">
-                            〇〇銀行 渋谷支店<br>
-                            普通 1234567<br>
-                            (ネコ タロウ)
-                        </td>
-                        <td class="p-3 text-center">
-                            <!-- 💡 ボタンを押すと、あなたのメール宛に申請内容が自動作成されて飛ぶ仕組み -->
-                            <button onclick="sendPayoutEmail('山田 花子', '25,400円', '20,320円', '〇〇銀行 渋谷支店 普通 1234567 (ネコ タロウ)')" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow transition flex items-center justify-center gap-1 mx-auto">
-                                <i class="fa-solid fa-paper-plane"></i> 振込申請を送信する
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="pt-3 border-t border-stone-200 flex justify-end">
+                <button onclick="closePayoutManagerModal()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 text-sm font-bold px-5 py-2 rounded-xl transition">
+                    閉じる
+                </button>
+            </div>
         </div>
-
-        <!-- 閉じるボタン -->
-        <div class="pt-3 border-t border-stone-200 flex justify-end">
-            <button onclick="closePayoutManagerModal()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 text-sm font-bold px-5 py-2 rounded-xl transition">
-                閉じる
-            </button>
-        </div>
-
     </div>
-</div>
-   <script>
-// 💡 ボタンが押されたら、内容をコピーしてGmail（またはメール作成画面）を直接開く
-function sendPayoutEmail(name, requestedAmount, finalAmount, bankInfo) {
-    // 👇 あなたのメールアドレスをここに設定してください
-    const myEmail = "ken.c.1173.surf@gmail.com"; 
 
-    // メール本文のテキストを作成
-    const emailBody = 
-        `管理者様\n\n` +
-        `ボランティアさんから支援金の振込申請が届きました。\n\n` +
-        `----------------------------------------\n` +
-        `■ ボランティア名: ${name}\n` +
-        `■ 申請額: ${requestedAmount}\n` +
-        `■ お振込予定額 (手数料20%控除後): ${finalAmount}\n` +
-        `■ 振込先口座:\n${bankInfo}\n` +
-        `----------------------------------------\n\n` +
-        `内容を確認の上、お振込みのお手続きをお願いいたします。`;
-
-    // 1. クリップボードに申請内容を自動コピーする
-    navigator.clipboard.writeText(emailBody).then(() => {
-        // 2. Gmailの新規作成画面をブラウザで直接開く（宛先と件名が自動入力されます）
-        const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(myEmail)}&su=${encodeURIComponent("【保護猫アプリ】支援金の振込申請")}&body=${encodeURIComponent(emailBody)}`;
-        
-        window.open(gmailUrl, '_blank');
-
-        alert("📋 申請内容をコピーしました！\nGmailの送信画面が開きますので、そのまま送信してください🐾");
-    }).catch(err => {
-        alert("コピーに失敗しました。ブラウザの権限を確認してください。");
-        console.error(err);
-    });
-}
-</script>
-        <!-- 閉じるボタン -->
-        <div class="pt-3 border-t border-stone-200 flex justify-end">
-            <button onclick="closePayoutManagerModal()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 text-sm font-bold px-5 py-2 rounded-xl transition">
-                閉じる
-            </button>
-        </div>
-
-    </div>
-</div>
-    <!-- フッター (新規登録の隣にマニュアルボタン追加) -->
+    <!-- フッター -->
     <footer class="bg-stone-800 text-stone-300 text-xs py-8 mt-12 border-t border-stone-700">
         <div class="max-w-6xl mx-auto px-4 text-center space-y-4">
             <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="font-bold text-amber-400 text-sm cursor-pointer hover:underline inline-flex items-center gap-1.5">
                 <span>🐾 保護ネコ応援プラットフォーム RescuCat</span>
             </div>
 
-            <!-- 規約 ＆ プライバシーポリシー リンク -->
             <div class="flex justify-center gap-4 text-[11px] text-stone-400">
                 <button onclick="openPolicyModal('terms')" class="hover:text-amber-300 underline">利用規約</button>
                 <span>•</span>
                 <button onclick="openPolicyModal('privacy')" class="hover:text-amber-300 underline">プライバシーポリシー</button>
             </div>
 
+            <!-- フッターのログイン ＆ ひっそり管理者ボタン -->
             <div class="flex justify-center items-center gap-4 pt-2">
                 <button onclick="toggleAuthForm()" style="background: none; border: none; color: #a8a29e; text-decoration: underline; font-size: 0.8rem; cursor: pointer; padding: 5px;">
                     ボランティア・管理者ログイン / 登録
                 </button>
                 <span class="text-stone-600 text-[10px]">•</span>
-                <!-- ひっそり配置したKenさん専用の管理者ボタン -->
                 <button onclick="openPayoutManagerModal()" style="background: none; border: none; color: #78716c; font-size: 0.75rem; cursor: pointer; padding: 5px;" class="hover:text-amber-400">
                     🔒 管理者専用
                 </button>
             </div>
+
             <div id="auth-section" style="display: none; margin: 20px auto; max-width: 360px; padding: 15px; background: #fff; border: 1px solid #444; border-radius: 8px; text-align: left; color: #333;">
                 <div style="display: flex; items-center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
                     <div style="display: flex; gap: 10px;">
                         <button onclick="switchAuthTab('login')" id="tabLoginBtn" style="background: none; border: none; font-weight: bold; color: #3182ce; cursor: pointer; font-size: 0.85rem;">ログイン</button>
                         <button onclick="switchAuthTab('signup')" id="tabSignupBtn" style="background: none; border: none; color: #718096; cursor: pointer; font-size: 0.85rem;">新規登録</button>
                     </div>
-                    <!-- 新規登録の隣にマニュアルボタン！ -->
                     <button type="button" onclick="openManualModal()" style="background: #fef3c7; color: #78350f; border: 1px solid #fde68a; border-radius: 4px; padding: 2px 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">
                         📖 運用マニュアル
                     </button>
@@ -721,7 +575,7 @@ function sendPayoutEmail(name, requestedAmount, finalAmount, bankInfo) {
     <!-- JavaScript 処理 -->
     <script>
         const SUPABASE_URL = 'https://hoesxsdbbezzmgqipckv.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_-uX4NW-NQQADr1fzd_kIHA_W451CzXA'; // ご自身のキーに置き換えてください
+        const SUPABASE_ANON_KEY = 'sb_publishable_-uX4NW-NQQADr1fzd_kIHA_W451CzXA';
 
         window.supabaseClient = null;
         try {
@@ -735,6 +589,134 @@ function sendPayoutEmail(name, requestedAmount, finalAmount, bankInfo) {
         let currentSelectedCatId = null;
         let isLoggedIn = false;
 
+        /* ================= ボランティア用・申請モーダルの処理 ================= */
+        window.openVolunteerPayoutModal = function() {
+            const modal = document.getElementById('volunteerPayoutApplyModal');
+            if (modal) modal.classList.remove('hidden');
+        };
+        window.closeVolunteerPayoutModal = function() {
+            const modal = document.getElementById('volunteerPayoutApplyModal');
+            if (modal) modal.classList.add('hidden');
+        };
+        window.calculateFinalAmount = function() {
+            const requested = parseFloat(document.getElementById('payout-requested-amount').value) || 0;
+            const finalAmount = Math.floor(requested * 0.8);
+            document.getElementById('payout-final-amount').value = finalAmount.toLocaleString() + '円';
+        };
+        window.handleVolunteerPayoutSubmit = async function(event) {
+            event.preventDefault();
+            if (!window.supabaseClient) return;
+
+            const submitBtn = document.getElementById('submitPayoutBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "送信中...";
+
+            const reqAmount = parseFloat(document.getElementById('payout-requested-amount').value);
+            const finalAmt = Math.floor(reqAmount * 0.8);
+
+            if (reqAmount < 20000) {
+                alert("⚠️ 振込申請は20,000円以上から可能です。");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "🚀 この内容で振込申請を送信する";
+                return;
+            }
+
+            const { error } = await window.supabaseClient.from('payout_requests').insert([{
+                volunteer_name: document.getElementById('payout-volunteer-name').value,
+                volunteer_email: document.getElementById('payout-volunteer-email').value,
+                requested_amount: reqAmount,
+                final_amount: finalAmt,
+                bank_info: document.getElementById('payout-bank-info').value,
+                status: 'pending'
+            }]);
+
+            if (error) {
+                alert("申請の送信に失敗しました: " + error.message);
+            } else {
+                alert("🎉 振込申請が完了しました！\n管理者が確認次第、お振込み手続きを行います。");
+                document.getElementById('payout-requested-amount').value = '';
+                document.getElementById('payout-bank-info').value = '';
+                closeVolunteerPayoutModal();
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.innerText = "🚀 この内容で振込申請を送信する";
+        };
+
+        /* ================= 管理者専用・管理ダッシュボードの処理 ================= */
+        window.openPayoutManagerModal = function() {
+            const ADMIN_PASS = "7777";
+            const input = prompt("【管理者認証】パスコードを入力してください:");
+            if (input === ADMIN_PASS) {
+                document.getElementById('payoutManagerModal').classList.remove('hidden');
+                fetchAdminPayoutRequests();
+            } else if (input !== null) {
+                alert("パスコードが正しくありません。");
+            }
+        };
+        window.closePayoutManagerModal = function() {
+            document.getElementById('payoutManagerModal').classList.add('hidden');
+        };
+        async function fetchAdminPayoutRequests() {
+            const listEl = document.getElementById('adminPayoutList');
+            if (!listEl || !window.supabaseClient) return;
+            listEl.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-stone-400">データを取得中...</td></tr>';
+
+            const { data, error } = await window.supabaseClient
+                .from('payout_requests')
+                .select('*')
+                .order('id', { ascending: false });
+
+            if (error) {
+                listEl.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-rose-500 font-bold">取得エラー: ${error.message}</td></tr>`;
+                return;
+            }
+            const requests = data || [];
+            if (requests.length === 0) {
+                listEl.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-stone-400">現在、届いている振込申請はありません 🐾</td></tr>';
+                return;
+            }
+            listEl.innerHTML = '';
+            requests.forEach(req => {
+                const dateStr = new Date(req.created_at).toLocaleString('ja-JP');
+                const isPending = req.status === 'pending';
+                listEl.innerHTML += `
+                    <tr class="${isPending ? 'bg-amber-50/30' : 'bg-stone-50'}">
+                        <td class="p-3 font-medium">${req.volunteer_name}<br><span class="text-[10px] text-stone-400">${req.volunteer_email || ''}</span></td>
+                        <td class="p-3 text-xs text-stone-500">${dateStr}</td>
+                        <td class="p-3 font-bold">${req.requested_amount.toLocaleString()}円</td>
+                        <td class="p-3 font-bold text-amber-700">${req.final_amount.toLocaleString()}円</td>
+                        <td class="p-3 text-xs whitespace-pre-wrap">${req.bank_info}</td>
+                        <td class="p-3 text-center">
+                            ${isPending ? `
+                                <button onclick="processPayout(${req.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
+                                    振込完了にする
+                                </button>
+                            ` : `
+                                <span class="bg-stone-200 text-stone-600 text-xs font-bold px-2.5 py-1 rounded-full">振込対応済み</span>
+                            `}
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+        window.processPayout = async function(requestId) {
+            if (!confirm("この申請を「振込完了」に更新しますか？\n（※ご自身の銀行口座等でお振込みを完了した後に実行してください）")) return;
+            if (!window.supabaseClient) return;
+
+            const { error } = await window.supabaseClient
+                .from('payout_requests')
+                .update({ status: 'paid' })
+                .eq('id', requestId);
+
+            if (error) alert("更新エラー: " + error.message);
+            else {
+                alert("🎉 振込完了として記録しました！");
+                fetchAdminPayoutRequests();
+            }
+        };
+
+        /* ================= メイン機能の処理 ================= */
         async function fetchCats() {
             const grid = document.getElementById('catGrid');
             if (!window.supabaseClient) return;
@@ -1085,10 +1067,7 @@ function sendPayoutEmail(name, requestedAmount, finalAmount, bankInfo) {
 
             const { data, error } = await window.supabaseClient
                 .from('adoption_applications')
-                .select(`
-                    *,
-                    cats ( name, shelter )
-                `)
+                .select(`*, cats ( name, shelter )`)
                 .order('id', { ascending: false });
 
             if (error) {
@@ -1225,31 +1204,20 @@ function sendPayoutEmail(name, requestedAmount, finalAmount, bankInfo) {
             submitBtn.innerText = "投稿して公開する";
         };
 
-        // マニュアルモーダルを開く
         window.openManualModal = function() {
             document.getElementById('manualModal').classList.remove('hidden');
         };
 
-        // 規約モーダル表示処理
         window.openPolicyModal = function(type) {
             const titleEl = document.getElementById('policyModalTitle');
             const contentEl = document.getElementById('policyModalContent');
 
             if (type === 'terms') {
                 titleEl.innerText = "利用規約";
-                contentEl.innerHTML = `
-<p class="font-bold text-stone-800">【RescuCat 利用規約】</p>
-<p><strong>第1条（目的）</strong><br>本プラットフォーム（以下「本サービス」）は、保護ネコの里親募集、活動支援、およびボランティアと支援者のマッチング・コミュニケーションを促進することを目的とします。</p>
-<p><strong>第2条（里親応募に関する注意・禁止事項）</strong><br>1. 応募者は、真実かつ正確な情報を提供してエントリーを行うものとします。<br>2. 営利目的、転売目的、動物虐待を目的とした応募は固く禁止します。発覚した場合は法的措置を講じます。<br>3. 里親決定後の譲渡契約およびやり取りは、保護主（ボランティア）と応募者の直接の責任において行うものとします。</p>
-<p><strong>第3条（免責事項）</strong><br>本サービスは、ユーザー間（ボランティアと支援者・応募者）で生じたトラブル、譲渡後のトラブル等について、一切の責任を負いません。</p>
-<p><strong>第4条（規約の変更）</strong><br>本規約は、必要に応じて事前通知なく変更できるものとします。</p>`;
+                contentEl.innerHTML = `<p class="font-bold text-stone-800">【RescuCat 利用規約】</p><p>利用規約の本文が入ります。</p>`;
             } else if (type === 'privacy') {
                 titleEl.innerText = "プライバシーポリシー";
-                contentEl.innerHTML = `
-<p class="font-bold text-stone-800">【RescuCat プライバシーポリシー】</p>
-<p><strong>1. 個人情報の収集・利用目的</strong><br>本サービスでは、里親・お見合い応募の際に、お名前・メールアドレス・電話番号・住宅環境等の個人情報を収集します。<br>収集した個人情報は、以下の目的のみに利用します。<br>・保護主（ボランティア）からの選考・面談日程連絡および譲渡手続き<br>・本サービスに関する重要なお知らせや問い合わせ対応</p>
-<p><strong>2. 個人情報の第三者提供・管理</strong><br>ご提供いただいた個人情報は、該当する保護ネコの担当ボランティア以外の第三者に開示・提供することはありません。また、データベース上で厳重に保護・管理されます。</p>
-<p><strong>3. 個人情報の開示・訂正・削除</strong><br>ご本人からの個人情報の照会・修正・削除のご要望があった場合は、迅速に対応いたします。</p>`;
+                contentEl.innerHTML = `<p class="font-bold text-stone-800">【RescuCat プライバシーポリシー】</p><p>プライバシーポリシーの本文が入ります。</p>`;
             }
             document.getElementById('policyModal').classList.remove('hidden');
         };
@@ -1325,50 +1293,29 @@ function sendPayoutEmail(name, requestedAmount, finalAmount, bankInfo) {
             alert('ログアウトしました');
             checkUserSession();
         };
-// プレビューの金額を選択する関数（もし無ければ追加しておくと便利です）
-let selectedTipAmount = 1000;
-window.selectAmount = function(amount) {
-    selectedTipAmount = amount;
-    document.getElementById('customAmount').value = amount;
-};
 
-// 投げ銭モーダルを開く・閉じる関数
-function openTipModal(id) { 
-    const modal = document.getElementById('tipModal');
-    if (modal) modal.classList.remove('hidden'); 
-}
-function closeModal(id) { 
-    const modal = document.getElementById('tipModal');
-    if (modal) modal.classList.add('hidden'); 
-}
+        if (typeof window.rescueCatDonationAmount === 'undefined') {
+            window.rescueCatDonationAmount = 1000;
+        }
 
-// 完全に重複しない独自のグローバル変数名に変更！
-if (typeof window.rescueCatDonationAmount === 'undefined') {
-    window.rescueCatDonationAmount = 1000;
-}
+        window.selectAmount = function(amount) {
+            window.rescueCatDonationAmount = amount;
+            const input = document.getElementById('customAmount');
+            if (input) input.value = amount;
+        };
 
-window.selectAmount = function(amount) {
-    window.rescueCatDonationAmount = amount;
-    const input = document.getElementById('customAmount');
-    if (input) input.value = amount;
-};
+        window.submitTip = function() {
+            const stripeLinks = {
+                500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
+                1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
+                3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
+            };
+            let amount = window.rescueCatDonationAmount || 1000;
+            let targetUrl = stripeLinks[amount] || stripeLinks[1000];
+            alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
+            window.location.href = targetUrl;
+        };
 
-// 投げ銭を確定するボタンの処理（Stripeの決済リンクへ飛ぶ）
-window.submitTip = function() {
-    // 💡 Stripeで作った3つの固定金額の決済リンクURLをここにそれぞれ貼り付けてください
-    const stripeLinks = {
-        500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
-        1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
-        3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
-    };
-
-    let amount = window.rescueCatDonationAmount || 1000;
-    let targetUrl = stripeLinks[amount] || stripeLinks[1000];
-
-    alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
-    
-    window.location.href = targetUrl;
-};
         async function checkUserSession() {
             if (!window.supabaseClient) return;
             const { data: { session } } = await window.supabaseClient.auth.getSession();
@@ -1393,238 +1340,6 @@ window.submitTip = function() {
             fetchCats();
             fetchNews();
         });
-        // 支援金管理モーダルを開く
-window.openPayoutManagerModal = function() {
-    const modal = document.getElementById('payoutManagerModal');
-    if (modal) {
-        modal.classList.remove('hidden');
-    } else {
-        alert("支援金管理のモーダル要素がHTMLに見つかりません。");
-    }
-};
-
-// 支援金管理モーダルを閉じる
-window.closePayoutManagerModal = function() {
-    const modal = document.getElementById('payoutManagerModal');
-    if (modal) {
-        modal.classList.add('hidden');
-    }
-};
-// モーダルの開閉
-window.openVolunteerPayoutModal = function() {
-    document.getElementById('volunteerPayoutApplyModal').classList.remove('hidden');
-};
-window.closeVolunteerPayoutModal = function() {
-    document.getElementById('volunteerPayoutApplyModal').classList.add('hidden');
-};
-
-// 申請額入力時に、20%引きの振込予定額を自動計算する関数
-window.calculateFinalAmount = function() {
-    const requested = parseFloat(document.getElementById('payout-requested-amount').value) || 0;
-    const finalAmount = Math.floor(requested * 0.8); // 20%控除
-    document.getElementById('payout-final-amount').value = finalAmount.toLocaleString() + '円';
-};
-
-// Supabaseへの申請データ送信処理
-window.handleVolunteerPayoutSubmit = async function(event) {
-    event.preventDefault();
-    if (!window.supabaseClient) return;
-
-    const submitBtn = document.getElementById('submitPayoutBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerText = "送信中...";
-
-    const reqAmount = parseFloat(document.getElementById('payout-requested-amount').value);
-    const finalAmt = Math.floor(reqAmount * 0.8);
-
-    // 20,000円未満の申請チェック
-    if (reqAmount < 20000) {
-        alert("⚠️ 振込申請は20,000円以上から可能です。");
-        submitBtn.disabled = false;
-        submitBtn.innerText = "🚀 この内容で振込申請を送信する";
-        return;
-    }
-
-    // 先ほど作成した `payout_requests` テーブルへ保存！
-    const { error } = await window.supabaseClient.from('payout_requests').insert([{
-        volunteer_name: document.getElementById('payout-volunteer-name').value,
-        volunteer_email: document.getElementById('payout-volunteer-email').value,
-        requested_amount: reqAmount,
-        final_amount: finalAmt,
-        bank_info: document.getElementById('payout-bank-info').value,
-        status: 'pending' // 未処理状態で保存
-    }]);
-
-    if (error) {
-        alert("申請の送信に失敗しました: " + error.message);
-    } else {
-        alert("🎉 振込申請が完了しました！\n管理者が確認次第、お振込み手続きを行います。");
-        document.getElementById('payout-requested-amount').value = '';
-        document.getElementById('payout-bank-info').value = '';
-        closeVolunteerPayoutModal();
-    }
-
-    submitBtn.disabled = false;
-    submitBtn.innerText = "🚀 この内容で振込申請を送信する";
-};
-        
-// 管理者が「振込完了」ボタンを押したときの処理
-window.processPayout = function(requestId) {
-    if (confirm("この申請の振込を完了として処理しますか？（※実際にご自身の銀行口座から相手へお振込みを済ませてから押してください）")) {
-        alert("振込完了ステータスに変更しました。データベースの記録が更新されます。");
-        // TODO: Supabaseのデータを「paid (振込済み)」に更新する処理をここに繋げます
-    }
-};
-        // パスコード認証付きで管理者モーダルを開く
-window.openPayoutManagerModal = function() {
-    const ADMIN_PASS = "7777"; // 💡 ご自身の好きなパスコードに変更可能
-    const input = prompt("【管理者認証】パスコードを入力してください:");
-    
-    if (input === ADMIN_PASS) {
-        document.getElementById('payoutManagerModal').classList.remove('hidden');
-        // Supabaseから届いている最新の振込申請一覧を取得して表示
-        fetchAdminPayoutRequests();
-    } else if (input !== null) {
-        alert("パスコードが正しくありません。");
-    }
-};
-
-// 支援金管理モーダルを閉じる
-window.closePayoutManagerModal = function() {
-    document.getElementById('payoutManagerModal').classList.add('hidden');
-};
-
-// Supabaseの `payout_requests` テーブルから未処理・処理済みの申請を取得して表示
-async function fetchAdminPayoutRequests() {
-    const listEl = document.getElementById('adminPayoutList');
-    if (!listEl || !window.supabaseClient) return;
-
-    listEl.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-stone-400">データを取得中...</td></tr>';
-
-    // 最新の申請順に取得
-    const { data, error } = await window.supabaseClient
-        .from('payout_requests')
-        .select('*')
-        .order('id', { ascending: false });
-
-    if (error) {
-        listEl.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-rose-500 font-bold">取得エラー: ${error.message}</td></tr>`;
-        return;
-    }
-
-    const requests = data || [];
-
-    if (requests.length === 0) {
-        listEl.innerHTML = '<tr><td colspan="6" class="p-4 text-center text-stone-400">現在、届いている振込申請はありません 🐾</td></tr>';
-        return;
-    }
-
-    listEl.innerHTML = '';
-    requests.forEach(req => {
-        const dateStr = new Date(req.created_at).toLocaleString('ja-JP');
-        const isPending = req.status === 'pending';
-
-        listEl.innerHTML += `
-            <tr class="${isPending ? 'bg-amber-50/30' : 'bg-stone-50'}">
-                <td class="p-3 font-medium">
-                    ${req.volunteer_name}<br>
-                    <span class="text-[10px] text-stone-400">${req.volunteer_email || ''}</span>
-                </td>
-                <td class="p-3 text-xs text-stone-500">${dateStr}</td>
-                <td class="p-3 font-bold">${req.requested_amount.toLocaleString()}円</td>
-                <td class="p-3 font-bold text-amber-700">${req.final_amount.toLocaleString()}円</td>
-                <td class="p-3 text-xs whitespace-pre-wrap">${req.bank_info}</td>
-                <td class="p-3 text-center">
-                    ${isPending ? `
-                        <button onclick="processPayout(${req.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
-                            振込完了にする
-                        </button>
-                    ` : `
-                        <span class="bg-stone-200 text-stone-600 text-xs font-bold px-2.5 py-1 rounded-full">振込対応済み</span>
-                    `}
-                </td>
-            </tr>
-        `;
-    });
-}
-
-        // ボランティア用の振込申請モーダルを開く・閉じる関数
-window.openVolunteerPayoutModal = function() {
-    const modal = document.getElementById('volunteerPayoutApplyModal');
-    if (modal) modal.classList.remove('hidden');
-};
-window.closeVolunteerPayoutModal = function() {
-    const modal = document.getElementById('volunteerPayoutApplyModal');
-    if (modal) modal.classList.add('hidden');
-};
-
-// 申請額入力時に、20%引きの振込予定額を自動計算する関数
-window.calculateFinalAmount = function() {
-    const requested = parseFloat(document.getElementById('payout-requested-amount').value) || 0;
-    const finalAmount = Math.floor(requested * 0.8); // 20%控除
-    document.getElementById('payout-final-amount').value = finalAmount.toLocaleString() + '円';
-};
-
-// Supabaseへの申請データ送信処理
-window.handleVolunteerPayoutSubmit = async function(event) {
-    event.preventDefault();
-    if (!window.supabaseClient) return;
-
-    const submitBtn = document.getElementById('submitPayoutBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerText = "送信中...";
-
-    const reqAmount = parseFloat(document.getElementById('payout-requested-amount').value);
-    const finalAmt = Math.floor(reqAmount * 0.8);
-
-    if (reqAmount < 20000) {
-        alert("⚠️ 振込申請は20,000円以上から可能です。");
-        submitBtn.disabled = false;
-        submitBtn.innerText = "🚀 この内容で振込申請を送信する";
-        return;
-    }
-
-    const { error } = await window.supabaseClient.from('payout_requests').insert([{
-        volunteer_name: document.getElementById('payout-volunteer-name').value,
-        volunteer_email: document.getElementById('payout-volunteer-email').value,
-        requested_amount: reqAmount,
-        final_amount: finalAmt,
-        bank_info: document.getElementById('payout-bank-info').value,
-        status: 'pending'
-    }]);
-
-    if (error) {
-        alert("申請の送信に失敗しました: " + error.message);
-    } else {
-        alert("🎉 振込申請が完了しました！\n管理者が確認次第、お振込み手続きを行います。");
-        document.getElementById('payout-requested-amount').value = '';
-        document.getElementById('payout-bank-info').value = '';
-        closeVolunteerPayoutModal();
-    }
-
-    submitBtn.disabled = false;
-    submitBtn.innerText = "🚀 この内容で振込申請を送信する";
-};
-// 振込完了処理 (Supabaseのステータスを 'paid' に更新)
-window.processPayout = async function(requestId) {
-    if (!confirm("この申請を「振込完了」に更新しますか？\n（※ご自身の銀行口座等でお振込みを完了した後に実行してください）")) {
-        return;
-    }
-
-    if (!window.supabaseClient) return;
-
-    const { error } = await window.supabaseClient
-        .from('payout_requests')
-        .update({ status: 'paid' })
-        .eq('id', requestId);
-
-    if (error) {
-        alert("更新エラー: " + error.message);
-    } else {
-        alert("🎉 振込完了として記録しました！");
-        fetchAdminPayoutRequests(); // 一覧を再読み込み
-    }
-};
     </script>
 </body>
 </html>
