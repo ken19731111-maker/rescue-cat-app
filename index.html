@@ -343,7 +343,7 @@
         // 1. データ読み込み
         async function fetchCats() {
             const grid = document.getElementById('catGrid');
-            if (!window.supabaseClient || SUPABASE_URL === 'https://hoesxsdbbezzmgqipckv.supabase.co') {
+            if (!window.supabaseClient || SUPABASE_URL === 'YOUR_SUPABASE_URL') {
                 grid.innerHTML = '<div class="col-span-full text-center py-12 text-rose-500 font-bold">SupabaseのURLとKeyを設定してください 🐾</div>';
                 return;
             }
