@@ -516,14 +516,14 @@
 
     </div>
 </div>
-    <script>
-// 💡 ボタンが押されたら、あなたのメールアドレス宛てに申請内容を記載したメールソフトを起動する関数
+   <script>
+// 💡 ボタンが押されたら、内容をコピーしてGmail（またはメール作成画面）を直接開く
 function sendPayoutEmail(name, requestedAmount, finalAmount, bankInfo) {
-    // 👇 ここに「あなたのメールアドレス」を入れてください
-    const myEmail = "ken.c.1173.surf@gmail.com"; // 例: ご自身のメールアドレスに変更してください
-    
-    const subject = encodeURIComponent("【保護猫アプリ】支援金の振込申請がありました");
-    const body = encodeURIComponent(
+    // 👇 あなたのメールアドレスをここに設定してください
+    const myEmail = "ken.c.1173.surf@gmail.com"; 
+
+    // メール本文のテキストを作成
+    const emailBody = 
         `管理者様\n\n` +
         `ボランティアさんから支援金の振込申請が届きました。\n\n` +
         `----------------------------------------\n` +
@@ -532,11 +532,20 @@ function sendPayoutEmail(name, requestedAmount, finalAmount, bankInfo) {
         `■ お振込予定額 (手数料20%控除後): ${finalAmount}\n` +
         `■ 振込先口座:\n${bankInfo}\n` +
         `----------------------------------------\n\n` +
-        `内容を確認の上、ご自身の銀行口座からお振込みの手続きをお願いいたします。`
-    );
+        `内容を確認の上、お振込みのお手続きをお願いいたします。`;
 
-    // メーラー（メールソフト）を自動で立ち上げる
-    window.location.href = `mailto:${myEmail}?subject=${subject}&body=${body}`;
+    // 1. クリップボードに申請内容を自動コピーする
+    navigator.clipboard.writeText(emailBody).then(() => {
+        // 2. Gmailの新規作成画面をブラウザで直接開く（宛先と件名が自動入力されます）
+        const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(myEmail)}&su=${encodeURIComponent("【保護猫アプリ】支援金の振込申請")}&body=${encodeURIComponent(emailBody)}`;
+        
+        window.open(gmailUrl, '_blank');
+
+        alert("📋 申請内容をコピーしました！\nGmailの送信画面が開きますので、そのまま送信してください🐾");
+    }).catch(err => {
+        alert("コピーに失敗しました。ブラウザの権限を確認してください。");
+        console.error(err);
+    });
 }
 </script>
         <!-- 閉じるボタン -->
