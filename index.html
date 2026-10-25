@@ -151,7 +151,7 @@
                 <button onclick="closeModal('updatesModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
-            <!-- 管理者専用：近況報告の追加フォーム (ログイン時のみ表示) -->
+            <!-- 管理者専用：近況報告の追加フォーム -->
             <div id="admin-add-update-box" class="bg-amber-50/80 p-4 rounded-xl border border-amber-200 space-y-3 hidden">
                 <h4 class="text-xs font-extrabold text-amber-900">✍️ 新しい近況報告（日記）を追加</h4>
                 <form id="addUpdateForm" onsubmit="handleCreateUpdate(event)" class="space-y-3 text-xs">
@@ -172,7 +172,6 @@
                 </form>
             </div>
 
-            <!-- 報告タイムライン一覧 -->
             <div id="updatesTimeline" class="space-y-4">
                 <p class="text-xs text-stone-400 text-center py-4">読み込み中...</p>
             </div>
@@ -284,7 +283,7 @@
             updateGlobalMeter();
         }
 
-        // 2. 一覧表示
+        // 2. 一覧表示（団体名をボタン化）
         function renderCats(cats) {
             const grid = document.getElementById('catGrid');
             grid.innerHTML = '';
@@ -299,6 +298,7 @@
                 const current = cat.current_amount || 0;
                 const percent = Math.min(100, Math.round((current / target) * 100));
                 const isFav = favorites.includes(cat.id);
+                const shelterName = cat.shelter || '保護活動者';
 
                 const card = `
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-amber-100 flex flex-col justify-between">
@@ -314,7 +314,14 @@
                                 <h3 class="font-extrabold text-lg text-stone-800">${cat.name} <span class="text-xs text-stone-500 font-normal">(${cat.age || '不明'})</span></h3>
                                 ${cat.is_urgent ? '<span class="bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded">🚨 緊急</span>' : ''}
                             </div>
-                            <p class="text-xs text-amber-900 font-medium bg-amber-50 inline-block px-2 py-1 rounded-md">🏠 ${cat.shelter || '保護活動者'}</p>
+                            
+                            <!-- 団体名をバッジボタンに変更 -->
+                            <div>
+                                <button onclick="filterCatsByShelter('${shelterName}')" class="text-xs text-amber-900 font-bold bg-amber-50 hover:bg-amber-100 border border-amber-200 px-2.5 py-1 rounded-lg transition flex items-center gap-1">
+                                    <i class="fa-solid fa-house-chimney"></i> ${shelterName} の猫を見る
+                                </button>
+                            </div>
+
                             <p class="text-xs text-stone-600 line-clamp-2">「${cat.message || ''}」</p>
                             
                             <div class="space-y-1">
@@ -356,11 +363,11 @@
             });
         }
 
-        function filterCatsByShelter(shelterName) {
+        window.filterCatsByShelter = function(shelterName) {
             renderCats(catsData.filter(c => c.shelter === shelterName));
         }
 
-        // 4. 汎用画像圧縮 (Canvas)
+        // 4. 画像圧縮
         window.processImage = function(event, targetInputId, statusId) {
             const file = event.target.files[0];
             const statusEl = document.getElementById(statusId);
@@ -429,7 +436,7 @@
             submitBtn.innerText = "🐾 このネコちゃんを登録・公開する";
         };
 
-        // 6. 近況報告モーダルを開く＆取得
+        // 6. 近況報告モーダル
         window.openUpdatesModal = async function(catId) {
             currentSelectedCatId = catId;
             const cat = catsData.find(c => c.id === catId);
@@ -439,13 +446,9 @@
             document.getElementById('modalCatShelter').innerText = '🏠 ' + (cat.shelter || '保護団体');
             document.getElementById('updatesModal').classList.remove('hidden');
 
-            // ログイン状態に応じて追加フォームの表示切り替え
             const adminUpdateBox = document.getElementById('admin-add-update-box');
-            if (isLoggedIn) {
-                adminUpdateBox.classList.remove('hidden');
-            } else {
-                adminUpdateBox.classList.add('hidden');
-            }
+            if (isLoggedIn) adminUpdateBox.classList.remove('hidden');
+            else adminUpdateBox.classList.add('hidden');
 
             await fetchUpdates(catId);
         };
@@ -487,7 +490,6 @@
             });
         }
 
-        // 7. 新しい近況報告の投稿
         window.handleCreateUpdate = async function(event) {
             event.preventDefault();
             if (!window.supabaseClient || !currentSelectedCatId) return;
@@ -515,12 +517,11 @@
                 document.getElementById('update-compress-status').innerText = "";
                 await fetchUpdates(currentSelectedCatId);
             }
-
             submitBtn.disabled = false;
             submitBtn.innerText = "🐾 この近況を投稿する";
         };
 
-        // 8. フィルター・その他
+        // 7. その他
         function updateGlobalMeter() {
             const globalCurrent = catsData.reduce((sum, cat) => sum + (cat.current_amount || 0), 0);
             document.getElementById('globalAmount').innerText = globalCurrent.toLocaleString() + '円';
