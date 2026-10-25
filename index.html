@@ -454,6 +454,73 @@
         <button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">投げ銭を確定する</button>
     </div>
 </div>
+    <!-- モーダル: 管理者用・支援金請求管理 -->
+<div id="payoutManagerModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-4xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+        
+        <!-- モーダルヘッダー -->
+        <div class="flex justify-between items-center border-b pb-3">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-shield-halved text-amber-600 text-xl"></i>
+                <h3 class="font-bold text-lg text-stone-800">ボランティア支援金・請求管理</h3>
+            </div>
+            <button onclick="closePayoutManagerModal()" class="text-stone-400 hover:text-stone-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+        </div>
+
+        <p class="text-xs text-stone-500">ボランティアからの振込申請の確認と管理を行います（手数料設定: 20%）</p>
+
+        <!-- 総プール残高表示 -->
+        <div class="bg-amber-50 p-4 rounded-xl border border-amber-200 flex justify-between items-center">
+            <span class="text-xs text-stone-600 font-medium">総プール残高（未処理）</span>
+            <span class="font-bold text-lg text-amber-800" id="adminTotalPool">124,500円</span>
+        </div>
+
+        <!-- 申請一覧テーブル -->
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-sm">
+                <thead>
+                    <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
+                        <th class="p-3">ボランティア名</th>
+                        <th class="p-3">担当猫 / 概要</th>
+                        <th class="p-3">申請額</th>
+                        <th class="p-3">振込予定額 (20%引)</th>
+                        <th class="p-3">振込先口座</th>
+                        <th class="p-3 text-center">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="adminPayoutList" class="divide-y divide-stone-200 text-stone-700">
+                    <!-- サンプルデータ -->
+                    <tr>
+                        <td class="p-3 font-medium">山田 花子</td>
+                        <td class="p-3 text-xs text-stone-500">たまちゃん 保護活動</td>
+                        <td class="p-3 font-bold">25,400円</td>
+                        <td class="p-3 font-bold text-amber-700">20,320円</td>
+                        <td class="p-3 text-xs">
+                            〇〇銀行 渋谷支店<br>
+                            普通 1234567<br>
+                            (ネコ タロウ)
+                        </td>
+                        <td class="p-3 text-center">
+                            <button onclick="processPayout('req_001')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
+                                振込完了にする
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 閉じるボタン -->
+        <div class="pt-3 border-t border-stone-200 flex justify-end">
+            <button onclick="closePayoutManagerModal()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 text-sm font-bold px-5 py-2 rounded-xl transition">
+                閉じる
+            </button>
+        </div>
+
+    </div>
+</div>
     <!-- フッター (新規登録の隣にマニュアルボタン追加) -->
     <footer class="bg-stone-800 text-stone-300 text-xs py-8 mt-12 border-t border-stone-700">
         <div class="max-w-6xl mx-auto px-4 text-center space-y-4">
