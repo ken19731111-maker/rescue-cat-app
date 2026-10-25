@@ -70,7 +70,7 @@
                     </div>
                 </div>
 
-                <!-- ボランティア専用 受信トレイ（里親応募一覧） -->
+                <!-- ボランティア専用 受信トレイ（里親応募一覧 ＆ ステータス管理） -->
                 <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3">
                     <div class="flex justify-between items-center">
                         <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
@@ -84,6 +84,56 @@
                         <p class="text-xs text-white/70 text-center py-2">応募データを読み込んでいます...</p>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- 全体活動レポート・お知らせセクション 📰 -->
+        <section class="bg-white rounded-2xl p-5 shadow-sm border border-amber-100 space-y-4">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-extrabold text-amber-900 text-base flex items-center gap-2">
+                    <span>📰 活動レポート・団体からのお知らせ</span>
+                </h3>
+                <button id="addNewsBtn" onclick="toggleNewsForm()" class="text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg hidden transition">
+                    ✍️ お知らせを投稿する
+                </button>
+            </div>
+
+            <!-- 管理者専用：お知らせ投稿フォーム -->
+            <form id="newsForm" onsubmit="handleCreateNews(event)" class="bg-amber-50/50 p-4 rounded-xl border border-amber-200 space-y-3 text-xs hidden">
+                <h4 class="font-bold text-amber-900">✍️ 新しい活動レポート・お知らせを作成</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-stone-600 mb-1">タイトル <span class="text-rose-500">*</span></label>
+                        <input type="text" id="news-title" required placeholder="例: 今月の譲渡会開催のお知らせ" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-stone-600 mb-1">カテゴリ</label>
+                        <select id="news-category" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                            <option value="お知らせ">📢 お知らせ</option>
+                            <option value="活動報告">🐾 活動報告</option>
+                            <option value="譲渡会">🏠 譲渡会情報</option>
+                            <option value="収支報告">📊 収支・支援使い道</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">画像選択 (任意・自動圧縮)</label>
+                    <input type="file" id="news-image-file" accept="image/*" onchange="processImage(event, 'news-image-url', 'news-compress-status')" class="w-full text-[11px] text-stone-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-amber-100 file:text-amber-800">
+                    <input type="hidden" id="news-image-url">
+                    <p id="news-compress-status" class="text-[10px] text-amber-700 font-bold mt-0.5"></p>
+                </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">本文 <span class="text-rose-500">*</span></label>
+                    <textarea id="news-content" rows="3" required placeholder="レポート本文を入力してください" class="w-full border border-stone-300 rounded p-2 bg-white outline-none"></textarea>
+                </div>
+                <button type="submit" id="submitNewsBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded shadow transition">
+                    投稿して公開する
+                </button>
+            </form>
+
+            <!-- お知らせ一覧 -->
+            <div id="newsList" class="space-y-3">
+                <p class="text-xs text-stone-400 text-center py-4">お知らせを読み込んでいます...</p>
             </div>
         </section>
 
@@ -601,7 +651,6 @@
             }
         };
 
-        // SNSシェア処理（X, LINE, Instagram）
         window.shareSNS = function(platform) {
             const cat = catsData.find(c => c.id === currentSelectedCatId);
             if (!cat) return;
@@ -613,7 +662,6 @@
             } else if (platform === 'line') {
                 window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
             } else if (platform === 'instagram') {
-                // クリップボードに紹介テキストをコピー
                 navigator.clipboard.writeText(`${text}\n${url}`).then(() => {
                     alert(`📸 「${cat.name}」ちゃんの紹介テキストとURLをコピーしました！\n\nInstagramアプリまたはWebを開いて、ストーリーズや投稿に貼り付けてシェアしてください🐾`);
                     window.open('https://www.instagram.com/', '_blank');
@@ -703,7 +751,8 @@
                 applicant_email: document.getElementById('apply-email').value,
                 applicant_phone: document.getElementById('apply-phone').value,
                 housing_type: document.getElementById('apply-housing').value,
-                message: document.getElementById('apply-message').value
+                message: document.getElementById('apply-message').value,
+                status: '未対応'
             }]);
 
             if (error) {
@@ -715,6 +764,7 @@
             }
         };
 
+        // ボランティア専用：届いた里親応募一覧を取得（ステータス更新機能付き）
         async function fetchApplications() {
             const listEl = document.getElementById('volunteerApplicationsList');
             const badgeEl = document.getElementById('appCountBadge');
@@ -744,14 +794,27 @@
             listEl.innerHTML = '';
             apps.forEach(app => {
                 const catName = app.cats ? app.cats.name : '不明な猫';
-                const shelter = app.cats ? app.cats.shelter : '';
                 const dateStr = new Date(app.created_at).toLocaleString('ja-JP');
+                const appStatus = app.status || '未対応';
+
+                let statusColor = "bg-rose-100 text-rose-800 border-rose-300";
+                if (appStatus === '面談調整中') statusColor = "bg-amber-100 text-amber-800 border-amber-300";
+                if (appStatus === 'トライアル決定') statusColor = "bg-blue-100 text-blue-800 border-blue-300";
+                if (appStatus === '譲渡完了') statusColor = "bg-emerald-100 text-emerald-800 border-emerald-300";
 
                 listEl.innerHTML += `
                     <div class="bg-white text-stone-800 rounded-lg p-3 space-y-2 text-xs shadow-sm">
-                        <div class="flex justify-between items-center border-b pb-1.5">
+                        <div class="flex justify-between items-center border-b pb-1.5 flex-wrap gap-1">
                             <span class="font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded">🐱 応募先: ${catName}</span>
-                            <span class="text-[10px] text-stone-400">${dateStr}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] text-stone-400">${dateStr}</span>
+                                <select onchange="updateApplicationStatus(${app.id}, this.value)" class="text-[11px] font-bold border rounded px-1.5 py-0.5 outline-none ${statusColor}">
+                                    <option value="未対応" ${appStatus === '未対応' ? 'selected' : ''}>🔴 未対応</option>
+                                    <option value="面談調整中" ${appStatus === '面談調整中' ? 'selected' : ''}>🟡 面談調整中</option>
+                                    <option value="トライアル決定" ${appStatus === 'トライアル決定' ? 'selected' : ''}>🔵 トライアル決定</option>
+                                    <option value="譲渡完了" ${appStatus === '譲渡完了' ? 'selected' : ''}>🟢 譲渡完了</option>
+                                </select>
+                            </div>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-1 text-[11px]">
                             <p><strong>お名前:</strong> ${app.applicant_name} 様</p>
@@ -764,6 +827,88 @@
                 `;
             });
         }
+
+        // 応募ステータス更新処理
+        window.updateApplicationStatus = async function(appId, newStatus) {
+            if (!window.supabaseClient) return;
+            const { error } = await window.supabaseClient
+                .from('adoption_applications')
+                .update({ status: newStatus })
+                .eq('id', appId);
+
+            if (error) alert("ステータス更新エラー: " + error.message);
+            else {
+                fetchApplications();
+            }
+        };
+
+        // --- 全体活動レポート（お知らせ）関連処理 ---
+        async function fetchNews() {
+            const listEl = document.getElementById('newsList');
+            if (!window.supabaseClient) return;
+            const { data, error } = await window.supabaseClient.from('news_posts').select('*').order('id', { ascending: false });
+            if (error) {
+                listEl.innerHTML = '<p class="text-xs text-rose-500 text-center py-2">お知らせの読み込みに失敗しました</p>';
+                return;
+            }
+            const news = data || [];
+            if (news.length === 0) {
+                listEl.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">現在、お知らせはありません 🐾</p>';
+                return;
+            }
+            listEl.innerHTML = '';
+            news.forEach(item => {
+                const dateStr = new Date(item.created_at).toLocaleDateString('ja-JP');
+                listEl.innerHTML += `
+                    <div class="border border-stone-200 rounded-xl p-4 bg-stone-50/50 space-y-2 text-xs">
+                        <div class="flex justify-between items-center border-b pb-1.5">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-md text-[10px]">${item.category || 'お知らせ'}</span>
+                                <h4 class="font-bold text-sm text-stone-800">${item.title}</h4>
+                            </div>
+                            <span class="text-[10px] text-stone-400">${dateStr}</span>
+                        </div>
+                        <p class="text-stone-700 leading-relaxed whitespace-pre-wrap">${item.content}</p>
+                        ${item.image_url ? `<img src="${item.image_url}" class="rounded-lg max-h-56 object-cover mt-2 w-full md:w-auto">` : ''}
+                    </div>
+                `;
+            });
+        }
+
+        window.toggleNewsForm = function() {
+            const form = document.getElementById('newsForm');
+            form.classList.toggle('hidden');
+        };
+
+        window.handleCreateNews = async function(event) {
+            event.preventDefault();
+            if (!window.supabaseClient) return;
+            const submitBtn = document.getElementById('submitNewsBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "投稿中...";
+
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+
+            const { error } = await window.supabaseClient.from('news_posts').insert([{
+                title: document.getElementById('news-title').value,
+                category: document.getElementById('news-category').value,
+                content: document.getElementById('news-content').value,
+                image_url: document.getElementById('news-image-url').value,
+                user_id: user ? user.id : null
+            }]);
+
+            if (error) {
+                alert("投稿エラー: " + error.message);
+            } else {
+                alert("🎉 新しい活動レポート・お知らせを投稿しました！");
+                document.getElementById('newsForm').reset();
+                document.getElementById('news-compress-status').innerText = "";
+                toggleNewsForm();
+                fetchNews();
+            }
+            submitBtn.disabled = false;
+            submitBtn.innerText = "投稿して公開する";
+        };
 
         function updateGlobalMeter() {
             const globalCurrent = catsData.reduce((sum, cat) => sum + (cat.current_amount || 0), 0);
@@ -843,6 +988,7 @@
             isLoggedIn = !!session;
             document.getElementById('admin-add-cat-section').classList.toggle('hidden', !session);
             document.getElementById('volunteerDashboard').classList.toggle('hidden', !session);
+            document.getElementById('addNewsBtn').classList.toggle('hidden', !session);
             document.getElementById('login-form-container').style.display = session ? 'none' : 'block';
             document.getElementById('signup-form-container').style.display = 'none';
             document.getElementById('logout-section').style.display = session ? 'block' : 'none';
@@ -858,6 +1004,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             checkUserSession();
             fetchCats();
+            fetchNews();
         });
     </script>
 </body>
