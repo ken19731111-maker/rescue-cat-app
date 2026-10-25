@@ -1115,31 +1115,16 @@ function closeModal(id) {
     if (modal) modal.classList.add('hidden'); 
 }
 
-// 変数を一切作らず、HTMLのinput要素の値を直接読み書きする安全設計
+// windowオブジェクトを使うことで、重複エラーを完全に防ぎます
+if (typeof window.selectedTipAmount === 'undefined') {
+    window.selectedTipAmount = 1000;
+}
+
 window.selectAmount = function(amount) {
+    window.selectedTipAmount = amount;
+    // 隠してある入力欄があれば、そこにも値を連動させておく
     const input = document.getElementById('customAmount');
-    if (input) {
-        input.value = amount;
-    }
-};
-
-// 投げ銭を確定するボタンの処理（Stripeの決済リンクへ飛ぶ）
-// 投げ銭モーダルを開く・閉じる関数
-function openTipModal(id) { 
-    const modal = document.getElementById('tipModal');
-    if (modal) modal.classList.remove('hidden'); 
-}
-function closeModal(id) { 
-    const modal = document.getElementById('tipModal');
-    if (modal) modal.classList.add('hidden'); 
-}
-
-// 選択された金額を記憶する変数
-let selectedTipAmount = 1000;
-
-window.selectAmount = function(amount) {
-    selectedTipAmount = amount;
-    // 選択された金額をわかりやすく視覚的に変えたい場合の処理もここに書けます
+    if (input) input.value = amount;
 };
 
 // 投げ銭を確定するボタンの処理（選んだ金額のStripeリンクへ飛ぶ）
@@ -1151,9 +1136,10 @@ window.submitTip = function() {
         3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
     };
 
-    let targetUrl = stripeLinks[selectedTipAmount] || stripeLinks[1000];
+    let amount = window.selectedTipAmount || 1000;
+    let targetUrl = stripeLinks[amount] || stripeLinks[1000];
 
-    alert(`🐾 ${selectedTipAmount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
+    alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
     
     window.location.href = targetUrl;
 };
