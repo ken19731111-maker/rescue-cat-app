@@ -1105,25 +1105,42 @@ window.selectAmount = function(amount) {
     document.getElementById('customAmount').value = amount;
 };
 
-// 選択された金額を記憶する変数（初期値は1000円）
-let selectedTipAmount = 1000;
+// 投げ銭モーダルを開く・閉じる関数
+function openTipModal(id) { 
+    document.getElementById('tipModal').classList.remove('hidden'); 
+}
+function closeModal(id) { 
+    document.getElementById('tipModal').classList.add('hidden'); 
+}
+
+// 金額ボタンが押されたときの処理（変数の重複を防ぐため safe に定義）
+if (typeof selectedTipAmount === 'undefined') {
+    var selectedTipAmount = 1000;
+}
 
 window.selectAmount = function(amount) {
     selectedTipAmount = amount;
     document.getElementById('customAmount').value = amount;
 };
 
-// 投げ銭を確定するボタンの処理（金額に応じてStripeのリンクを切り替える）
+// 投げ銭を確定するボタンの処理（Stripeの決済リンクへ飛ぶ）
 window.submitTip = function() {
     const customAmountInput = document.getElementById('customAmount');
     let amount = customAmountInput.value ? parseInt(customAmountInput.value) : selectedTipAmount;
 
-    // 💡 ここに、Stripeで作った3つの「決済リンクのURL」をそれぞれの金額に合わせて貼り付けてください！
+    // 💡 Stripeで作った3つの決済リンクのURLをここに貼り付けてください
     const stripeLinks = {
         500: "https://dashboard.stripe.com/acct_1UUKlnHJh5iDdQ3C/test/products/prod_VVLy8uSgwEdlg5",
         1000: "https://dashboard.stripe.com/acct_1UUKlnHJh5iDdQ3C/test/products/prod_VVLz9AwyD53lVo",
         3000: "https://dashboard.stripe.com/acct_1UUKlnHJh5iDdQ3C/test/products/prod_VVM0zsOo70fN57"
     };
+
+    let targetUrl = stripeLinks[amount] || stripeLinks[1000];
+
+    alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
+    
+    window.location.href = targetUrl;
+};
 
     // ユーザーが選んだ（または入力した）金額にぴったりのリンクを探す
     let targetUrl = stripeLinks[amount];
