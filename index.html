@@ -15,10 +15,10 @@
 </head>
 <body class="bg-amber-50/40 text-stone-800 min-h-screen flex flex-col">
 
-    <!-- ヘッダー -->
+    <!-- ヘッダー (タイトルクリックでホームに戻る) -->
     <header class="bg-white border-b border-amber-100 sticky top-0 z-30 shadow-sm">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-2">
+            <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition">
                 <span class="text-2xl">🐾</span>
                 <span class="font-extrabold text-xl text-amber-900 tracking-tight">RescuCat</span>
             </div>
@@ -99,41 +99,41 @@
             </div>
 
             <!-- 管理者専用：お知らせ投稿フォーム -->
-<form id="newsForm" onsubmit="handleCreateNews(event)" class="bg-amber-50/50 p-4 rounded-xl border border-amber-200 space-y-3 text-xs hidden">
-    <h4 class="font-bold text-amber-900">✍️ 新しい活動レポート・お知らせを作成</h4>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div>
-            <label class="block text-stone-600 mb-1">タイトル <span class="text-rose-500">*</span></label>
-            <input type="text" id="news-title" required placeholder="例: 今月の譲渡会開催のお知らせ" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
-        </div>
-        <div>
-            <label class="block text-stone-600 mb-1">団体名・執筆者名 <span class="text-rose-500">*</span></label>
-            <input type="text" id="news-shelter" required placeholder="例: 〇〇保護ネコの会" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
-        </div>
-        <div>
-            <label class="block text-stone-600 mb-1">カテゴリ</label>
-            <select id="news-category" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
-                <option value="お知らせ">📢 お知らせ</option>
-                <option value="活動報告">🐾 活動報告</option>
-                <option value="譲渡会">🏠 譲渡会情報</option>
-                <option value="収支報告">📊 収支・支援使い道</option>
-            </select>
-        </div>
-    </div>
-    <div>
-        <label class="block text-stone-600 mb-1">画像選択 (任意・自動圧縮)</label>
-        <input type="file" id="news-image-file" accept="image/*" onchange="processImage(event, 'news-image-url', 'news-compress-status')" class="w-full text-[11px] text-stone-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-amber-100 file:text-amber-800">
-        <input type="hidden" id="news-image-url">
-        <p id="news-compress-status" class="text-[10px] text-amber-700 font-bold mt-0.5"></p>
-    </div>
-    <div>
-        <label class="block text-stone-600 mb-1">本文 <span class="text-rose-500">*</span></label>
-        <textarea id="news-content" rows="3" required placeholder="レポート本文を入力してください" class="w-full border border-stone-300 rounded p-2 bg-white outline-none"></textarea>
-    </div>
-    <button type="submit" id="submitNewsBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded shadow transition">
-        投稿して公開する
-    </button>
-</form>
+            <form id="newsForm" onsubmit="handleCreateNews(event)" class="bg-amber-50/50 p-4 rounded-xl border border-amber-200 space-y-3 text-xs hidden">
+                <h4 class="font-bold text-amber-900">✍️ 新しい活動レポート・お知らせを作成</h4>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <div>
+                        <label class="block text-stone-600 mb-1">タイトル <span class="text-rose-500">*</span></label>
+                        <input type="text" id="news-title" required placeholder="例: 今月の譲渡会開催のお知らせ" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-stone-600 mb-1">団体名・執筆者名 <span class="text-rose-500">*</span></label>
+                        <input type="text" id="news-shelter" required placeholder="例: 〇〇保護ネコの会" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-stone-600 mb-1">カテゴリ</label>
+                        <select id="news-category" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                            <option value="お知らせ">📢 お知らせ</option>
+                            <option value="活動報告">🐾 活動報告</option>
+                            <option value="譲渡会">🏠 譲渡会情報</option>
+                            <option value="収支報告">📊 収支・支援使い道</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">画像選択 (任意・自動圧縮)</label>
+                    <input type="file" id="news-image-file" accept="image/*" onchange="processImage(event, 'news-image-url', 'news-compress-status')" class="w-full text-[11px] text-stone-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-amber-100 file:text-amber-800">
+                    <input type="hidden" id="news-image-url">
+                    <p id="news-compress-status" class="text-[10px] text-amber-700 font-bold mt-0.5"></p>
+                </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">本文 <span class="text-rose-500">*</span></label>
+                    <textarea id="news-content" rows="3" required placeholder="レポート本文を入力してください" class="w-full border border-stone-300 rounded p-2 bg-white outline-none"></textarea>
+                </div>
+                <button type="submit" id="submitNewsBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded shadow transition">
+                    投稿して公開する
+                </button>
+            </form>
 
             <!-- お知らせ一覧 -->
             <div id="newsList" class="space-y-3">
@@ -355,6 +355,22 @@
         </div>
     </div>
 
+    <!-- モーダル: 規約 ＆ プライバシーポリシー -->
+    <div id="policyModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[85vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 id="policyModalTitle" class="font-bold text-lg text-stone-800">利用規約・プライバシーポリシー</h3>
+                <button onclick="closeModal('policyModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div id="policyModalContent" class="text-xs text-stone-700 leading-relaxed space-y-3 whitespace-pre-wrap">
+                <!-- JavaScriptで動的生成 -->
+            </div>
+            <div class="pt-2 border-t text-right">
+                <button onclick="closeModal('policyModal')" class="bg-stone-800 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-stone-700 transition">閉じる</button>
+            </div>
+        </div>
+    </div>
+
     <!-- モーダル: 投げ銭 -->
     <div id="tipModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
@@ -375,10 +391,20 @@
         </div>
     </div>
 
-    <!-- フッター (管理者認証付き) -->
-    <footer class="bg-stone-800 text-stone-300 text-xs py-6 mt-12 border-t border-stone-700">
-        <div class="max-w-6xl mx-auto px-4 text-center space-y-3">
-            <p class="font-bold text-amber-400">🐾 保護ネコ応援プラットフォーム RescuCat</p>
+    <!-- フッター (タイトルクリックでホームへ戻る ＆ 規約リンク追加) -->
+    <footer class="bg-stone-800 text-stone-300 text-xs py-8 mt-12 border-t border-stone-700">
+        <div class="max-w-6xl mx-auto px-4 text-center space-y-4">
+            <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="font-bold text-amber-400 text-sm cursor-pointer hover:underline inline-flex items-center gap-1.5">
+                <span>🐾 保護ネコ応援プラットフォーム RescuCat</span>
+            </div>
+
+            <!-- 規約 ＆ プライバシーポリシー リンク -->
+            <div class="flex justify-center gap-4 text-[11px] text-stone-400">
+                <button onclick="openPolicyModal('terms')" class="hover:text-amber-300 underline">利用規約</button>
+                <span>•</span>
+                <button onclick="openPolicyModal('privacy')" class="hover:text-amber-300 underline">プライバシーポリシー</button>
+            </div>
+
             <div>
                 <button onclick="toggleAuthForm()" style="background: none; border: none; color: #a8a29e; text-decoration: underline; font-size: 0.8rem; cursor: pointer; padding: 5px;">
                     ボランティア・管理者ログイン / 登録
@@ -404,7 +430,7 @@
                     <button onclick="handleLogout()" style="padding: 6px 12px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer;">ログアウト</button>
                 </div>
             </div>
-            <p class="text-stone-400">© 2026 RescuCat All Rights Reserved.</p>
+            <p class="text-stone-500 text-[11px]">© 2026 RescuCat All Rights Reserved.</p>
         </div>
     </footer>
 
@@ -768,7 +794,6 @@
             }
         };
 
-        // ボランティア専用：届いた里親応募一覧を取得（ステータス更新機能付き）
         async function fetchApplications() {
             const listEl = document.getElementById('volunteerApplicationsList');
             const badgeEl = document.getElementById('appCountBadge');
@@ -832,7 +857,6 @@
             });
         }
 
-        // 応募ステータス更新処理
         window.updateApplicationStatus = async function(appId, newStatus) {
             if (!window.supabaseClient) return;
             const { error } = await window.supabaseClient
@@ -846,77 +870,100 @@
             }
         };
 
-        // --- 全体活動レポート（お知らせ）関連処理 ---
-        // お知らせ一覧を取得して表示（団体名バッジ付き）
-async function fetchNews() {
-    const listEl = document.getElementById('newsList');
-    if (!window.supabaseClient) return;
-    const { data, error } = await window.supabaseClient.from('news_posts').select('*').order('id', { ascending: false });
-    if (error) {
-        listEl.innerHTML = '<p class="text-xs text-rose-500 text-center py-2">お知らせの読み込みに失敗しました</p>';
-        return;
-    }
-    const news = data || [];
-    if (news.length === 0) {
-        listEl.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">現在、お知らせはありません 🐾</p>';
-        return;
-    }
-    listEl.innerHTML = '';
-    news.forEach(item => {
-        const dateStr = new Date(item.created_at).toLocaleDateString('ja-JP');
-        const shelterName = item.shelter ? `🏠 ${item.shelter}` : '';
+        async function fetchNews() {
+            const listEl = document.getElementById('newsList');
+            if (!window.supabaseClient) return;
+            const { data, error } = await window.supabaseClient.from('news_posts').select('*').order('id', { ascending: false });
+            if (error) {
+                listEl.innerHTML = '<p class="text-xs text-rose-500 text-center py-2">お知らせの読み込みに失敗しました</p>';
+                return;
+            }
+            const news = data || [];
+            if (news.length === 0) {
+                listEl.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">現在、お知らせはありません 🐾</p>';
+                return;
+            }
+            listEl.innerHTML = '';
+            news.forEach(item => {
+                const dateStr = new Date(item.created_at).toLocaleDateString('ja-JP');
+                const shelterName = item.shelter ? `🏠 ${item.shelter}` : '';
 
-        listEl.innerHTML += `
-            <div class="border border-stone-200 rounded-xl p-4 bg-stone-50/50 space-y-2 text-xs">
-                <div class="flex justify-between items-center border-b pb-1.5 flex-wrap gap-1">
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <span class="bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-md text-[10px]">${item.category || 'お知らせ'}</span>
-                        ${shelterName ? `<span class="bg-stone-200 text-stone-700 font-bold px-2 py-0.5 rounded-md text-[10px]">${shelterName}</span>` : ''}
-                        <h4 class="font-bold text-sm text-stone-800">${item.title}</h4>
+                listEl.innerHTML += `
+                    <div class="border border-stone-200 rounded-xl p-4 bg-stone-50/50 space-y-2 text-xs">
+                        <div class="flex justify-between items-center border-b pb-1.5 flex-wrap gap-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-md text-[10px]">${item.category || 'お知らせ'}</span>
+                                ${shelterName ? `<span class="bg-stone-200 text-stone-700 font-bold px-2 py-0.5 rounded-md text-[10px]">${shelterName}</span>` : ''}
+                                <h4 class="font-bold text-sm text-stone-800">${item.title}</h4>
+                            </div>
+                            <span class="text-[10px] text-stone-400">${dateStr}</span>
+                        </div>
+                        <p class="text-stone-700 leading-relaxed whitespace-pre-wrap">${item.content}</p>
+                        ${item.image_url ? `<img src="${item.image_url}" class="rounded-lg max-h-56 object-cover mt-2 w-full md:w-auto">` : ''}
                     </div>
-                    <span class="text-[10px] text-stone-400">${dateStr}</span>
-                </div>
-                <p class="text-stone-700 leading-relaxed whitespace-pre-wrap">${item.content}</p>
-                ${item.image_url ? `<img src="${item.image_url}" class="rounded-lg max-h-56 object-cover mt-2 w-full md:w-auto">` : ''}
-            </div>
-        `;
-    });
-}
+                `;
+            });
+        }
+
         window.toggleNewsForm = function() {
             const form = document.getElementById('newsForm');
             form.classList.toggle('hidden');
         };
 
         window.handleCreateNews = async function(event) {
-    event.preventDefault();
-    if (!window.supabaseClient) return;
-    const submitBtn = document.getElementById('submitNewsBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerText = "投稿中...";
+            event.preventDefault();
+            if (!window.supabaseClient) return;
+            const submitBtn = document.getElementById('submitNewsBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "投稿中...";
 
-    const { data: { user } } = await window.supabaseClient.auth.getUser();
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
 
-    const { error } = await window.supabaseClient.from('news_posts').insert([{
-        title: document.getElementById('news-title').value,
-        shelter: document.getElementById('news-shelter').value, // 団体名を保存！
-        category: document.getElementById('news-category').value,
-        content: document.getElementById('news-content').value,
-        image_url: document.getElementById('news-image-url').value,
-        user_id: user ? user.id : null
-    }]);
+            const { error } = await window.supabaseClient.from('news_posts').insert([{
+                title: document.getElementById('news-title').value,
+                shelter: document.getElementById('news-shelter').value,
+                category: document.getElementById('news-category').value,
+                content: document.getElementById('news-content').value,
+                image_url: document.getElementById('news-image-url').value,
+                user_id: user ? user.id : null
+            }]);
 
-    if (error) {
-        alert("投稿エラー: " + error.message);
-    } else {
-        alert("🎉 新しい活動レポート・お知らせを投稿しました！");
-        document.getElementById('newsForm').reset();
-        document.getElementById('news-compress-status').innerText = "";
-        toggleNewsForm();
-        fetchNews();
-    }
-    submitBtn.disabled = false;
-    submitBtn.innerText = "投稿して公開する";
-};
+            if (error) {
+                alert("投稿エラー: " + error.message);
+            } else {
+                alert("🎉 新しい活動レポート・お知らせを投稿しました！");
+                document.getElementById('newsForm').reset();
+                document.getElementById('news-compress-status').innerText = "";
+                toggleNewsForm();
+                fetchNews();
+            }
+            submitBtn.disabled = false;
+            submitBtn.innerText = "投稿して公開する";
+        };
+
+        // 規約モーダル表示処理
+        window.openPolicyModal = function(type) {
+            const titleEl = document.getElementById('policyModalTitle');
+            const contentEl = document.getElementById('policyModalContent');
+
+            if (type === 'terms') {
+                titleEl.innerText = "利用規約";
+                contentEl.innerHTML = `
+<p class="font-bold text-stone-800">【RescuCat 利用規約】</p>
+<p><strong>第1条（目的）</strong><br>本プラットフォーム（以下「本サービス」）は、保護ネコの里親募集、活動支援、およびボランティアと支援者のマッチング・コミュニケーションを促進することを目的とします。</p>
+<p><strong>第2条（里親応募に関する注意・禁止事項）</strong><br>1. 応募者は、真実かつ正確な情報を提供してエントリーを行うものとします。<br>2. 営利目的、転売目的、動物虐待を目的とした応募は固く禁止します。発覚した場合は法的措置を講じます。<br>3. 里親決定後の譲渡契約およびやり取りは、保護主（ボランティア）と応募者の直接の責任において行うものとします。</p>
+<p><strong>第3条（免責事項）</strong><br>本サービスは、ユーザー間（ボランティアと支援者・応募者）で生じたトラブル、譲渡後のトラブル等について、一切の責任を負いません。</p>
+<p><strong>第4条（規約の変更）</strong><br>本規約は、必要に応じて事前通知なく変更できるものとします。</p>`;
+            } else if (type === 'privacy') {
+                titleEl.innerText = "プライバシーポリシー";
+                contentEl.innerHTML = `
+<p class="font-bold text-stone-800">【RescuCat プライバシーポリシー】</p>
+<p><strong>1. 個人情報の収集・利用目的</strong><br>本サービスでは、里親・お見合い応募の際に、お名前・メールアドレス・電話番号・住宅環境等の個人情報を収集します。<br>収集した個人情報は、以下の目的のみに利用します。<br>・保護主（ボランティア）からの選考・面談日程連絡および譲渡手続き<br>・本サービスに関する重要なお知らせや問い合わせ対応</p>
+<p><strong>2. 個人情報の第三者提供・管理</strong><br>ご提供いただいた個人情報は、該当する保護ネコの担当ボランティア以外の第三者に開示・提供することはありません。また、データベース上で厳重に保護・管理されます。</p>
+<p><strong>3. 個人情報の開示・訂正・削除</strong><br>ご本人からの個人情報の照会・修正・削除のご要望があった場合は、迅速に対応いたします。</p>`;
+            }
+            document.getElementById('policyModal').classList.remove('hidden');
+        };
 
         function updateGlobalMeter() {
             const globalCurrent = catsData.reduce((sum, cat) => sum + (cat.current_amount || 0), 0);
