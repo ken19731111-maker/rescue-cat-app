@@ -205,15 +205,18 @@
                 </div>
             </div>
 
-            <!-- SNSシェアボタンエリア -->
+            <!-- SNSシェアボタンエリア (X / LINE / Instagram) -->
             <div class="bg-amber-50/60 p-3 rounded-xl border border-amber-200 flex items-center justify-between text-xs">
                 <span class="font-bold text-amber-900"><i class="fa-solid fa-share-nodes"></i> SNSで応援シェア:</span>
-                <div class="flex gap-2">
-                    <button onclick="shareSNS('twitter')" class="bg-stone-900 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-black">
+                <div class="flex gap-1.5 flex-wrap">
+                    <button onclick="shareSNS('twitter')" class="bg-stone-900 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-black transition">
                         <i class="fa-brands fa-x-twitter"></i> X
                     </button>
-                    <button onclick="shareSNS('line')" class="bg-emerald-600 text-white px-3 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-emerald-700">
+                    <button onclick="shareSNS('line')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-emerald-700 transition">
                         <i class="fa-brands fa-line"></i> LINE
+                    </button>
+                    <button onclick="shareSNS('instagram')" class="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:opacity-90 transition">
+                        <i class="fa-brands fa-instagram"></i> Instagram
                     </button>
                 </div>
             </div>
@@ -598,13 +601,26 @@
             }
         };
 
+        // SNSシェア処理（X, LINE, Instagram）
         window.shareSNS = function(platform) {
             const cat = catsData.find(c => c.id === currentSelectedCatId);
             if (!cat) return;
             const text = `保護ネコ支援プラットフォーム RescuCatで「${cat.name}」ちゃんを応援中！🐾`;
             const url = window.location.href;
-            if (platform === 'twitter') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
-            else if (platform === 'line') window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+
+            if (platform === 'twitter') {
+                window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+            } else if (platform === 'line') {
+                window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
+            } else if (platform === 'instagram') {
+                // クリップボードに紹介テキストをコピー
+                navigator.clipboard.writeText(`${text}\n${url}`).then(() => {
+                    alert(`📸 「${cat.name}」ちゃんの紹介テキストとURLをコピーしました！\n\nInstagramアプリまたはWebを開いて、ストーリーズや投稿に貼り付けてシェアしてください🐾`);
+                    window.open('https://www.instagram.com/', '_blank');
+                }).catch(() => {
+                    window.open('https://www.instagram.com/', '_blank');
+                });
+            }
         };
 
         async function fetchUpdates(catId) {
@@ -699,13 +715,11 @@
             }
         };
 
-        // ボランティア専用：届いた里親応募一覧を取得して表示
         async function fetchApplications() {
             const listEl = document.getElementById('volunteerApplicationsList');
             const badgeEl = document.getElementById('appCountBadge');
             if (!window.supabaseClient) return;
 
-            // adoption_applications と猫の情報を結合して取得
             const { data, error } = await window.supabaseClient
                 .from('adoption_applications')
                 .select(`
@@ -834,7 +848,7 @@
             document.getElementById('logout-section').style.display = session ? 'block' : 'none';
 
             if (session) {
-                fetchApplications(); // ログイン時に応募一覧を受信！
+                fetchApplications();
             }
         }
 
