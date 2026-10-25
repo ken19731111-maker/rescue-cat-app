@@ -70,21 +70,31 @@
                     </div>
                 </div>
 
-                <!-- ボランティア専用 受信トレイ（里親応募一覧 ＆ ステータス管理） -->
-                <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3">
-                    <div class="flex justify-between items-center">
-                        <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
-                            <i class="fa-solid fa-inbox"></i> 届いた里親・お見合い応募 受信トレイ <span id="appCountBadge" class="bg-white text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black">0件</span>
-                        </h4>
-                        <button onclick="fetchApplications()" class="text-[11px] bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded transition font-bold">
-                            <i class="fa-solid fa-rotate"></i> 更新
-                        </button>
-                    </div>
-                    <div id="volunteerApplicationsList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-                        <p class="text-xs text-white/70 text-center py-2">応募データを読み込んでいます...</p>
-                    </div>
-                </div>
-            </div>
+               <!-- ボランティア専用 受信トレイ（里親応募一覧 ＆ ステータス管理） -->
+<div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3">
+    <div class="flex justify-between items-center">
+        <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
+            <i class="fa-solid fa-inbox"></i> 届いた里親・お見合い応募 受信トレイ <span id="appCountBadge" class="bg-white text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black">0件</span>
+        </h4>
+        
+        <!-- 💡 右側のボタンを並べるエリア -->
+        <div class="flex items-center gap-1.5">
+            <!-- 新しく追加する「支援金請求管理」ボタン -->
+            <button onclick="openPayoutManagerModal()" class="text-[11px] bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded transition font-bold flex items-center gap-1">
+                <i class="fa-solid fa-yen-sign"></i> 支援金管理
+            </button>
+            
+            <!-- もともとの「更新」ボタン -->
+            <button onclick="fetchApplications()" class="text-[11px] bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded transition font-bold">
+                <i class="fa-solid fa-rotate"></i> 更新
+            </button>
+        </div>
+    </div>
+    
+    <div id="volunteerApplicationsList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+        <p class="text-xs text-white/70 text-center py-2">応募データを読み込んでいます...</p>
+    </div>
+</div>
         </section>
 
         <!-- 全体活動レポート・お知らせセクション 📰 -->
