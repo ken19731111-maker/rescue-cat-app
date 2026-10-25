@@ -1107,27 +1107,30 @@ window.selectAmount = function(amount) {
 
 // 投げ銭モーダルを開く・閉じる関数
 function openTipModal(id) { 
-    document.getElementById('tipModal').classList.remove('hidden'); 
+    const modal = document.getElementById('tipModal');
+    if (modal) modal.classList.remove('hidden'); 
 }
 function closeModal(id) { 
-    document.getElementById('tipModal').classList.add('hidden'); 
+    const modal = document.getElementById('tipModal');
+    if (modal) modal.classList.add('hidden'); 
 }
 
-// ほかのコードと絶対に名前が被らないように「rescueCatTipAmount」という名前に変更！
-if (typeof rescueCatTipAmount === 'undefined') {
-    var rescueCatTipAmount = 1000;
-}
-
+// 変数を一切作らず、HTMLのinput要素の値を直接読み書きする安全設計
 window.selectAmount = function(amount) {
-    rescueCatTipAmount = amount;
     const input = document.getElementById('customAmount');
-    if (input) input.value = amount;
+    if (input) {
+        input.value = amount;
+    }
 };
 
 // 投げ銭を確定するボタンの処理（Stripeの決済リンクへ飛ぶ）
 window.submitTip = function() {
     const customAmountInput = document.getElementById('customAmount');
-    let amount = (customAmountInput && customAmountInput.value) ? parseInt(customAmountInput.value) : rescueCatTipAmount;
+    // 入力欄の値を取得する（未入力ならデフォルトで1000円）
+    let amount = 1000;
+    if (customAmountInput && customAmountInput.value) {
+        amount = parseInt(customAmountInput.value, 10) || 1000;
+    }
 
     // 💡 Stripeで作った3つの決済リンクのURLをここに貼り付けてください
     const stripeLinks = {
