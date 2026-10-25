@@ -50,22 +50,39 @@
             </div>
 
             <!-- ダッシュボード（ログイン中のボランティア専用） -->
-            <div id="volunteerDashboard" class="hidden pt-3 border-t border-white/20 grid grid-cols-2 md:grid-cols-4 gap-3 text-center text-xs">
-                <div class="bg-white/10 rounded-xl p-2.5 backdrop-blur-sm">
-                    <p class="opacity-80">登録保護ネコ数</p>
-                    <p class="text-lg font-black" id="dashCatCount">0頭</p>
+            <div id="volunteerDashboard" class="hidden pt-3 border-t border-white/20 space-y-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-center text-xs">
+                    <div class="bg-white/10 rounded-xl p-2.5 backdrop-blur-sm">
+                        <p class="opacity-80">登録保護ネコ数</p>
+                        <p class="text-lg font-black" id="dashCatCount">0頭</p>
+                    </div>
+                    <div class="bg-white/10 rounded-xl p-2.5 backdrop-blur-sm">
+                        <p class="opacity-80">総支援獲得額</p>
+                        <p class="text-lg font-black" id="dashTotalAmount">0円</p>
+                    </div>
+                    <div class="bg-white/10 rounded-xl p-2.5 backdrop-blur-sm">
+                        <p class="opacity-80">里親決定数</p>
+                        <p class="text-lg font-black" id="dashAdoptedCount">0匹</p>
+                    </div>
+                    <div class="bg-white/10 rounded-xl p-2.5 backdrop-blur-sm">
+                        <p class="opacity-80">緊急保護</p>
+                        <p class="text-lg font-black" id="dashUrgentCount">0件</p>
+                    </div>
                 </div>
-                <div class="bg-white/10 rounded-xl p-2.5 backdrop-blur-sm">
-                    <p class="opacity-80">総支援獲得額</p>
-                    <p class="text-lg font-black" id="dashTotalAmount">0円</p>
-                </div>
-                <div class="bg-white/10 rounded-xl p-2.5 backdrop-blur-sm">
-                    <p class="opacity-80">里親決定数</p>
-                    <p class="text-lg font-black" id="dashAdoptedCount">0匹</p>
-                </div>
-                <div class="bg-white/10 rounded-xl p-2.5 backdrop-blur-sm">
-                    <p class="opacity-80">緊急保護</p>
-                    <p class="text-lg font-black" id="dashUrgentCount">0件</p>
+
+                <!-- ボランティア専用 受信トレイ（里親応募一覧） -->
+                <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-inbox"></i> 届いた里親・お見合い応募 受信トレイ <span id="appCountBadge" class="bg-white text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black">0件</span>
+                        </h4>
+                        <button onclick="fetchApplications()" class="text-[11px] bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded transition font-bold">
+                            <i class="fa-solid fa-rotate"></i> 更新
+                        </button>
+                    </div>
+                    <div id="volunteerApplicationsList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                        <p class="text-xs text-white/70 text-center py-2">応募データを読み込んでいます...</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -478,72 +495,69 @@
         };
 
         window.handleCreateCat = async function(event) {
-    event.preventDefault();
-    if (!window.supabaseClient) return;
-    const submitBtn = document.getElementById('submitCatBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerText = "🐾 登録中...";
+            event.preventDefault();
+            if (!window.supabaseClient) return;
+            const submitBtn = document.getElementById('submitCatBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "🐾 登録中...";
 
-    // ログイン中のボランティアユーザー情報を取得
-    const { data: { user } } = await window.supabaseClient.auth.getUser();
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
 
-    const { error } = await window.supabaseClient.from('cats').insert([{
-        name: document.getElementById('cat-name').value,
-        shelter: document.getElementById('cat-shelter').value,
-        age: document.getElementById('cat-age').value,
-        target_amount: parseInt(document.getElementById('cat-target').value) || 20000,
-        current_amount: 0,
-        status: document.getElementById('cat-status').value,
-        image_url: document.getElementById('cat-image-url').value,
-        message: document.getElementById('cat-message').value,
-        has_video: document.getElementById('cat-has-video').checked,
-        is_kitten: document.getElementById('cat-is-kitten').checked,
-        is_urgent: document.getElementById('cat-is-urgent').checked,
-        user_id: user ? user.id : null // 登録したボランティアのIDを自動保存！
-    }]);
+            const { error } = await window.supabaseClient.from('cats').insert([{
+                name: document.getElementById('cat-name').value,
+                shelter: document.getElementById('cat-shelter').value,
+                age: document.getElementById('cat-age').value,
+                target_amount: parseInt(document.getElementById('cat-target').value) || 20000,
+                current_amount: 0,
+                status: document.getElementById('cat-status').value,
+                image_url: document.getElementById('cat-image-url').value,
+                message: document.getElementById('cat-message').value,
+                has_video: document.getElementById('cat-has-video').checked,
+                is_kitten: document.getElementById('cat-is-kitten').checked,
+                is_urgent: document.getElementById('cat-is-urgent').checked,
+                user_id: user ? user.id : null
+            }]);
 
-    if (error) alert("登録エラー: " + error.message);
-    else {
-        alert("🎉 新しいネコちゃんを登録しました！");
-        document.getElementById('addCatForm').reset();
-        document.getElementById('compress-status').innerText = "";
-        fetchCats();
-    }
-    submitBtn.disabled = false;
-    submitBtn.innerText = "🐾 このネコちゃんを登録・公開する";
-};
+            if (error) alert("登録エラー: " + error.message);
+            else {
+                alert("🎉 新しいネコちゃんを登録しました！");
+                document.getElementById('addCatForm').reset();
+                document.getElementById('compress-status').innerText = "";
+                fetchCats();
+            }
+            submitBtn.disabled = false;
+            submitBtn.innerText = "🐾 このネコちゃんを登録・公開する";
+        };
+
         window.openUpdatesModal = async function(catId) {
-    currentSelectedCatId = catId;
-    const cat = catsData.find(c => c.id === catId);
-    if (!cat) return;
+            currentSelectedCatId = catId;
+            const cat = catsData.find(c => c.id === catId);
+            if (!cat) return;
 
-    document.getElementById('modalCatName').innerText = cat.name + ' の詳細・応募';
-    document.getElementById('modalCatShelter').innerText = '🏠 ' + (cat.shelter || '保護団体');
-    document.getElementById('modalCatStatusBadge').innerText = cat.status || '募集中';
-    document.getElementById('updatesModal').classList.remove('hidden');
+            document.getElementById('modalCatName').innerText = cat.name + ' の詳細・応募';
+            document.getElementById('modalCatShelter').innerText = '🏠 ' + (cat.shelter || '保護団体');
+            document.getElementById('modalCatStatusBadge').innerText = cat.status || '募集中';
+            document.getElementById('updatesModal').classList.remove('hidden');
 
-    const adminUpdateBox = document.getElementById('admin-add-update-box');
-    const adminStatusBox = document.getElementById('admin-status-box');
+            const adminUpdateBox = document.getElementById('admin-add-update-box');
+            const adminStatusBox = document.getElementById('admin-status-box');
 
-    // 現在ログイン中のユーザー情報を取得
-    const { data: { user } } = await window.supabaseClient.auth.getUser();
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            const isOwner = user && cat.user_id && user.id === cat.user_id;
 
-    // 「ログイン中」かつ「自分が登録した猫 (user_idが一致)」の時だけ編集エリアを表示！
-    const isOwner = user && cat.user_id && user.id === cat.user_id;
+            if (isOwner) {
+                adminUpdateBox.classList.remove('hidden');
+                adminStatusBox.classList.remove('hidden');
+                document.getElementById('modalStatusSelect').value = cat.status || '募集中';
+            } else {
+                adminUpdateBox.classList.add('hidden');
+                adminStatusBox.classList.add('hidden');
+            }
 
-    if (isOwner) {
-        adminUpdateBox.classList.remove('hidden');
-        adminStatusBox.classList.remove('hidden');
-        document.getElementById('modalStatusSelect').value = cat.status || '募集中';
-    } else {
-        adminUpdateBox.classList.add('hidden');
-        adminStatusBox.classList.add('hidden');
-    }
-
-    switchModalTab('updates');
-    await fetchUpdates(catId);
-    await fetchComments(catId);
-};
+            switchModalTab('updates');
+            await fetchUpdates(catId);
+            await fetchComments(catId);
+        };
 
         window.switchModalTab = function(tab) {
             const updatesTimeline = document.getElementById('updatesTimeline');
@@ -663,7 +677,6 @@
             }
         };
 
-        // 里親応募送信処理
         window.handleCreateApplication = async function(event) {
             event.preventDefault();
             if (!window.supabaseClient || !currentSelectedCatId) return;
@@ -685,6 +698,58 @@
                 switchModalTab('updates');
             }
         };
+
+        // ボランティア専用：届いた里親応募一覧を取得して表示
+        async function fetchApplications() {
+            const listEl = document.getElementById('volunteerApplicationsList');
+            const badgeEl = document.getElementById('appCountBadge');
+            if (!window.supabaseClient) return;
+
+            // adoption_applications と猫の情報を結合して取得
+            const { data, error } = await window.supabaseClient
+                .from('adoption_applications')
+                .select(`
+                    *,
+                    cats ( name, shelter )
+                `)
+                .order('id', { ascending: false });
+
+            if (error) {
+                listEl.innerHTML = '<p class="text-xs text-white/80 text-center py-2">応募データの取得に失敗しました</p>';
+                return;
+            }
+
+            const apps = data || [];
+            badgeEl.innerText = apps.length + '件';
+
+            if (apps.length === 0) {
+                listEl.innerHTML = '<p class="text-xs text-white/70 text-center py-3">現在、届いている里親応募はありません。</p>';
+                return;
+            }
+
+            listEl.innerHTML = '';
+            apps.forEach(app => {
+                const catName = app.cats ? app.cats.name : '不明な猫';
+                const shelter = app.cats ? app.cats.shelter : '';
+                const dateStr = new Date(app.created_at).toLocaleString('ja-JP');
+
+                listEl.innerHTML += `
+                    <div class="bg-white text-stone-800 rounded-lg p-3 space-y-2 text-xs shadow-sm">
+                        <div class="flex justify-between items-center border-b pb-1.5">
+                            <span class="font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded">🐱 応募先: ${catName}</span>
+                            <span class="text-[10px] text-stone-400">${dateStr}</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-1 text-[11px]">
+                            <p><strong>お名前:</strong> ${app.applicant_name} 様</p>
+                            <p><strong>メール:</strong> <a href="mailto:${app.applicant_email}" class="text-blue-600 underline">${app.applicant_email}</a></p>
+                            <p><strong>お電話:</strong> <a href="tel:${app.applicant_phone}" class="text-blue-600 underline">${app.applicant_phone}</a></p>
+                            <p><strong>住宅環境:</strong> ${app.housing_type || '未入力'}</p>
+                        </div>
+                        ${app.message ? `<div class="bg-stone-50 p-2 rounded text-[11px] text-stone-600"><strong>メッセージ:</strong><br>${app.message}</div>` : ''}
+                    </div>
+                `;
+            });
+        }
 
         function updateGlobalMeter() {
             const globalCurrent = catsData.reduce((sum, cat) => sum + (cat.current_amount || 0), 0);
@@ -767,6 +832,10 @@
             document.getElementById('login-form-container').style.display = session ? 'none' : 'block';
             document.getElementById('signup-form-container').style.display = 'none';
             document.getElementById('logout-section').style.display = session ? 'block' : 'none';
+
+            if (session) {
+                fetchApplications(); // ログイン時に応募一覧を受信！
+            }
         }
 
         function openTipModal(id) { document.getElementById('tipModal').classList.remove('hidden'); }
