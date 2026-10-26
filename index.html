@@ -431,9 +431,9 @@
             <div>
                 <p class="text-xs text-stone-500 mb-2">金額を選択してください</p>
                 <div class="grid grid-cols-3 gap-2 mb-3">
-                    <button onclick="selectAmount(500)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">500円</button>
-                    <button onclick="selectAmount(1000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">1,000円</button>
-                    <button onclick="selectAmount(3000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">3,000円</button>
+                    <button onclick="selectAmount(500, this)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">500円</button>
+                    <button onclick="selectAmount(1000, this)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 active">1,000円</button>
+                    <button onclick="selectAmount(3000, this)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">3,000円</button>
                 </div>
                 <div class="hidden">
                     <input type="number" id="customAmount" placeholder="金額を自由入力 (円)" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm outline-none">
@@ -649,7 +649,6 @@
                 return;
             }
 
-            // 💡 存在しないuser_idカラムを除外し、確実に保存できるように修正
             const { error } = await window.supabaseClient.from('payout_requests').insert([{
                 volunteer_name: document.getElementById('payout-volunteer-name').value,
                 volunteer_email: document.getElementById('payout-volunteer-email').value,
@@ -1344,10 +1343,18 @@
             window.rescueCatDonationAmount = 1000;
         }
 
-        window.selectAmount = function(amount) {
+        window.selectAmount = function(amount, btnElement) {
             window.rescueCatDonationAmount = amount;
             const input = document.getElementById('customAmount');
             if (input) input.value = amount;
+
+            document.querySelectorAll('.tip-preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            if (btnElement) {
+                btnElement.classList.add('active');
+            }
         };
 
         window.submitTip = function() {
