@@ -1282,25 +1282,26 @@ async function fetchUpdates(catId) {
         };
 
         window.openPolicyModal = function(type) {
-            const titleEl = document.getElementById('policyModalTitle');
-            const contentEl = document.getElementById('policyModalContent');
+    const titleEl = document.getElementById('policyModalTitle');
+    const contentEl = document.getElementById('policyModalContent');
 
-            if (type === 'terms') {
-                titleEl.innerText = "利用規約";
-                contentEl.innerHTML = `
+    if (type === 'terms') {
+        titleEl.innerText = "利用規約";
+        contentEl.innerHTML = `
 <p class="font-bold text-stone-800">【RescuCat 利用規約】</p>
 <p><strong>第1条（目的）</strong><br>本プラットフォームは、保護ネコの里親募集、活動支援、およびボランティアと支援者のマッチングを目的とします。</p>
 <p><strong>第2条（里親応募に関する注意・禁止事項）</strong><br>1. 応募者は、真実かつ正確な情報を提供してエントリーを行うものとします。<br>2. 営利目的、転売目的、動物虐待を目的とした応募は固く禁止します。</p>
 <p><strong>第3条（免責事項）</strong><br>本サービスは、ユーザー間で生じたトラブル等について一切の責任を負いません。</p>`;
-            } else if (type === 'privacy') {
-                titleEl.innerText = "プライバシーポリシー";
-                contentEl.innerHTML = `
+    } else if (type === 'privacy') {
+        titleEl.innerText = "プライバシーポリシー";
+        contentEl.innerHTML = `
 <p class="font-bold text-stone-800">【RescuCat プライバシーポリシー】</p>
 <p><strong>1. 個人情報の収集・利用目的</strong><br>本サービスでは、里親応募の際に、お名前・メールアドレス・電話番号等の個人情報を収集し、保護主からの連絡・譲渡手続きにのみ利用します。</p>
 <p><strong>2. 管理と保護</strong><br>ご提供いただいた個人情報はデータベース上で厳重に保護されます。</p>`;
-            }
-            document.getElementById('policyModal').classList.add('hidden');
-        };
+    }
+    // ⬇️ ここを remove('hidden') に書き換えます！
+    document.getElementById('policyModal').classList.remove('hidden');
+};
 
         function updateGlobalMeter() {
             const globalCurrent = catsData.reduce((sum, cat) => sum + (cat.current_amount || 0), 0);
