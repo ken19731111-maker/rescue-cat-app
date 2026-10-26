@@ -649,17 +649,14 @@
                 return;
             }
 
-            // 💡 RLSエラーを防ぐためログイン中ユーザーのIDを取得して付与
-            const { data: { user } } = await window.supabaseClient.auth.getUser();
-
+            // 💡 存在しないuser_idカラムを除外し、確実に保存できるように修正
             const { error } = await window.supabaseClient.from('payout_requests').insert([{
                 volunteer_name: document.getElementById('payout-volunteer-name').value,
                 volunteer_email: document.getElementById('payout-volunteer-email').value,
                 requested_amount: reqAmount,
                 final_amount: finalAmt,
                 bank_info: document.getElementById('payout-bank-info').value,
-                status: 'pending',
-                user_id: user ? user.id : null
+                status: 'pending'
             }]);
 
             if (error) {
