@@ -157,7 +157,7 @@
             </div>
         </section>
 
-        <!-- 管理者・ボランティア専用：新規ネコちゃん登録フォーム (動画URL入力欄追加) -->
+        <!-- 管理者・ボランティア専用：新規ネコちゃん登録フォーム (チェックボックス復元＆動画URL対応) -->
         <section id="admin-add-cat-section" class="bg-white rounded-2xl p-5 shadow-sm border border-amber-200 hidden space-y-4">
             <div class="flex justify-between items-center border-b pb-2 flex-wrap gap-2">
                 <div class="flex items-center gap-2 flex-wrap">
@@ -210,7 +210,12 @@
                     <label class="block text-stone-600 mb-1">保護主からのメッセージ・紹介文</label>
                     <textarea id="cat-message" rows="2" placeholder="ネコちゃんの性格や保護された経緯など" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
                 </div>
+                <!-- 👇 チェックボックス欄（動画あり・子ネコ・緊急支援）を完全復元 -->
                 <div class="flex items-center space-x-6 md:col-span-2 py-1">
+                    <label class="flex items-center space-x-1.5 cursor-pointer">
+                        <input type="checkbox" id="cat-has-video" class="rounded text-amber-600 focus:ring-amber-500">
+                        <span>🎥 SNS・動画あり</span>
+                    </label>
                     <label class="flex items-center space-x-1.5 cursor-pointer">
                         <input type="checkbox" id="cat-is-kitten" class="rounded text-amber-600 focus:ring-amber-500">
                         <span>🐱 子ネコ</span>
@@ -253,7 +258,7 @@
 
     </main>
 
-    <!-- モーダル: 詳細・近況報告・動画プレビュー表示 -->
+    <!-- モーダル: 詳細・近況報告・動画表示 -->
     <div id="updatesModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-5 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -267,7 +272,7 @@
                 <button onclick="closeModal('updatesModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
-            <!-- 動画リンク表示エリア (登録がある場合のみモーダル内に表示) -->
+            <!-- 動画リンク表示エリア -->
             <div id="modalVideoContainer" class="hidden bg-stone-900 p-3 rounded-xl text-white space-y-2 text-xs">
                 <p class="font-bold text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-video"></i> 紹介動画・SNSリンク</p>
                 <a id="modalVideoLink" href="#" target="_blank" class="block bg-amber-600 hover:bg-amber-700 text-white text-center font-bold py-2 rounded-lg transition truncate px-3">
@@ -303,25 +308,20 @@
             </div>
 
             <div id="admin-add-update-box" class="bg-amber-50/80 p-4 rounded-xl border border-amber-200 space-y-3 hidden">
-    <h4 class="text-xs font-extrabold text-amber-900">✍️ 新しい近況報告（日記）を追加</h4>
-    <form id="addUpdateForm" onsubmit="handleCreateUpdate(event)" class="space-y-3 text-xs">
-        <textarea id="update-message" rows="2" required placeholder="今日の様子など..." class="w-full border border-stone-300 rounded-lg p-2 outline-none bg-white"></textarea>
-        <div>
-            <label class="block text-stone-600 mb-1">写真を追加 (自動圧縮)</label>
-            <input type="file" id="update-image-file" accept="image/*" onchange="processImage(event, 'update-image-url', 'update-compress-status')" class="w-full text-[11px] text-stone-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-amber-100 file:text-amber-800">
-            <input type="hidden" id="update-image-url">
-            <p id="update-compress-status" class="text-[10px] text-amber-700 font-bold mt-0.5"></p>
-        </div>
-        <!-- 👇 近況報告用の動画URL入力欄を追加 -->
-        <div>
-            <label class="block text-stone-600 mb-1">🎥 動画URL (YouTube等)</label>
-            <input type="url" id="update-video-url" placeholder="https://www.youtube.com/watch?v=..." class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
-        </div>
-        <button type="submit" id="submitUpdateBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg shadow transition">
-            🐾 近況を投稿する
-        </button>
-    </form>
-</div>
+                <h4 class="text-xs font-extrabold text-amber-900">✍️ 新しい近況報告（日記）を追加</h4>
+                <form id="addUpdateForm" onsubmit="handleCreateUpdate(event)" class="space-y-3 text-xs">
+                    <textarea id="update-message" rows="2" required placeholder="今日の様子など..." class="w-full border border-stone-300 rounded-lg p-2 outline-none bg-white"></textarea>
+                    <div>
+                        <label class="block text-stone-600 mb-1">写真を追加 (自動圧縮)</label>
+                        <input type="file" id="update-image-file" accept="image/*" onchange="processImage(event, 'update-image-url', 'update-compress-status')" class="w-full text-[11px] text-stone-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-amber-100 file:text-amber-800">
+                        <input type="hidden" id="update-image-url">
+                        <p id="update-compress-status" class="text-[10px] text-amber-700 font-bold mt-0.5"></p>
+                    </div>
+                    <button type="submit" id="submitUpdateBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg shadow transition">
+                        🐾 近況を投稿する
+                    </button>
+                </form>
+            </div>
 
             <div class="flex border-b border-stone-200 text-xs font-bold text-center">
                 <button onclick="switchModalTab('updates')" id="modalTabUpdates" class="flex-1 pb-2 border-b-2 border-amber-600 text-amber-900">📖 近況報告</button>
@@ -609,7 +609,7 @@
         let currentSelectedCatId = null;
         let isLoggedIn = false;
 
-        /* ================= 独自のトースト通知関数 ================= */
+        /* ================= トースト通知 ================= */
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             if (!container) return;
@@ -629,7 +629,7 @@
             }, 3500);
         }
 
-        /* ================= ボランティア用・支援金申請モーダル ================= */
+        /* ================= 支援金申請モーダル ================= */
         window.openVolunteerPayoutModal = function() {
             const modal = document.getElementById('volunteerPayoutApplyModal');
             if (modal) modal.classList.remove('hidden');
@@ -683,7 +683,7 @@
             submitBtn.innerText = "🚀 この内容で振込申請を送信する";
         };
 
-        /* ================= 管理者専用・管理ダッシュボード (パスコード 7777) ================= */
+        /* ================= 管理者専用ダッシュボード (パスコード 7777) ================= */
         window.openPayoutManagerModal = function() {
             const ADMIN_PASS = "7777";
             const input = prompt("【管理者認証】パスコードを入力してください:");
@@ -756,7 +756,7 @@
             }
         };
 
-        /* ================= メイン機能の処理 ================= */
+        /* ================= メイン機能 ================= */
         async function fetchCats() {
             const grid = document.getElementById('catGrid');
             if (!window.supabaseClient) return;
@@ -786,7 +786,9 @@
                 const isFav = favorites.includes(cat.id);
                 const shelterName = cat.shelter || '保護活動者';
                 const status = cat.status || '募集中';
-                const hasVideo = cat.video_url && cat.video_url.trim() !== "";
+                
+                // 動画チェックボックス または 動画URLがある場合
+                const hasVideo = cat.has_video || (cat.video_url && cat.video_url.trim() !== "");
 
                 let statusBadgeClass = "bg-amber-100 text-amber-800";
                 if (status === 'トライアル中') statusBadgeClass = "bg-orange-100 text-orange-700";
@@ -893,6 +895,9 @@
 
             const { data: { user } } = await window.supabaseClient.auth.getUser();
 
+            const videoUrl = document.getElementById('cat-video-url').value;
+            const hasVideoCheck = document.getElementById('cat-has-video').checked;
+
             const { error } = await window.supabaseClient.from('cats').insert([{
                 name: document.getElementById('cat-name').value,
                 shelter: document.getElementById('cat-shelter').value,
@@ -901,9 +906,9 @@
                 current_amount: 0,
                 status: document.getElementById('cat-status').value,
                 image_url: document.getElementById('cat-image-url').value,
-                video_url: document.getElementById('cat-video-url').value, // 👈 動画URL保存
+                video_url: videoUrl,
                 message: document.getElementById('cat-message').value,
-                has_video: !!document.getElementById('cat-video-url').value,
+                has_video: hasVideoCheck || !!(videoUrl && videoUrl.trim() !== ""), // どちらかがONならtrue
                 is_kitten: document.getElementById('cat-is-kitten').checked,
                 is_urgent: document.getElementById('cat-is-urgent').checked,
                 user_id: user ? user.id : null
@@ -931,7 +936,6 @@
             document.getElementById('modalCatStatusBadge').innerText = cat.status || '募集中';
             document.getElementById('updatesModal').classList.remove('hidden');
 
-            // 動画URLが登録されている場合はモーダル内に動画ボタンを表示
             const videoContainer = document.getElementById('modalVideoContainer');
             const videoLink = document.getElementById('modalVideoLink');
             if (cat.video_url && cat.video_url.trim() !== "") {
@@ -1039,40 +1043,20 @@
         }
 
         window.handleCreateUpdate = async function(event) {
-    event.preventDefault();
-    if (!window.supabaseClient || !currentSelectedCatId) return;
-    const { error } = await window.supabaseClient.from('cat_updates').insert([{
-        cat_id: currentSelectedCatId,
-        message: document.getElementById('update-message').value,
-        image_url: document.getElementById('update-image-url').value,
-        video_url: document.getElementById('update-video-url').value // 👈 追加
-    }]);
-    if (error) showToast("投稿エラー: " + error.message, "error");
-    else {
-        showToast("🎉 近況報告を投稿しました！");
-        document.getElementById('addUpdateForm').reset();
-        await fetchUpdates(currentSelectedCatId);
-    }
-};
-
-async function fetchUpdates(catId) {
-    const timeline = document.getElementById('updatesTimeline');
-    const { data } = await window.supabaseClient.from('cat_updates').select('*').eq('cat_id', catId).order('id', { ascending: false });
-    if (!data || data.length === 0) {
-        timeline.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">まだ近況報告がありません。</p>';
-        return;
-    }
-    timeline.innerHTML = '';
-    data.forEach(upd => {
-        timeline.innerHTML += `
-            <div class="bg-amber-50/50 border border-amber-100 rounded-xl p-3 space-y-2 text-xs">
-                <p class="text-stone-700 whitespace-pre-wrap">${upd.message || ''}</p>
-                ${upd.image_url ? `<img src="${upd.image_url}" class="rounded-lg w-full h-40 object-cover mt-2">` : ''}
-                ${upd.video_url ? `<a href="${upd.video_url}" target="_blank" class="block bg-amber-600 hover:bg-amber-700 text-white text-center font-bold py-1.5 rounded-lg mt-2"><i class="fa-solid fa-video"></i> この報告の動画を開く</a>` : ''}
-            </div>
-        `;
-    });
-}
+            event.preventDefault();
+            if (!window.supabaseClient || !currentSelectedCatId) return;
+            const { error } = await window.supabaseClient.from('cat_updates').insert([{
+                cat_id: currentSelectedCatId,
+                message: document.getElementById('update-message').value,
+                image_url: document.getElementById('update-image-url').value
+            }]);
+            if (error) showToast("投稿エラー: " + error.message, "error");
+            else {
+                showToast("🎉 近況報告を投稿しました！");
+                document.getElementById('addUpdateForm').reset();
+                await fetchUpdates(currentSelectedCatId);
+            }
+        };
 
         async function fetchComments(catId) {
             const list = document.getElementById('commentsList');
@@ -1282,26 +1266,25 @@ async function fetchUpdates(catId) {
         };
 
         window.openPolicyModal = function(type) {
-    const titleEl = document.getElementById('policyModalTitle');
-    const contentEl = document.getElementById('policyModalContent');
+            const titleEl = document.getElementById('policyModalTitle');
+            const contentEl = document.getElementById('policyModalContent');
 
-    if (type === 'terms') {
-        titleEl.innerText = "利用規約";
-        contentEl.innerHTML = `
+            if (type === 'terms') {
+                titleEl.innerText = "利用規約";
+                contentEl.innerHTML = `
 <p class="font-bold text-stone-800">【RescuCat 利用規約】</p>
 <p><strong>第1条（目的）</strong><br>本プラットフォームは、保護ネコの里親募集、活動支援、およびボランティアと支援者のマッチングを目的とします。</p>
 <p><strong>第2条（里親応募に関する注意・禁止事項）</strong><br>1. 応募者は、真実かつ正確な情報を提供してエントリーを行うものとします。<br>2. 営利目的、転売目的、動物虐待を目的とした応募は固く禁止します。</p>
 <p><strong>第3条（免責事項）</strong><br>本サービスは、ユーザー間で生じたトラブル等について一切の責任を負いません。</p>`;
-    } else if (type === 'privacy') {
-        titleEl.innerText = "プライバシーポリシー";
-        contentEl.innerHTML = `
+            } else if (type === 'privacy') {
+                titleEl.innerText = "プライバシーポリシー";
+                contentEl.innerHTML = `
 <p class="font-bold text-stone-800">【RescuCat プライバシーポリシー】</p>
 <p><strong>1. 個人情報の収集・利用目的</strong><br>本サービスでは、里親応募の際に、お名前・メールアドレス・電話番号等の個人情報を収集し、保護主からの連絡・譲渡手続きにのみ利用します。</p>
 <p><strong>2. 管理と保護</strong><br>ご提供いただいた個人情報はデータベース上で厳重に保護されます。</p>`;
-    }
-    // ⬇️ ここを remove('hidden') に書き換えます！
-    document.getElementById('policyModal').classList.remove('hidden');
-};
+            }
+            document.getElementById('policyModal').classList.remove('hidden');
+        };
 
         function updateGlobalMeter() {
             const globalCurrent = catsData.reduce((sum, cat) => sum + (cat.current_amount || 0), 0);
@@ -1325,7 +1308,7 @@ async function fetchUpdates(catId) {
 
         function filterCats(type) {
             if (type === 'all') renderCats(catsData);
-            else if (type === 'video') renderCats(catsData.filter(c => c.has_video));
+            else if (type === 'video') renderCats(catsData.filter(c => c.has_video || (c.video_url && c.video_url.trim() !== "")));
             else if (type === 'kitten') renderCats(catsData.filter(c => c.is_kitten));
             else if (type === 'urgent') renderCats(catsData.filter(c => c.is_urgent));
             else if (type === 'adopted') renderCats(catsData.filter(c => c.status === '譲渡決定'));
@@ -1408,9 +1391,9 @@ async function fetchUpdates(catId) {
 
         window.submitTip = function() {
             const stripeLinks = {
-                500: "https://buy.stripe.com/00wdRbetL8rvceL8Nvcs801",
-                1000: "https://buy.stripe.com/fZu5kF99rePTgv11l3cs800",
-                3000: "https://buy.stripe.com/eVqcN70CVbDH1A7bZHcs802"
+                500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
+                1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
+                3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
             };
             let amount = window.rescueCatDonationAmount || 1000;
             let targetUrl = stripeLinks[amount] || stripeLinks[1000];
