@@ -1310,14 +1310,26 @@
             window.rescueCatDonationAmount = 1000;
         }
 
-        window.selectAmount = function(amount) {
-            window.rescueCatDonationAmount = amount;
-            const input = document.getElementById('customAmount');
-            if (input) input.value = amount;
-        };
+        // 選択中の金額を保存する変数（初期値は1000円など）
+let rescueCatDonationAmount = 1000;
 
-        let currentTipCatId = null;
+window.selectAmount = function(amount) {
+    rescueCatDonationAmount = amount;
+    const input = document.getElementById('customAmount');
+    if (input) input.value = amount;
 
+    // 💡 すべての金額ボタンから 'active' クラスを一旦はずす
+    const buttons = document.querySelectorAll('.tip-preset-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+
+    // 💡 押された金額のボタンだけに 'active' クラスを付与する
+    // （ボタンのテキストに金額が含まれているかで判定します）
+    buttons.forEach(btn => {
+        if (btn.innerText.includes(amount.toLocaleString())) {
+            btn.classList.add('active');
+        }
+    });
+};
 // 投げ銭モーダルを開く時に猫のIDを記憶
 window.openTipModal = function(catId) {
     currentTipCatId = catId;
