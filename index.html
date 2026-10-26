@@ -1357,19 +1357,32 @@
             }
         };
 
-        window.submitTip = function() {
-            const stripeLinks = {
-                500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
-                1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
-                3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
-            };
-            let amount = window.rescueCatDonationAmount || 1000;
-            let targetUrl = stripeLinks[amount] || stripeLinks[1000];
-            showToast(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。`);
-            setTimeout(() => {
-                window.location.href = targetUrl;
-            }, 1000);
-        };
+       // 投げ銭モーダルを開く際に、対象のネコIDを保持する
+function openTipModal(id) { 
+    currentSelectedCatId = id;
+    document.getElementById('tipModal').classList.remove('hidden'); 
+}
+
+// 投げ銭を確定してStripeへ移動
+window.submitTip = function() {
+    const stripeLinks = {
+        500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
+        1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
+        3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
+    };
+    let amount = window.rescueCatDonationAmount || 1000;
+    let targetUrl = stripeLinks[amount] || stripeLinks[1000];
+    
+    // どのネコちゃんへの支援か覚えるため、localStorageに保存
+    if (currentSelectedCatId) {
+        localStorage.setItem('pending_tip_cat_id', currentSelectedCatId);
+    }
+
+    showToast(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。`);
+    setTimeout(() => {
+        window.location.href = targetUrl;
+    }, 1000);
+};
 
         async function checkUserSession() {
             if (!window.supabaseClient) return;
@@ -1394,6 +1407,7 @@
             checkUserSession();
             fetchCats();
             fetchNews();
+            checkPaymentSuccess();
         });
     </script>
 </body>
