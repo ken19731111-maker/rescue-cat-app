@@ -303,20 +303,25 @@
             </div>
 
             <div id="admin-add-update-box" class="bg-amber-50/80 p-4 rounded-xl border border-amber-200 space-y-3 hidden">
-                <h4 class="text-xs font-extrabold text-amber-900">✍️ 新しい近況報告（日記）を追加</h4>
-                <form id="addUpdateForm" onsubmit="handleCreateUpdate(event)" class="space-y-3 text-xs">
-                    <textarea id="update-message" rows="2" required placeholder="今日の様子など..." class="w-full border border-stone-300 rounded-lg p-2 outline-none bg-white"></textarea>
-                    <div>
-                        <label class="block text-stone-600 mb-1">写真を追加 (自動圧縮)</label>
-                        <input type="file" id="update-image-file" accept="image/*" onchange="processImage(event, 'update-image-url', 'update-compress-status')" class="w-full text-[11px] text-stone-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-amber-100 file:text-amber-800">
-                        <input type="hidden" id="update-image-url">
-                        <p id="update-compress-status" class="text-[10px] text-amber-700 font-bold mt-0.5"></p>
-                    </div>
-                    <button type="submit" id="submitUpdateBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg shadow transition">
-                        🐾 近況を投稿する
-                    </button>
-                </form>
-            </div>
+    <h4 class="text-xs font-extrabold text-amber-900">✍️ 新しい近況報告（日記）を追加</h4>
+    <form id="addUpdateForm" onsubmit="handleCreateUpdate(event)" class="space-y-3 text-xs">
+        <textarea id="update-message" rows="2" required placeholder="今日の様子など..." class="w-full border border-stone-300 rounded-lg p-2 outline-none bg-white"></textarea>
+        <div>
+            <label class="block text-stone-600 mb-1">写真を追加 (自動圧縮)</label>
+            <input type="file" id="update-image-file" accept="image/*" onchange="processImage(event, 'update-image-url', 'update-compress-status')" class="w-full text-[11px] text-stone-500 file:py-1 file:px-2 file:rounded file:border-0 file:bg-amber-100 file:text-amber-800">
+            <input type="hidden" id="update-image-url">
+            <p id="update-compress-status" class="text-[10px] text-amber-700 font-bold mt-0.5"></p>
+        </div>
+        <!-- 👇 近況報告用の動画URL入力欄を追加 -->
+        <div>
+            <label class="block text-stone-600 mb-1">🎥 動画URL (YouTube等)</label>
+            <input type="url" id="update-video-url" placeholder="https://www.youtube.com/watch?v=..." class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+        </div>
+        <button type="submit" id="submitUpdateBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2 rounded-lg shadow transition">
+            🐾 近況を投稿する
+        </button>
+    </form>
+</div>
 
             <div class="flex border-b border-stone-200 text-xs font-bold text-center">
                 <button onclick="switchModalTab('updates')" id="modalTabUpdates" class="flex-1 pb-2 border-b-2 border-amber-600 text-amber-900">📖 近況報告</button>
@@ -1034,20 +1039,40 @@
         }
 
         window.handleCreateUpdate = async function(event) {
-            event.preventDefault();
-            if (!window.supabaseClient || !currentSelectedCatId) return;
-            const { error } = await window.supabaseClient.from('cat_updates').insert([{
-                cat_id: currentSelectedCatId,
-                message: document.getElementById('update-message').value,
-                image_url: document.getElementById('update-image-url').value
-            }]);
-            if (error) showToast("投稿エラー: " + error.message, "error");
-            else {
-                showToast("🎉 近況報告を投稿しました！");
-                document.getElementById('addUpdateForm').reset();
-                await fetchUpdates(currentSelectedCatId);
-            }
-        };
+    event.preventDefault();
+    if (!window.supabaseClient || !currentSelectedCatId) return;
+    const { error } = await window.supabaseClient.from('cat_updates').insert([{
+        cat_id: currentSelectedCatId,
+        message: document.getElementById('update-message').value,
+        image_url: document.getElementById('update-image-url').value,
+        video_url: document.getElementById('update-video-url').value // 👈 追加
+    }]);
+    if (error) showToast("投稿エラー: " + error.message, "error");
+    else {
+        showToast("🎉 近況報告を投稿しました！");
+        document.getElementById('addUpdateForm').reset();
+        await fetchUpdates(currentSelectedCatId);
+    }
+};
+
+async function fetchUpdates(catId) {
+    const timeline = document.getElementById('updatesTimeline');
+    const { data } = await window.supabaseClient.from('cat_updates').select('*').eq('cat_id', catId).order('id', { ascending: false });
+    if (!data || data.length === 0) {
+        timeline.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">まだ近況報告がありません。</p>';
+        return;
+    }
+    timeline.innerHTML = '';
+    data.forEach(upd => {
+        timeline.innerHTML += `
+            <div class="bg-amber-50/50 border border-amber-100 rounded-xl p-3 space-y-2 text-xs">
+                <p class="text-stone-700 whitespace-pre-wrap">${upd.message || ''}</p>
+                ${upd.image_url ? `<img src="${upd.image_url}" class="rounded-lg w-full h-40 object-cover mt-2">` : ''}
+                ${upd.video_url ? `<a href="${upd.video_url}" target="_blank" class="block bg-amber-600 hover:bg-amber-700 text-white text-center font-bold py-1.5 rounded-lg mt-2"><i class="fa-solid fa-video"></i> この報告の動画を開く</a>` : ''}
+            </div>
+        `;
+    });
+}
 
         async function fetchComments(catId) {
             const list = document.getElementById('commentsList');
