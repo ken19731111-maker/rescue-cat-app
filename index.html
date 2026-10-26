@@ -1366,16 +1366,17 @@ window.submitTip = function() {
 };
 
         // Stripe完了後の戻り検知 ＆ Supabase自動更新処理
+// Stripe完了後の戻り検知 ＆ Supabase自動更新処理（改良版）
 async function handleStripeReturn() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const isSuccess = urlParams.get('payout_success') === 'true';
-    
-    // URLのパラメータ、またはローカルストレージから一時情報を取得
-    const pendingCatId = urlParams.get('cat_id') || localStorage.getItem('pending_tip_cat_id');
-    const pendingAmount = parseFloat(urlParams.get('amount') || localStorage.getItem('pending_tip_amount'));
+    // ローカルストレージに「決済中だったよ」というフラグや猫IDが残っているか確認
+    const pendingCatId = localStorage.getItem('pending_tip_cat_id');
+    const pendingAmount = parseFloat(localStorage.getItem('pending_tip_amount'));
+    const isPaying = localStorage.getItem('is_stripe_paying');
 
-    if ((isSuccess || urlParams.get('redirect_status') === 'succeeded') && pendingCatId && pendingAmount) {
-        // 二重加算防止のために保持情報をすぐクリア
+    // 決済中フラグがあり、かつ猫IDと金額データが残っていれば、決済完了とみなす
+    if (isPaying && pendingCatId && pendingAmount) {
+        // フラグ類をすぐにクリア（二重実行防止）
+        localStorage.removeItem('is_stripe_paying');
         localStorage.removeItem('pending_tip_cat_id');
         localStorage.removeItem('pending_tip_amount');
 
@@ -1406,9 +1407,6 @@ async function handleStripeReturn() {
         } else {
             alert(`🎉 決済が完了しました！\n「${cat.name}」ちゃんへ ${pendingAmount.toLocaleString()}円 の支援が加算されました！ありがとうございます🐾`);
             
-            // URLから不要なパラメータを取り除いて見た目をスッキリさせる
-            window.history.replaceState({}, document.title, window.location.pathname);
-
             // 表示を再読み込み・更新
             fetchCats();
         }
