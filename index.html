@@ -1304,18 +1304,100 @@
             if (input) input.value = amount;
         };
 
-        window.submitTip = function() {
-            const stripeLinks = {
-                500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
-                1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
-                3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
-            };
-            let amount = window.rescueCatDonationAmount || 1000;
-            let targetUrl = stripeLinks[amount] || stripeLinks[1000];
-            alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
-            window.location.href = targetUrl;
-        };
+        let currentTipCatId = null;
 
+// 投げ銭モーダルを開く時に猫のIDを記憶
+window.openTipModal = function(catId) {
+    currentTipCatId = catId;
+    document.getElementById('tipModal').classList.remove('hidden');
+};
+       // 投げ銭を確定するボタンの処理
+window.submitTip = function() {
+    if (!currentTipCatId) {
+        alert("対象のネコちゃんが選択されていません");
+        return;
+    }
+
+    const amount = window.rescueCatDonationAmount || 1000;
+
+    // 💡 ご自身の本番/Vercel URLに合わせてドメインを書き換えてください
+    const baseUrl = window.location.origin + window.location.pathname;
+
+    // Stripeの各決済リンク（※Stripe側の「完了後の転送URL」を動的設定するか、URL別に設定します）
+    const stripeLinks = {
+        500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
+        1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
+        3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
+    };
+
+    let targetUrl = stripeLinks[amount] || stripeLinks[1000];
+
+    // 💡 決済完了後に戻ってくる用の情報（URLパラメータ）を作ってローカルストレージに一時保存
+    localStorage.setItem('pending_tip_cat_id', currentTipCatId);
+    localStorage.setItem('pending_tip_amount', amount);
+
+    alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
+    
+    window.location.href = targetUrl;
+};
+
+        // Stripe完了後の戻り検知 ＆ Supabase自動更新処理
+async function handleStripeReturn() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const isSuccess = urlParams.get('payout_success') === 'true';
+    
+    // URLのパラメータ、またはローカルストレージから一時情報を取得
+    const pendingCatId = urlParams.get('cat_id') || localStorage.getItem('pending_tip_cat_id');
+    const pendingAmount = parseFloat(urlParams.get('amount') || localStorage.getItem('pending_tip_amount'));
+
+    if ((isSuccess || urlParams.get('redirect_status') === 'succeeded') && pendingCatId && pendingAmount) {
+        // 二重加算防止のために保持情報をすぐクリア
+        localStorage.removeItem('pending_tip_cat_id');
+        localStorage.removeItem('pending_tip_amount');
+
+        if (!window.supabaseClient) return;
+
+        // 対象のネコちゃんの現在の金額を取得
+        const { data: cat, error: fetchErr } = await window.supabaseClient
+            .from('cats')
+            .select('current_amount, name')
+            .eq('id', pendingCatId)
+            .single();
+
+        if (fetchErr || !cat) {
+            console.error("ネコちゃんのデータ取得エラー:", fetchErr);
+            return;
+        }
+
+        const newAmount = (cat.current_amount || 0) + pendingAmount;
+
+        // Supabaseの `current_amount` を自動加算（UPDATE）
+        const { error: updateErr } = await window.supabaseClient
+            .from('cats')
+            .update({ current_amount: newAmount })
+            .eq('id', pendingCatId);
+
+        if (updateErr) {
+            console.error("金額の更新に失敗しました:", updateErr);
+        } else {
+            alert(`🎉 決済が完了しました！\n「${cat.name}」ちゃんへ ${pendingAmount.toLocaleString()}円 の支援が加算されました！ありがとうございます🐾`);
+            
+            // URLから不要なパラメータを取り除いて見た目をスッキリさせる
+            window.history.replaceState({}, document.title, window.location.pathname);
+
+            // 表示を再読み込み・更新
+            fetchCats();
+        }
+    }
+}
+
+// ページ読み込み時の処理に追加
+window.addEventListener('DOMContentLoaded', () => {
+    checkUserSession();
+    fetchCats();
+    fetchNews();
+    handleStripeReturn(); // 👈 追加！
+});
         async function checkUserSession() {
             if (!window.supabaseClient) return;
             const { data: { session } } = await window.supabaseClient.auth.getSession();
