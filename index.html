@@ -12,18 +12,33 @@
         @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap');
         body { font-family: 'M PLUS Rounded 1c', sans-serif; }
         
-        /* 💡 選択中の投げ銭ボタンのスタイル */
+        /* 選択中の投げ銭ボタンのスタイル */
         .tip-preset-btn.active {
-            background-color: #d97706 !important; /* 濃いオレンジ色 (amber-600相当) */
+            background-color: #d97706 !important;
             color: white !important;
             border-color: #b45309 !important;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
+
+        /* トースト通知のアニメーション */
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes fadeOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+        .toast-enter { animation: slideIn 0.3s ease-out forwards; }
+        .toast-exit { animation: fadeOut 0.3s ease-in forwards; }
     </style>
 </head>
 <body class="bg-amber-50/40 text-stone-800 min-h-screen flex flex-col">
 
-    <!-- ヘッダー (タイトルクリックでホームに戻る) -->
+    <!-- 🍞 おしゃれなトースト通知表示エリア（画面右上に固定） -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+    <!-- ヘッダー -->
     <header class="bg-white border-b border-amber-100 sticky top-0 z-30 shadow-sm">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition">
@@ -47,8 +62,8 @@
                 <div>
                     <span class="text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full uppercase tracking-wider">今月のプラットフォーム全体支援</span>
                     <h2 class="text-2xl font-black mt-1 leading-snug">
-    <span class="inline-block">あなたのひと押しが、</span><span class="inline-block">ネコの明日をつくる</span>
-</h2>
+                        <span class="inline-block">あなたのひと押しが、</span><span class="inline-block">ネコの明日をつくる</span>
+                    </h2>
                 </div>
                 <div class="text-right">
                     <p class="text-xl font-extrabold" id="globalAmount">0円</p>
@@ -79,30 +94,29 @@
                     </div>
                 </div>
 
-               <!-- ボランティア専用 受信トレイ（里親応募一覧 ＆ ステータス管理） -->
-<div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3">
-    <div class="flex justify-between items-center">
-        <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
-            <i class="fa-solid fa-inbox"></i> 届いた里親・お見合い応募 受信トレイ <span id="appCountBadge" class="bg-white text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black">0件</span>
-        </h4>
-        
-        <div class="flex items-center gap-1.5">
-            <button onclick="openPayoutManagerModal()" class="text-[11px] bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded transition font-bold flex items-center gap-1">
-                <i class="fa-solid fa-yen-sign"></i> 支援金管理
-            </button>
-            <button onclick="fetchApplications()" class="text-[11px] bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded transition font-bold">
-                <i class="fa-solid fa-rotate"></i> 更新
-            </button>
-        </div>
-    </div>
-    
-    <div id="volunteerApplicationsList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
-        <p class="text-xs text-white/70 text-center py-2">応募データを読み込んでいます...</p>
-    </div>
-</div>
+                <!-- ボランティア専用 受信トレイ -->
+                <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
+                            <i class="fa-solid fa-inbox"></i> 届いた里親・お見合い応募 受信トレイ <span id="appCountBadge" class="bg-white text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black">0件</span>
+                        </h4>
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="openPayoutManagerModal()" class="text-[11px] bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded transition font-bold flex items-center gap-1">
+                                <i class="fa-solid fa-yen-sign"></i> 支援金管理
+                            </button>
+                            <button onclick="fetchApplications()" class="text-[11px] bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded transition font-bold">
+                                <i class="fa-solid fa-rotate"></i> 更新
+                            </button>
+                        </div>
+                    </div>
+                    <div id="volunteerApplicationsList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                        <p class="text-xs text-white/70 text-center py-2">応募データを読み込んでいます...</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <!-- 全体活動レポート・お知らせセクション 📰 -->
+        <!-- 全体活動レポート・お知らせセクション -->
         <section class="bg-white rounded-2xl p-5 shadow-sm border border-amber-100 space-y-4">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 class="font-extrabold text-amber-900 text-base flex items-center gap-2">
@@ -113,7 +127,6 @@
                 </button>
             </div>
 
-            <!-- 管理者専用：お知らせ投稿フォーム -->
             <form id="newsForm" onsubmit="handleCreateNews(event)" class="bg-amber-50/50 p-4 rounded-xl border border-amber-200 space-y-3 text-xs hidden">
                 <h4 class="font-bold text-amber-900">✍️ 新しい活動レポート・お知らせを作成</h4>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -150,7 +163,6 @@
                 </button>
             </form>
 
-            <!-- お知らせ一覧 -->
             <div id="newsList" class="space-y-3">
                 <p class="text-xs text-stone-400 text-center py-4">お知らせを読み込んでいます...</p>
             </div>
@@ -548,6 +560,28 @@
         let currentTipCatId = null;
         let rescueCatDonationAmount = 1000;
 
+        // 🍞 キュートなトースト通知関数（alertの代わりに画面にふわっと表示）
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-center gap-2 px-4 py-3 rounded-2xl shadow-lg text-xs font-bold text-white toast-enter transition-all ${
+                type === 'success' ? 'bg-amber-600' : 'bg-rose-600'
+            }`;
+            
+            const icon = type === 'success' ? 'fa-solid fa-paw' : 'fa-solid fa-circle-exclamation';
+            toast.innerHTML = `<i class="${icon} text-sm"></i> <span>${message.replace(/\n/g, '<br>')}</span>`;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
         async function fetchCats() {
             const grid = document.getElementById('catGrid');
             if (!window.supabaseClient) return;
@@ -646,7 +680,6 @@
             renderCats(catsData.filter(c => c.shelter === shelterName));
         }
 
-        // 投げ銭モーダルを開く時に猫のIDを記憶
         window.openTipModal = function(catId) {
             currentTipCatId = catId;
             document.getElementById('tipModal').classList.remove('hidden');
@@ -656,7 +689,6 @@
             document.getElementById(id).classList.add('hidden');
         };
 
-        // 金額ボタン選択時の処理
         window.selectAmount = function(amount) {
             rescueCatDonationAmount = amount;
             const input = document.getElementById('customAmount');
@@ -671,10 +703,9 @@
             });
         };
 
-        // 投げ銭を確定してStripeへ飛ぶ処理
         window.submitTip = function() {
             if (!currentTipCatId) {
-                alert("対象のネコちゃんが選択されていません");
+                showToast("対象のネコちゃんが選択されていません", "error");
                 return;
             }
 
@@ -692,11 +723,12 @@
             localStorage.setItem('pending_tip_amount', amount);
             localStorage.setItem('is_stripe_paying', 'true');
 
-            alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
-            window.location.href = targetUrl;
+            showToast(`${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 800);
         };
 
-        // Stripe完了後の戻り検知 ＆ Supabase自動更新処理
         async function handleStripeReturn() {
             const pendingCatId = localStorage.getItem('pending_tip_cat_id');
             const pendingAmount = parseFloat(localStorage.getItem('pending_tip_amount'));
@@ -730,7 +762,7 @@
                 if (updateErr) {
                     console.error("金額の更新に失敗しました:", updateErr);
                 } else {
-                    alert(`🎉 決済が完了しました！\n「${cat.name}」ちゃんへ ${pendingAmount.toLocaleString()}円 の支援が加算されました！ありがとうございます🐾`);
+                    showToast(`🎉 決済完了！\n「${cat.name}」ちゃんへ ${pendingAmount.toLocaleString()}円 が加算されました！`);
                     fetchCats();
                 }
             }
@@ -788,9 +820,10 @@
                 user_id: user ? user.id : null
             }]);
 
-            if (error) alert("登録エラー: " + error.message);
-            else {
-                alert("🎉 新しいネコちゃんを登録しました！");
+            if (error) {
+                showToast("登録エラー: " + error.message, "error");
+            } else {
+                showToast("🎉 新しいネコちゃんを登録しました！");
                 document.getElementById('addCatForm').reset();
                 document.getElementById('compress-status').innerText = "";
                 fetchCats();
@@ -860,9 +893,10 @@
             if (!window.supabaseClient || !currentSelectedCatId) return;
             const newStatus = document.getElementById('modalStatusSelect').value;
             const { error } = await window.supabaseClient.from('cats').update({ status: newStatus }).eq('id', currentSelectedCatId);
-            if (error) alert('更新エラー: ' + error.message);
-            else {
-                alert('🎉 ステータスを「' + newStatus + '」に更新しました！');
+            if (error) {
+                showToast('更新エラー: ' + error.message, "error");
+            } else {
+                showToast('🎉 ステータスを「' + newStatus + '」に更新しました！');
                 fetchCats();
                 openUpdatesModal(currentSelectedCatId);
             }
@@ -880,7 +914,7 @@
                 window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
             } else if (platform === 'instagram') {
                 navigator.clipboard.writeText(`${text}\n${url}`).then(() => {
-                    alert(`📸 「${cat.name}」ちゃんの紹介テキストとURLをコピーしました！\n\nInstagramアプリまたはWebを開いてシェアしてください🐾`);
+                    showToast(`📸 紹介テキストとURLをコピーしました！`);
                     window.open('https://www.instagram.com/', '_blank');
                 }).catch(() => {
                     window.open('https://www.instagram.com/', '_blank');
@@ -914,9 +948,10 @@
                 message: document.getElementById('update-message').value,
                 image_url: document.getElementById('update-image-url').value
             }]);
-            if (error) alert("投稿エラー: " + error.message);
-            else {
-                alert("🎉 近況報告を投稿しました！");
+            if (error) {
+                showToast("投稿エラー: " + error.message, "error");
+            } else {
+                showToast("🎉 近況報告を投稿しました！");
                 document.getElementById('addUpdateForm').reset();
                 await fetchUpdates(currentSelectedCatId);
             }
@@ -950,9 +985,10 @@
                 user_name: document.getElementById('comment-username').value,
                 message: document.getElementById('comment-message').value
             }]);
-            if (error) alert("エラー: " + error.message);
-            else {
-                alert("❤️ 応援メッセージを送信しました！");
+            if (error) {
+                showToast("エラー: " + error.message, "error");
+            } else {
+                showToast("❤️ 応援メッセージを送信しました！");
                 document.getElementById('comment-message').value = '';
                 await fetchComments(currentSelectedCatId);
             }
@@ -973,9 +1009,9 @@
             }]);
 
             if (error) {
-                alert("応募送信エラー: " + error.message);
+                showToast("応募送信エラー: " + error.message, "error");
             } else {
-                alert("🎉 里親・お見合い応募を受け付けました！保護主からの連絡をお待ちください。");
+                showToast("🎉 里親・お見合い応募を受け付けました！");
                 document.getElementById('applySection').querySelector('form').reset();
                 switchModalTab('updates');
             }
@@ -1048,8 +1084,11 @@
                 .update({ status: newStatus })
                 .eq('id', appId);
 
-            if (error) alert("ステータス更新エラー: " + error.message);
-            else fetchApplications();
+            if (error) {
+                showToast("ステータス更新エラー: " + error.message, "error");
+            } else {
+                fetchApplications();
+            }
         };
 
         async function fetchNews() {
@@ -1110,9 +1149,9 @@
             }]);
 
             if (error) {
-                alert("投稿エラー: " + error.message);
+                showToast("投稿エラー: " + error.message, "error");
             } else {
-                alert("🎉 新しい活動レポート・お知らせを投稿しました！");
+                showToast("🎉 新しい活動レポート・お知らせを投稿しました！");
                 document.getElementById('newsForm').reset();
                 document.getElementById('news-compress-status').innerText = "";
                 toggleNewsForm();
@@ -1192,8 +1231,12 @@
                 email: document.getElementById('login-email').value,
                 password: document.getElementById('login-password').value
             });
-            if (error) alert('ログイン失敗: ' + error.message);
-            else { alert('ログイン成功！🐾'); checkUserSession(); }
+            if (error) {
+                showToast('ログイン失敗: ' + error.message, "error");
+            } else {
+                showToast('ログイン成功！🐾');
+                checkUserSession();
+            }
         };
 
         window.handleSignUp = async function() {
@@ -1202,13 +1245,17 @@
                 email: document.getElementById('signup-email').value,
                 password: document.getElementById('signup-password').value
             });
-            if (error) alert('新規登録失敗: ' + error.message);
-            else { alert('新規登録完了！'); checkUserSession(); }
+            if (error) {
+                showToast('新規登録失敗: ' + error.message, "error");
+            } else {
+                showToast('新規登録完了！');
+                checkUserSession();
+            }
         };
 
         window.handleLogout = async function() {
             await window.supabaseClient.auth.signOut();
-            alert('ログアウトしました');
+            showToast('ログアウトしました');
             checkUserSession();
         };
 
@@ -1245,7 +1292,7 @@
             navigator.clipboard.writeText(emailBody).then(() => {
                 const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(myEmail)}&su=${encodeURIComponent("【保護猫アプリ】支援金の振込申請")}&body=${encodeURIComponent(emailBody)}`;
                 window.open(gmailUrl, '_blank');
-                alert("📋 申請内容をコピーしました！Gmail画面が開きます🐾");
+                showToast("📋 申請内容をコピーしました！Gmail画面が開きます🐾");
             });
         };
 
@@ -1253,7 +1300,7 @@
             checkUserSession();
             fetchCats();
             fetchNews();
-            handleStripeReturn(); // 👈 Stripe決済完了後の自動加算チェック
+            handleStripeReturn();
         });
     </script>
 </body>
