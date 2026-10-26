@@ -436,7 +436,7 @@
                 <div class="grid grid-cols-3 gap-2 mb-3">
                     <button onclick="selectAmount(500)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">500円</button>
                     <button onclick="selectAmount(1000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">1,000円</button>
-                    <button onclick="selectAmount(3000)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">3,000円</button>
+                    <button onclick="selectAmount()" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">3,000円</button>
                 </div>
                 <div class="hidden">
                     <input type="number" id="customAmount" placeholder="金額を自由入力 (円)" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm outline-none">
@@ -1330,95 +1330,77 @@ window.selectAmount = function(amount) {
         }
     });
 };
-// 投げ銭モーダルを開く時に猫のIDを記憶
-window.openTipModal = function(catId) {
-    currentTipCatId = catId;
-    document.getElementById('tipModal').classList.remove('hidden');
-};
-       // 投げ銭を確定するボタンの処理
-window.submitTip = function() {
-    if (!currentTipCatId) {
-        alert("対象のネコちゃんが選択されていません");
-        return;
-    }
+let currentTipCatId = null;
+        let rescueCatDonationAmount = 1000;
 
-    const amount = window.rescueCatDonationAmount || 1000;
+      // 投げ銭を確定してStripeへ飛ぶ処理
+        window.submitTip = function() {
+            if (!currentTipCatId) {
+                alert("対象のネコちゃんが選択されていません");
+                return;
+            }
 
-    const stripeLinks = {
-        500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
-        1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
-        3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
-    };
+            const amount = rescueCatDonationAmount || 1000;
 
-    let targetUrl = stripeLinks[amount] || stripeLinks[1000];
+            const stripeLinks = {
+                500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
+                1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
+                3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
+            };
 
-    // 💡 どの猫にいくら支援しようとしたかをブラウザに記憶させる
-    localStorage.setItem('pending_tip_cat_id', currentTipCatId);
-    localStorage.setItem('pending_tip_amount', amount);
-    localStorage.setItem('is_stripe_paying', 'true'); // 👈 「今Stripeで決済しに行った」という目印
+            let targetUrl = stripeLinks[amount] || stripeLinks[1000];
 
-    alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
-    
-    window.location.href = targetUrl;
-};
-    let targetUrl = stripeLinks[amount] || stripeLinks[1000];
+            // 決済前の情報をローカルストレージに一時保存
+            localStorage.setItem('pending_tip_cat_id', currentTipCatId);
+            localStorage.setItem('pending_tip_amount', amount);
+            localStorage.setItem('is_stripe_paying', 'true');
 
-    // 💡 決済完了後に戻ってくる用の情報（URLパラメータ）を作ってローカルストレージに一時保存
-    localStorage.setItem('pending_tip_cat_id', currentTipCatId);
-    localStorage.setItem('pending_tip_amount', amount);
-
-    alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
-    
-    window.location.href = targetUrl;
-};
+            alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
+            window.location.href = targetUrl;
+        };
 
         // Stripe完了後の戻り検知 ＆ Supabase自動更新処理
-// Stripe完了後の戻り検知 ＆ Supabase自動更新処理（改良版）
-async function handleStripeReturn() {
-    // ローカルストレージに「決済中だったよ」というフラグや猫IDが残っているか確認
-    const pendingCatId = localStorage.getItem('pending_tip_cat_id');
-    const pendingAmount = parseFloat(localStorage.getItem('pending_tip_amount'));
-    const isPaying = localStorage.getItem('is_stripe_paying');
+        async function handleStripeReturn() {
+            const pendingCatId = localStorage.getItem('pending_tip_cat_id');
+            const pendingAmount = parseFloat(localStorage.getItem('pending_tip_amount'));
+            const isPaying = localStorage.getItem('is_stripe_paying');
 
-    // 決済中フラグがあり、かつ猫IDと金額データが残っていれば、決済完了とみなす
-    if (isPaying && pendingCatId && pendingAmount) {
-        // フラグ類をすぐにクリア（二重実行防止）
-        localStorage.removeItem('is_stripe_paying');
-        localStorage.removeItem('pending_tip_cat_id');
-        localStorage.removeItem('pending_tip_amount');
+            if (isPaying && pendingCatId && pendingAmount) {
+                // 二重実行防止のためにフラグをクリア
+                localStorage.removeItem('is_stripe_paying');
+                localStorage.removeItem('pending_tip_cat_id');
+                localStorage.removeItem('pending_tip_amount');
 
-        if (!window.supabaseClient) return;
+                if (!window.supabaseClient) return;
 
-        // 対象のネコちゃんの現在の金額を取得
-        const { data: cat, error: fetchErr } = await window.supabaseClient
-            .from('cats')
-            .select('current_amount, name')
-            .eq('id', pendingCatId)
-            .single();
+                // 対象のネコちゃんの現在の金額を取得
+                const { data: cat, error: fetchErr } = await window.supabaseClient
+                    .from('cats')
+                    .select('current_amount, name')
+                    .eq('id', pendingCatId)
+                    .single();
 
-        if (fetchErr || !cat) {
-            console.error("ネコちゃんのデータ取得エラー:", fetchErr);
-            return;
+                if (fetchErr || !cat) {
+                    console.error("ネコちゃんのデータ取得エラー:", fetchErr);
+                    return;
+                }
+
+                const newAmount = (cat.current_amount || 0) + pendingAmount;
+
+                // Supabaseの `current_amount` を自動加算（UPDATE）
+                const { error: updateErr } = await window.supabaseClient
+                    .from('cats')
+                    .update({ current_amount: newAmount })
+                    .eq('id', pendingCatId);
+
+                if (updateErr) {
+                    console.error("金額の更新に失敗しました:", updateErr);
+                } else {
+                    alert(`🎉 決済が完了しました！\n「${cat.name}」ちゃんへ ${pendingAmount.toLocaleString()}円 の支援が加算されました！ありがとうございます🐾`);
+                    fetchCats();
+                }
+            }
         }
-
-        const newAmount = (cat.current_amount || 0) + pendingAmount;
-
-        // Supabaseの `current_amount` を自動加算（UPDATE）
-        const { error: updateErr } = await window.supabaseClient
-            .from('cats')
-            .update({ current_amount: newAmount })
-            .eq('id', pendingCatId);
-
-        if (updateErr) {
-            console.error("金額の更新に失敗しました:", updateErr);
-        } else {
-            alert(`🎉 決済が完了しました！\n「${cat.name}」ちゃんへ ${pendingAmount.toLocaleString()}円 の支援が加算されました！ありがとうございます🐾`);
-            
-            // 表示を再読み込み・更新
-            fetchCats();
-        }
-    }
-}
 
 // ページ読み込み時の処理に追加
 window.addEventListener('DOMContentLoaded', () => {
