@@ -23,7 +23,7 @@
     <!-- トースト通知コンテナ -->
     <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
-    <!-- ヘッダー (タイトルクリックでホームに戻る) -->
+    <!-- ヘッダー -->
     <header class="bg-white border-b border-amber-100 sticky top-0 z-30 shadow-sm">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition">
@@ -157,7 +157,7 @@
             </div>
         </section>
 
-        <!-- 管理者・ボランティア専用：新規ネコちゃん登録フォーム -->
+        <!-- 管理者・ボランティア専用：新規ネコちゃん登録フォーム (動画URL入力欄追加) -->
         <section id="admin-add-cat-section" class="bg-white rounded-2xl p-5 shadow-sm border border-amber-200 hidden space-y-4">
             <div class="flex justify-between items-center border-b pb-2 flex-wrap gap-2">
                 <div class="flex items-center gap-2 flex-wrap">
@@ -203,14 +203,14 @@
                     <p id="compress-status" class="text-[10px] text-amber-700 font-bold mt-1"></p>
                 </div>
                 <div class="md:col-span-2">
+                    <label class="block text-stone-600 mb-1">🎥 紹介動画URL (YouTube, Instagram, TikTok等のリンク)</label>
+                    <input type="url" id="cat-video-url" placeholder="https://www.youtube.com/watch?v=..." class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none bg-white">
+                </div>
+                <div class="md:col-span-2">
                     <label class="block text-stone-600 mb-1">保護主からのメッセージ・紹介文</label>
                     <textarea id="cat-message" rows="2" placeholder="ネコちゃんの性格や保護された経緯など" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
                 </div>
                 <div class="flex items-center space-x-6 md:col-span-2 py-1">
-                    <label class="flex items-center space-x-1.5 cursor-pointer">
-                        <input type="checkbox" id="cat-has-video" class="rounded text-amber-600 focus:ring-amber-500">
-                        <span>🎥 SNS・動画あり</span>
-                    </label>
                     <label class="flex items-center space-x-1.5 cursor-pointer">
                         <input type="checkbox" id="cat-is-kitten" class="rounded text-amber-600 focus:ring-amber-500">
                         <span>🐱 子ネコ</span>
@@ -253,7 +253,7 @@
 
     </main>
 
-    <!-- モーダル: 近況報告 ＆ 応援コメント ＆ 里親応募 ＆ SNSシェア -->
+    <!-- モーダル: 詳細・近況報告・動画プレビュー表示 -->
     <div id="updatesModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-5 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -265,6 +265,14 @@
                     </div>
                 </div>
                 <button onclick="closeModal('updatesModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <!-- 動画リンク表示エリア (登録がある場合のみモーダル内に表示) -->
+            <div id="modalVideoContainer" class="hidden bg-stone-900 p-3 rounded-xl text-white space-y-2 text-xs">
+                <p class="font-bold text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-video"></i> 紹介動画・SNSリンク</p>
+                <a id="modalVideoLink" href="#" target="_blank" class="block bg-amber-600 hover:bg-amber-700 text-white text-center font-bold py-2 rounded-lg transition truncate px-3">
+                    🎥 動画を開いて視聴する
+                </a>
             </div>
 
             <div id="admin-status-box" class="bg-stone-50 p-3 rounded-xl border border-stone-200 flex items-center justify-between text-xs hidden">
@@ -403,7 +411,7 @@
                 </div>
                 <div class="space-y-1.5 border-b pb-3">
                     <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span> 新しい猫ちゃんの登録手順</h4>
-                    <p class="pl-6 text-stone-600">**「新しい保護ネコちゃんを登録」** フォームから名前・団体名・写真などを入力し公開します。</p>
+                    <p class="pl-6 text-stone-600">**「新しい保護ネコちゃんを登録」** フォームから名前・団体名・写真・動画URLなどを入力し公開します。</p>
                 </div>
                 <div class="space-y-1.5 border-b pb-3">
                     <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">3</span> 近況報告（写真日記）の投稿 ＆ ステータス更新</h4>
@@ -773,6 +781,7 @@
                 const isFav = favorites.includes(cat.id);
                 const shelterName = cat.shelter || '保護活動者';
                 const status = cat.status || '募集中';
+                const hasVideo = cat.video_url && cat.video_url.trim() !== "";
 
                 let statusBadgeClass = "bg-amber-100 text-amber-800";
                 if (status === 'トライアル中') statusBadgeClass = "bg-orange-100 text-orange-700";
@@ -782,8 +791,8 @@
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-amber-100 flex flex-col justify-between">
                         <div class="relative">
                             <img src="${cat.image_url || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop'}" alt="${cat.name}" class="w-full h-48 object-cover">
-                            <div class="absolute top-3 left-3 flex gap-1.5">
-                                ${cat.has_video ? '<span class="bg-rose-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full shadow">🎥 動画</span>' : ''}
+                            <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap">
+                                ${hasVideo ? '<span class="bg-rose-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full shadow">🎥 動画あり</span>' : ''}
                                 <span class="${statusBadgeClass} text-[11px] font-bold px-2 py-0.5 rounded-full shadow">${status}</span>
                             </div>
                             <button onclick="toggleFav(${cat.id})" class="absolute top-3 right-3 bg-white/80 p-2 rounded-full text-rose-500 shadow-sm">
@@ -887,8 +896,9 @@
                 current_amount: 0,
                 status: document.getElementById('cat-status').value,
                 image_url: document.getElementById('cat-image-url').value,
+                video_url: document.getElementById('cat-video-url').value, // 👈 動画URL保存
                 message: document.getElementById('cat-message').value,
-                has_video: document.getElementById('cat-has-video').checked,
+                has_video: !!document.getElementById('cat-video-url').value,
                 is_kitten: document.getElementById('cat-is-kitten').checked,
                 is_urgent: document.getElementById('cat-is-urgent').checked,
                 user_id: user ? user.id : null
@@ -915,6 +925,16 @@
             document.getElementById('modalCatShelter').innerText = '🏠 ' + (cat.shelter || '保護団体');
             document.getElementById('modalCatStatusBadge').innerText = cat.status || '募集中';
             document.getElementById('updatesModal').classList.remove('hidden');
+
+            // 動画URLが登録されている場合はモーダル内に動画ボタンを表示
+            const videoContainer = document.getElementById('modalVideoContainer');
+            const videoLink = document.getElementById('modalVideoLink');
+            if (cat.video_url && cat.video_url.trim() !== "") {
+                videoLink.href = cat.video_url;
+                videoContainer.classList.remove('hidden');
+            } else {
+                videoContainer.classList.add('hidden');
+            }
 
             const adminUpdateBox = document.getElementById('admin-add-update-box');
             const adminStatusBox = document.getElementById('admin-status-box');
@@ -1254,7 +1274,7 @@
 <p><strong>1. 個人情報の収集・利用目的</strong><br>本サービスでは、里親応募の際に、お名前・メールアドレス・電話番号等の個人情報を収集し、保護主からの連絡・譲渡手続きにのみ利用します。</p>
 <p><strong>2. 管理と保護</strong><br>ご提供いただいた個人情報はデータベース上で厳重に保護されます。</p>`;
             }
-            document.getElementById('policyModal').classList.remove('hidden');
+            document.getElementById('policyModal').classList.add('hidden');
         };
 
         function updateGlobalMeter() {
@@ -1379,7 +1399,6 @@
             }, 1000);
         };
 
-        /* ================= 決済完了時の自動加算関数 ================= */
         async function checkPaymentSuccess() {
             const urlParams = new URLSearchParams(window.location.search);
             const isSuccess = urlParams.get('payout_success');
