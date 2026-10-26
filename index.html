@@ -1344,16 +1344,23 @@ window.submitTip = function() {
 
     const amount = window.rescueCatDonationAmount || 1000;
 
-    // 💡 ご自身の本番/Vercel URLに合わせてドメインを書き換えてください
-    const baseUrl = window.location.origin + window.location.pathname;
-
-    // Stripeの各決済リンク（※Stripe側の「完了後の転送URL」を動的設定するか、URL別に設定します）
     const stripeLinks = {
         500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
         1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
         3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
     };
 
+    let targetUrl = stripeLinks[amount] || stripeLinks[1000];
+
+    // 💡 どの猫にいくら支援しようとしたかをブラウザに記憶させる
+    localStorage.setItem('pending_tip_cat_id', currentTipCatId);
+    localStorage.setItem('pending_tip_amount', amount);
+    localStorage.setItem('is_stripe_paying', 'true'); // 👈 「今Stripeで決済しに行った」という目印
+
+    alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
+    
+    window.location.href = targetUrl;
+};
     let targetUrl = stripeLinks[amount] || stripeLinks[1000];
 
     // 💡 決済完了後に戻ってくる用の情報（URLパラメータ）を作ってローカルストレージに一時保存
