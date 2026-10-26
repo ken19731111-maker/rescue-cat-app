@@ -12,9 +12,16 @@
         @import url('https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap');
         body { font-family: 'M PLUS Rounded 1c', sans-serif; }
         .tip-preset-btn.active { background-color: #d97706 !important; color: white !important; border-color: #b45309 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+        .toast-enter { animation: slideIn 0.3s ease-out forwards; }
+        .toast-exit { animation: fadeOut 0.3s ease-in forwards; }
     </style>
 </head>
 <body class="bg-amber-50/40 text-stone-800 min-h-screen flex flex-col">
+
+    <!-- トースト通知コンテナ -->
+    <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- ヘッダー (タイトルクリックでホームに戻る) -->
     <header class="bg-white border-b border-amber-100 sticky top-0 z-30 shadow-sm">
@@ -39,7 +46,8 @@
             <div class="flex justify-between items-end">
                 <div>
                     <span class="text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full uppercase tracking-wider">今月のプラットフォーム全体支援</span>
-                    <h2 class="text-2xl font-black mt-1">あなたのひと押しが、ネコの明日をつくる</h2>
+                    <!-- スマホ改行最適化済み見出し -->
+                    <h2 class="text-2xl font-black mt-1">あなたのひと押しが、<span class="inline-block">ネコの明日をつくる</span></h2>
                 </div>
                 <div class="text-right">
                     <span class="text-xs opacity-90">目標: 200,000円</span>
@@ -71,14 +79,13 @@
                     </div>
                 </div>
 
-                <!-- ボランティア専用 受信トレイ（里親応募一覧 ＆ ステータス管理） -->
+                <!-- ボランティア専用 受信トレイ -->
                 <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3">
                     <div class="flex justify-between items-center">
                         <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
                             <i class="fa-solid fa-inbox"></i> 届いた里親・お見合い応募 受信トレイ <span id="appCountBadge" class="bg-white text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black">0件</span>
                         </h4>
                         
-                        <!-- 右側のボタン群（支援金申請 ＆ マニュアル ＆ 更新） -->
                         <div class="flex items-center gap-1.5">
                             <button onclick="openVolunteerPayoutModal()" class="text-[11px] bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded transition font-bold flex items-center gap-1">
                                 <i class="fa-solid fa-yen-sign"></i> 支援金を申請する
@@ -110,7 +117,6 @@
                 </button>
             </div>
 
-            <!-- 管理者専用：お知らせ投稿フォーム -->
             <form id="newsForm" onsubmit="handleCreateNews(event)" class="bg-amber-50/50 p-4 rounded-xl border border-amber-200 space-y-3 text-xs hidden">
                 <h4 class="font-bold text-amber-900">✍️ 新しい活動レポート・お知らせを作成</h4>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -147,13 +153,12 @@
                 </button>
             </form>
 
-            <!-- お知らせ一覧 -->
             <div id="newsList" class="space-y-3">
                 <p class="text-xs text-stone-400 text-center py-4">お知らせを読み込んでいます...</p>
             </div>
         </section>
 
-        <!-- 管理者・ボランティア専用：新規ネコちゃん登録フォーム (マニュアルボタン付き) -->
+        <!-- 管理者・ボランティア専用：新規ネコちゃん登録フォーム -->
         <section id="admin-add-cat-section" class="bg-white rounded-2xl p-5 shadow-sm border border-amber-200 hidden space-y-4">
             <div class="flex justify-between items-center border-b pb-2 flex-wrap gap-2">
                 <div class="flex items-center gap-2 flex-wrap">
@@ -263,7 +268,6 @@
                 <button onclick="closeModal('updatesModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
 
-            <!-- ステータス変更（管理者専用） -->
             <div id="admin-status-box" class="bg-stone-50 p-3 rounded-xl border border-stone-200 flex items-center justify-between text-xs hidden">
                 <span class="font-bold text-stone-700">🏠 ステータス変更:</span>
                 <div class="flex gap-2">
@@ -276,7 +280,6 @@
                 </div>
             </div>
 
-            <!-- SNSシェアボタンエリア (X / LINE / Instagram) -->
             <div class="bg-amber-50/60 p-3 rounded-xl border border-amber-200 flex items-center justify-between text-xs">
                 <span class="font-bold text-amber-900"><i class="fa-solid fa-share-nodes"></i> SNSで応援シェア:</span>
                 <div class="flex gap-1.5 flex-wrap">
@@ -292,7 +295,6 @@
                 </div>
             </div>
 
-            <!-- 管理者専用：近況報告の追加フォーム -->
             <div id="admin-add-update-box" class="bg-amber-50/80 p-4 rounded-xl border border-amber-200 space-y-3 hidden">
                 <h4 class="text-xs font-extrabold text-amber-900">✍️ 新しい近況報告（日記）を追加</h4>
                 <form id="addUpdateForm" onsubmit="handleCreateUpdate(event)" class="space-y-3 text-xs">
@@ -309,19 +311,16 @@
                 </form>
             </div>
 
-            <!-- タブ切り替え（近況報告 ⇔ 応援コメント ⇔ 里親応募） -->
             <div class="flex border-b border-stone-200 text-xs font-bold text-center">
                 <button onclick="switchModalTab('updates')" id="modalTabUpdates" class="flex-1 pb-2 border-b-2 border-amber-600 text-amber-900">📖 近況報告</button>
                 <button onclick="switchModalTab('comments')" id="modalTabComments" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400">💬 応援コメント</button>
                 <button onclick="switchModalTab('apply')" id="modalTabApply" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400">🏠 里親・お見合い応募</button>
             </div>
 
-            <!-- 報告タイムライン一覧 -->
             <div id="updatesTimeline" class="space-y-4">
                 <p class="text-xs text-stone-400 text-center py-4">読み込み中...</p>
             </div>
 
-            <!-- 応援コメント一覧 ＆ 投稿フォーム -->
             <div id="commentsSection" class="space-y-4 hidden">
                 <form onsubmit="handleCreateComment(event)" class="bg-stone-50 p-3 rounded-xl border border-stone-200 space-y-2 text-xs">
                     <p class="font-bold text-stone-700">✨ 温かい応援メッセージを送る</p>
@@ -334,7 +333,6 @@
                 </div>
             </div>
 
-            <!-- 里親・お見合い応募フォーム -->
             <div id="applySection" class="space-y-4 hidden">
                 <form onsubmit="handleCreateApplication(event)" class="bg-amber-50/50 p-4 rounded-xl border border-amber-200 space-y-3 text-xs">
                     <p class="font-extrabold text-amber-900">🏠 この猫ちゃんとの里親・お見合いエントリー</p>
@@ -372,7 +370,7 @@
         </div>
     </div>
 
-    <!-- モーダル: 規約 ＆ プライバシーポリシー (正式な詳細条文を復元) -->
+    <!-- モーダル: 規約 ＆ プライバシーポリシー -->
     <div id="policyModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-2xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[85vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -492,7 +490,7 @@
         </div>
     </div>
 
-    <!-- モーダル: 管理者専用・支援金申請管理ダッシュボード (パスコード7777保護) -->
+    <!-- モーダル: 管理者専用・支援金申請管理ダッシュボード -->
     <div id="payoutManagerModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-4xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -537,14 +535,12 @@
                 <span>🐾 保護ネコ応援プラットフォーム RescuCat</span>
             </div>
 
-            <!-- 利用規約・プライバシーポリシーリンク -->
             <div class="flex justify-center gap-4 text-[11px] text-stone-400">
                 <button onclick="openPolicyModal('terms')" class="hover:text-amber-300 underline">利用規約</button>
                 <span>•</span>
                 <button onclick="openPolicyModal('privacy')" class="hover:text-amber-300 underline">プライバシーポリシー</button>
             </div>
 
-            <!-- フッターのログイン ＆ 🔒 管理者専用ボタン -->
             <div class="flex justify-center items-center gap-4 pt-2">
                 <button onclick="toggleAuthForm()" style="background: none; border: none; color: #a8a29e; text-decoration: underline; font-size: 0.8rem; cursor: pointer; padding: 5px;">
                     ボランティア・管理者ログイン / 登録
@@ -601,6 +597,26 @@
         let currentSelectedCatId = null;
         let isLoggedIn = false;
 
+        /* ================= 独自のトースト通知関数 (alert廃止) ================= */
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            toast.className = `pointer-events-auto flex items-center gap-2 px-4 py-3 rounded-xl shadow-lg text-xs font-bold text-white toast-enter ${
+                type === 'success' ? 'bg-amber-600' : 'bg-rose-600'
+            }`;
+            
+            toast.innerHTML = `<i class="fa-solid fa-cat text-sm"></i><span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.remove('toast-enter');
+                toast.classList.add('toast-exit');
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
         /* ================= ボランティア用・支援金申請モーダル ================= */
         window.openVolunteerPayoutModal = function() {
             const modal = document.getElementById('volunteerPayoutApplyModal');
@@ -627,11 +643,14 @@
             const finalAmt = Math.floor(reqAmount * 0.8);
 
             if (reqAmount < 20000) {
-                alert("⚠️ 振込申請は20,000円以上から可能です。");
+                showToast("⚠️ 振込申請は20,000円以上から可能です。", "error");
                 submitBtn.disabled = false;
                 submitBtn.innerText = "🚀 この内容で振込申請を送信する";
                 return;
             }
+
+            // 💡 RLSエラーを防ぐためログイン中ユーザーのIDを取得して付与
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
 
             const { error } = await window.supabaseClient.from('payout_requests').insert([{
                 volunteer_name: document.getElementById('payout-volunteer-name').value,
@@ -639,13 +658,15 @@
                 requested_amount: reqAmount,
                 final_amount: finalAmt,
                 bank_info: document.getElementById('payout-bank-info').value,
-                status: 'pending'
+                status: 'pending',
+                user_id: user ? user.id : null
             }]);
 
             if (error) {
-                alert("申請の送信に失敗しました: " + error.message);
+                showToast("申請の送信に失敗しました: " + error.message, "error");
+                console.error(error);
             } else {
-                alert("🎉 振込申請が完了しました！\n管理者が確認次第、お振込み手続きを行います。");
+                showToast("🎉 振込申請が完了しました！管理者が確認します。");
                 document.getElementById('payout-requested-amount').value = '';
                 document.getElementById('payout-bank-info').value = '';
                 closeVolunteerPayoutModal();
@@ -663,7 +684,7 @@
                 document.getElementById('payoutManagerModal').classList.remove('hidden');
                 fetchAdminPayoutRequests();
             } else if (input !== null) {
-                alert("パスコードが正しくありません。");
+                showToast("パスコードが正しくありません。", "error");
             }
         };
         window.closePayoutManagerModal = function() {
@@ -713,7 +734,7 @@
             });
         }
         window.processPayout = async function(requestId) {
-            if (!confirm("この申請を「振込完了」に更新しますか？\n（※ご自身の銀行口座等でお振込みを完了した後に実行してください）")) return;
+            if (!confirm("この申請を「振込完了」に更新しますか？")) return;
             if (!window.supabaseClient) return;
 
             const { error } = await window.supabaseClient
@@ -721,9 +742,9 @@
                 .update({ status: 'paid' })
                 .eq('id', requestId);
 
-            if (error) alert("更新エラー: " + error.message);
+            if (error) showToast("更新エラー: " + error.message, "error");
             else {
-                alert("🎉 振込完了として記録しました！");
+                showToast("🎉 振込完了として記録しました！");
                 fetchAdminPayoutRequests();
             }
         };
@@ -879,9 +900,10 @@
                 user_id: user ? user.id : null
             }]);
 
-            if (error) alert("登録エラー: " + error.message);
-            else {
-                alert("🎉 新しいネコちゃんを登録しました！");
+            if (error) {
+                showToast("登録エラー: " + error.message, "error");
+            } else {
+                showToast("🎉 新しいネコちゃんを登録しました！");
                 document.getElementById('addCatForm').reset();
                 document.getElementById('compress-status').innerText = "";
                 fetchCats();
@@ -951,9 +973,9 @@
             if (!window.supabaseClient || !currentSelectedCatId) return;
             const newStatus = document.getElementById('modalStatusSelect').value;
             const { error } = await window.supabaseClient.from('cats').update({ status: newStatus }).eq('id', currentSelectedCatId);
-            if (error) alert('更新エラー: ' + error.message);
+            if (error) showToast('更新エラー: ' + error.message, "error");
             else {
-                alert('🎉 ステータスを「' + newStatus + '」に更新しました！');
+                showToast('🎉 ステータスを「' + newStatus + '」に更新しました！');
                 fetchCats();
                 openUpdatesModal(currentSelectedCatId);
             }
@@ -971,7 +993,7 @@
                 window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
             } else if (platform === 'instagram') {
                 navigator.clipboard.writeText(`${text}\n${url}`).then(() => {
-                    alert(`📸 「${cat.name}」ちゃんの紹介テキストとURLをコピーしました！\n\nInstagramアプリまたはWebを開いて、ストーリーズや投稿に貼り付けてシェアしてください🐾`);
+                    showToast(`📸 紹介テキストとURLをコピーしました！`);
                     window.open('https://www.instagram.com/', '_blank');
                 }).catch(() => {
                     window.open('https://www.instagram.com/', '_blank');
@@ -1005,9 +1027,9 @@
                 message: document.getElementById('update-message').value,
                 image_url: document.getElementById('update-image-url').value
             }]);
-            if (error) alert("投稿エラー: " + error.message);
+            if (error) showToast("投稿エラー: " + error.message, "error");
             else {
-                alert("🎉 近況報告を投稿しました！");
+                showToast("🎉 近況報告を投稿しました！");
                 document.getElementById('addUpdateForm').reset();
                 await fetchUpdates(currentSelectedCatId);
             }
@@ -1041,9 +1063,9 @@
                 user_name: document.getElementById('comment-username').value,
                 message: document.getElementById('comment-message').value
             }]);
-            if (error) alert("エラー: " + error.message);
+            if (error) showToast("エラー: " + error.message, "error");
             else {
-                alert("❤️ 応援メッセージを送信しました！");
+                showToast("❤️ 応援メッセージを送信しました！");
                 document.getElementById('comment-message').value = '';
                 await fetchComments(currentSelectedCatId);
             }
@@ -1064,9 +1086,9 @@
             }]);
 
             if (error) {
-                alert("応募送信エラー: " + error.message);
+                showToast("応募送信エラー: " + error.message, "error");
             } else {
-                alert("🎉 里親・お見合い応募を受け付けました！保護主からの連絡をお待ちください。");
+                showToast("🎉 里親・お見合い応募を受け付けました！");
                 document.getElementById('applySection').querySelector('form').reset();
                 switchModalTab('updates');
             }
@@ -1139,7 +1161,7 @@
                 .update({ status: newStatus })
                 .eq('id', appId);
 
-            if (error) alert("ステータス更新エラー: " + error.message);
+            if (error) showToast("ステータス更新エラー: " + error.message, "error");
             else {
                 fetchApplications();
             }
@@ -1204,9 +1226,9 @@
             }]);
 
             if (error) {
-                alert("投稿エラー: " + error.message);
+                showToast("投稿エラー: " + error.message, "error");
             } else {
-                alert("🎉 新しい活動レポート・お知らせを投稿しました！");
+                showToast("🎉 新しい活動レポート・お知らせを投稿しました！");
                 document.getElementById('newsForm').reset();
                 document.getElementById('news-compress-status').innerText = "";
                 toggleNewsForm();
@@ -1220,7 +1242,6 @@
             document.getElementById('manualModal').classList.remove('hidden');
         };
 
-        // 利用規約・プライバシーポリシーのモーダル詳細表示
         window.openPolicyModal = function(type) {
             const titleEl = document.getElementById('policyModalTitle');
             const contentEl = document.getElementById('policyModalContent');
@@ -1229,17 +1250,15 @@
                 titleEl.innerText = "利用規約";
                 contentEl.innerHTML = `
 <p class="font-bold text-stone-800">【RescuCat 利用規約】</p>
-<p><strong>第1条（目的）</strong><br>本プラットフォーム（以下「本サービス」）は、保護ネコの里親募集、活動支援、およびボランティアと支援者のマッチング・コミュニケーションを促進することを目的とします。</p>
-<p><strong>第2条（里親応募に関する注意・禁止事項）</strong><br>1. 応募者は、真実かつ正確な情報を提供してエントリーを行うものとします。<br>2. 営利目的、転売目的、動物虐待を目的とした応募は固く禁止します。発覚した場合は法的措置を講じます。<br>3. 里親決定後の譲渡契約およびやり取りは、保護主（ボランティア）と応募者の直接の責任において行うものとします。</p>
-<p><strong>第3条（免責事項）</strong><br>本サービスは、ユーザー間（ボランティアと支援者・応募者）で生じたトラブル、譲渡後のトラブル等について、一切の責任を負いません。</p>
-<p><strong>第4条（規約の変更）</strong><br>本規約は、必要に応じて事前通知なく変更できるものとします。</p>`;
+<p><strong>第1条（目的）</strong><br>本プラットフォームは、保護ネコの里親募集、活動支援、およびボランティアと支援者のマッチングを目的とします。</p>
+<p><strong>第2条（里親応募に関する注意・禁止事項）</strong><br>1. 応募者は、真実かつ正確な情報を提供してエントリーを行うものとします。<br>2. 営利目的、転売目的、動物虐待を目的とした応募は固く禁止します。</p>
+<p><strong>第3条（免責事項）</strong><br>本サービスは、ユーザー間で生じたトラブル等について一切の責任を負いません。</p>`;
             } else if (type === 'privacy') {
                 titleEl.innerText = "プライバシーポリシー";
                 contentEl.innerHTML = `
 <p class="font-bold text-stone-800">【RescuCat プライバシーポリシー】</p>
-<p><strong>1. 個人情報の収集・利用目的</strong><br>本サービスでは、里親・お見合い応募の際に、お名前・メールアドレス・電話番号・住宅環境等の個人情報を収集します。<br>収集した個人情報は、以下の目的のみに利用します。<br>・保護主（ボランティア）からの選考・面談日程連絡および譲渡手続き<br>・本サービスに関する重要なお知らせや問い合わせ対応</p>
-<p><strong>2. 個人情報の第三者提供・管理</strong><br>ご提供いただいた個人情報は、該当する保護ネコの担当ボランティア以外の第三者に開示・提供することはありません。また、データベース上で厳重に保護・管理されます。</p>
-<p><strong>3. 個人情報の開示・訂正・削除</strong><br>ご本人からの個人情報の照会・修正・削除のご要望があった場合は、迅速に対応いたします。</p>`;
+<p><strong>1. 個人情報の収集・利用目的</strong><br>本サービスでは、里親応募の際に、お名前・メールアドレス・電話番号等の個人情報を収集し、保護主からの連絡・譲渡手続きにのみ利用します。</p>
+<p><strong>2. 管理と保護</strong><br>ご提供いただいた個人情報はデータベース上で厳重に保護されます。</p>`;
             }
             document.getElementById('policyModal').classList.remove('hidden');
         };
@@ -1296,8 +1315,12 @@
                 email: document.getElementById('login-email').value,
                 password: document.getElementById('login-password').value
             });
-            if (error) alert('ログイン失敗: ' + error.message);
-            else { alert('ログイン成功！🐾'); checkUserSession(); }
+            if (error) {
+                showToast('ログイン失敗: ' + error.message, "error");
+            } else {
+                showToast('ログイン成功しました！🐾');
+                checkUserSession();
+            }
         };
 
         window.handleSignUp = async function() {
@@ -1306,13 +1329,17 @@
                 email: document.getElementById('signup-email').value,
                 password: document.getElementById('signup-password').value
             });
-            if (error) alert('新規登録失敗: ' + error.message);
-            else { alert('新規登録完了！'); checkUserSession(); }
+            if (error) {
+                showToast('新規登録失敗: ' + error.message, "error");
+            } else {
+                showToast('新規登録が完了しました！');
+                checkUserSession();
+            }
         };
 
         window.handleLogout = async function() {
             await window.supabaseClient.auth.signOut();
-            alert('ログアウトしました');
+            showToast('ログアウトしました');
             checkUserSession();
         };
 
@@ -1334,8 +1361,10 @@
             };
             let amount = window.rescueCatDonationAmount || 1000;
             let targetUrl = stripeLinks[amount] || stripeLinks[1000];
-            alert(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。温かいご支援ありがとうございます！`);
-            window.location.href = targetUrl;
+            showToast(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。`);
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 1000);
         };
 
         async function checkUserSession() {
