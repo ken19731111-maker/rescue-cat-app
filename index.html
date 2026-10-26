@@ -46,11 +46,10 @@
             <div class="flex justify-between items-end">
                 <div>
                     <span class="text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full uppercase tracking-wider">今月のプラットフォーム全体支援</span>
-                    <!-- スマホ改行最適化済み見出し -->
                     <h2 class="text-2xl font-black mt-1">あなたのひと押しが、<span class="inline-block">ネコの明日をつくる</span></h2>
                 </div>
                 <div class="text-right">
-                    <span class="text-2xl font-black opacity-90">支援金額</span>
+                    <span class="text-xs opacity-90">目標: 200,000円</span>
                     <p class="text-xl font-extrabold" id="globalAmount">0円</p>
                 </div>
             </div>
@@ -597,7 +596,7 @@
         let currentSelectedCatId = null;
         let isLoggedIn = false;
 
-        /* ================= 独自のトースト通知関数 (alert廃止) ================= */
+        /* ================= 独自のトースト通知関数 ================= */
         function showToast(message, type = 'success') {
             const container = document.getElementById('toastContainer');
             if (!container) return;
@@ -660,7 +659,6 @@
 
             if (error) {
                 showToast("申請の送信に失敗しました: " + error.message, "error");
-                console.error(error);
             } else {
                 showToast("🎉 振込申請が完了しました！管理者が確認します。");
                 document.getElementById('payout-requested-amount').value = '';
@@ -1357,32 +1355,65 @@
             }
         };
 
-       // 投げ銭モーダルを開く際に、対象のネコIDを保持する
-function openTipModal(id) { 
-    currentSelectedCatId = id;
-    document.getElementById('tipModal').classList.remove('hidden'); 
-}
+        window.openTipModal = function(id) { 
+            currentSelectedCatId = id;
+            document.getElementById('tipModal').classList.remove('hidden'); 
+        };
 
-// 投げ銭を確定してStripeへ移動
-window.submitTip = function() {
-    const stripeLinks = {
-        500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
-        1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
-        3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
-    };
-    let amount = window.rescueCatDonationAmount || 1000;
-    let targetUrl = stripeLinks[amount] || stripeLinks[1000];
-    
-    // どのネコちゃんへの支援か覚えるため、localStorageに保存
-    if (currentSelectedCatId) {
-        localStorage.setItem('pending_tip_cat_id', currentSelectedCatId);
-    }
+        window.submitTip = function() {
+            const stripeLinks = {
+                500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
+                1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
+                3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
+            };
+            let amount = window.rescueCatDonationAmount || 1000;
+            let targetUrl = stripeLinks[amount] || stripeLinks[1000];
+            
+            if (currentSelectedCatId) {
+                localStorage.setItem('pending_tip_cat_id', currentSelectedCatId);
+            }
 
-    showToast(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。`);
-    setTimeout(() => {
-        window.location.href = targetUrl;
-    }, 1000);
-};
+            showToast(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。`);
+            setTimeout(() => {
+                window.location.href = targetUrl;
+            }, 1000);
+        };
+
+        /* ================= 決済完了時の自動加算関数 ================= */
+        async function checkPaymentSuccess() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const isSuccess = urlParams.get('payout_success');
+            const amountStr = urlParams.get('amount');
+
+            if (isSuccess === 'true' && amountStr) {
+                const addedAmount = parseInt(amountStr, 10) || 0;
+                const catId = localStorage.getItem('pending_tip_cat_id');
+
+                if (catId && addedAmount > 0 && window.supabaseClient) {
+                    const { data: catData, error: fetchErr } = await window.supabaseClient
+                        .from('cats')
+                        .select('current_amount, name')
+                        .eq('id', catId)
+                        .single();
+
+                    if (!fetchErr && catData) {
+                        const newTotal = (catData.current_amount || 0) + addedAmount;
+
+                        const { error: updateErr } = await window.supabaseClient
+                            .from('cats')
+                            .update({ current_amount: newTotal })
+                            .eq('id', catId);
+
+                        if (!updateErr) {
+                            showToast(`🎉 ${catData.name}ちゃんに ${addedAmount.toLocaleString()}円の支援が完了しました！ありがとう！`);
+                            localStorage.removeItem('pending_tip_cat_id');
+                            window.history.replaceState({}, document.title, window.location.pathname);
+                            fetchCats();
+                        }
+                    }
+                }
+            }
+        }
 
         async function checkUserSession() {
             if (!window.supabaseClient) return;
@@ -1400,7 +1431,6 @@ window.submitTip = function() {
             }
         }
 
-        function openTipModal(id) { document.getElementById('tipModal').classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
         window.addEventListener('DOMContentLoaded', () => {
