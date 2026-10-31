@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>保護ネコ支援プラットフォーム RescuCat｜推し活で猫の明日をつくる</title>
+    <title>保護ネコ支援プラットフォーム RescuCat｜推し活でネコの明日をつくる</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Supabase JS Client (v2) -->
@@ -31,8 +31,8 @@
                 <span class="font-extrabold text-xl text-amber-900 tracking-tight">RescuCat</span>
             </div>
             <div class="flex items-center space-x-3">
-                <button id="favHeaderBtn" class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-full font-bold flex items-center gap-1">
-                    <i class="fa-solid fa-heart"></i> マイ推し猫 <span id="favBadge" class="bg-rose-500 text-white rounded-full px-1.5 py-0.2 text-[10px]">0</span>
+                <button id="favHeaderBtn" class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-full font-bold flex items-center gap-1 whitespace-nowrap">
+                    <i class="fa-solid fa-heart"></i> マイ推しネコ <span id="favBadge" class="bg-rose-500 text-white rounded-full px-1.5 py-0.2 text-[10px]">0</span>
                 </button>
             </div>
         </div>
@@ -43,14 +43,16 @@
 
         <!-- 全体目標・実績メーター ＆ ボランティア活動ダッシュボード -->
         <section class="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-5 text-white shadow-md space-y-4">
-            <div class="flex justify-between items-end">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-3">
                 <div>
-                    <span class="text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full uppercase tracking-wider">🐾 推し猫を見つけて応援する保護ネコ支援</span>
-                    <h2 class="text-2xl font-black mt-1">「推し活」で、<span class="inline-block">ネコの明日をつくる。</span></h2>
+                    <span class="text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full uppercase tracking-wider inline-block">🐾 推しネコを見つけて応援する保護ネコ支援</span>
+                    <h2 class="text-xl sm:text-2xl font-black mt-2 leading-tight">
+                        <span class="inline-block">「推し活」で、</span><span class="inline-block">ネコの明日をつくる。</span>
+                    </h2>
                 </div>
-                <div class="text-right">
-                    <span class="text-xs opacity-90">今月の推し活: </span>
-                    <p class="text-xl font-extrabold" id="globalAmount">0円</p>
+                <div class="text-left sm:text-right whitespace-nowrap">
+                    <span class="text-xs opacity-90 block sm:inline">今月の推し活目標: 200,000円</span>
+                    <p class="text-xl font-extrabold mt-0.5 sm:mt-0" id="globalAmount">0円</p>
                 </div>
             </div>
             <div class="w-full bg-black/20 rounded-full h-3 overflow-hidden">
@@ -80,19 +82,19 @@
 
                 <!-- ボランティア専用 受信トレイ -->
                 <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3">
-                    <div class="flex justify-between items-center">
-                        <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
+                    <div class="flex justify-between items-center flex-wrap gap-2">
+                        <h4 class="font-bold text-sm text-white flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fa-solid fa-inbox"></i> 届いた里親・お見合い応募 受信トレイ <span id="appCountBadge" class="bg-white text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black">0件</span>
                         </h4>
                         
                         <div class="flex items-center gap-1.5">
-                            <button onclick="openVolunteerPayoutModal()" class="text-[11px] bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded transition font-bold flex items-center gap-1">
+                            <button onclick="openVolunteerPayoutModal()" class="text-[11px] bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded transition font-bold flex items-center gap-1 whitespace-nowrap">
                                 <i class="fa-solid fa-yen-sign"></i> 支援金を申請する
                             </button>
-                            <button onclick="openManualModal()" class="text-[11px] bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded transition font-bold flex items-center gap-1">
+                            <button onclick="openManualModal()" class="text-[11px] bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded transition font-bold flex items-center gap-1 whitespace-nowrap">
                                 <i class="fa-solid fa-book-open"></i> マニュアル
                             </button>
-                            <button onclick="fetchApplications()" class="text-[11px] bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded transition font-bold">
+                            <button onclick="fetchApplications()" class="text-[11px] bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded transition font-bold whitespace-nowrap">
                                 <i class="fa-solid fa-rotate"></i> 更新
                             </button>
                         </div>
@@ -107,11 +109,11 @@
 
         <!-- 全体活動レポート・お知らせセクション 📰 -->
         <section class="bg-white rounded-2xl p-5 shadow-sm border border-amber-100 space-y-4">
-            <div class="flex justify-between items-center border-b pb-2">
+            <div class="flex justify-between items-center border-b pb-2 flex-wrap gap-2">
                 <h3 class="font-extrabold text-amber-900 text-base flex items-center gap-2">
-                    <span>📰 推しネコの日常＆保護活動レポート</span>
+                    <span>📰 <span class="inline-block">推しネコの日常＆</span><span class="inline-block">保護活動レポート</span></span>
                 </h3>
-                <button id="addNewsBtn" onclick="toggleNewsForm()" class="text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg hidden transition">
+                <button id="addNewsBtn" onclick="toggleNewsForm()" class="text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg hidden transition whitespace-nowrap">
                     ✍️ お知らせを投稿する
                 </button>
             </div>
@@ -164,11 +166,11 @@
                     <h3 class="font-extrabold text-amber-900 text-base flex items-center gap-2">
                         <span>🐾 管理者メニュー：新しい保護ネコちゃんを登録</span>
                     </h3>
-                    <button type="button" onclick="openManualModal()" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold px-2.5 py-1 rounded-lg border border-amber-300 transition flex items-center gap-1">
+                    <button type="button" onclick="openManualModal()" class="text-xs bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold px-2.5 py-1 rounded-lg border border-amber-300 transition flex items-center gap-1 whitespace-nowrap">
                         <i class="fa-solid fa-book-open"></i> 📖 運用マニュアルを見る
                     </button>
                 </div>
-                <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-full">ボランティア認証済</span>
+                <span class="text-xs bg-amber-100 text-amber-800 font-bold px-2.5 py-1 rounded-full whitespace-nowrap">ボランティア認証済</span>
             </div>
 
             <form id="addCatForm" onsubmit="handleCreateCat(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-medium">
@@ -210,16 +212,16 @@
                     <label class="block text-stone-600 mb-1">保護主からのメッセージ・紹介文</label>
                     <textarea id="cat-message" rows="2" placeholder="ネコちゃんの性格や保護された経緯など" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none"></textarea>
                 </div>
-                <div class="flex items-center space-x-6 md:col-span-2 py-1">
-                    <label class="flex items-center space-x-1.5 cursor-pointer">
+                <div class="flex items-center space-x-6 md:col-span-2 py-1 flex-wrap gap-y-2">
+                    <label class="flex items-center space-x-1.5 cursor-pointer whitespace-nowrap">
                         <input type="checkbox" id="cat-has-video" class="rounded text-amber-600 focus:ring-amber-500">
                         <span>🎥 SNS・動画あり</span>
                     </label>
-                    <label class="flex items-center space-x-1.5 cursor-pointer">
+                    <label class="flex items-center space-x-1.5 cursor-pointer whitespace-nowrap">
                         <input type="checkbox" id="cat-is-kitten" class="rounded text-amber-600 focus:ring-amber-500">
                         <span>🐱 子ネコ</span>
                     </label>
-                    <label class="flex items-center space-x-1.5 cursor-pointer">
+                    <label class="flex items-center space-x-1.5 cursor-pointer whitespace-nowrap">
                         <input type="checkbox" id="cat-is-urgent" class="rounded text-amber-600 focus:ring-amber-500">
                         <span class="text-rose-600 font-bold">🚨 緊急支援が必要</span>
                     </label>
@@ -235,12 +237,12 @@
         <!-- 絞り込みタグ ＆ 団体フィルター -->
         <section class="space-y-2">
             <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none text-sm font-medium">
-                <button onclick="filterCats('all')" class="filter-btn active-filter bg-amber-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm">みんなの推し猫</button>
+                <button onclick="filterCats('all')" class="filter-btn active-filter bg-amber-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm">みんなの推しネコ</button>
                 <button onclick="filterCats('video')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">🎥 動画あり</button>
                 <button onclick="filterCats('kitten')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🐱 子ネコ</button>
                 <button onclick="filterCats('urgent')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🚨 緊急支援</button>
                 <button onclick="filterCats('adopted')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🎉 譲渡決定</button>
-                <button onclick="filterCats('fav')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">♥ マイ推し猫</button>
+                <button onclick="filterCats('fav')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">♥ マイ推しネコ</button>
             </div>
             <div id="shelterFilterContainer" class="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-stone-600">
                 <span class="font-bold whitespace-nowrap text-amber-900">🏠 団体別:</span>
@@ -251,7 +253,7 @@
         <!-- 保護ネコカード一覧 -->
         <section id="catGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="col-span-full text-center py-12 text-stone-400 font-bold">
-                🐾 推し猫データを読み込んでいます...
+                🐾 推しネコデータを読み込んでいます...
             </div>
         </section>
 
@@ -273,34 +275,34 @@
 
             <!-- 動画リンク表示エリア -->
             <div id="modalVideoContainer" class="hidden bg-stone-900 p-3 rounded-xl text-white space-y-2 text-xs">
-                <p class="font-bold text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-video"></i> 推し猫の紹介動画・SNSリンク</p>
+                <p class="font-bold text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-video"></i> 推しネコの紹介動画・SNSリンク</p>
                 <a id="modalVideoLink" href="#" target="_blank" class="block bg-amber-600 hover:bg-amber-700 text-white text-center font-bold py-2 rounded-lg transition truncate px-3">
                     🎥 動画を開いて視聴する
                 </a>
             </div>
 
             <div id="admin-status-box" class="bg-stone-50 p-3 rounded-xl border border-stone-200 flex items-center justify-between text-xs hidden">
-                <span class="font-bold text-stone-700">🏠 ステータス変更:</span>
+                <span class="font-bold text-stone-700 whitespace-nowrap">🏠 ステータス変更:</span>
                 <div class="flex gap-2">
                     <select id="modalStatusSelect" class="border border-stone-300 rounded px-2 py-1 bg-white outline-none">
                         <option value="募集中">募集中</option>
                         <option value="トライアル中">トライアル中</option>
                         <option value="譲渡決定">譲渡決定</option>
                     </select>
-                    <button onclick="updateCatStatus()" class="bg-stone-800 text-white px-3 py-1 rounded font-bold hover:bg-stone-700">更新</button>
+                    <button onclick="updateCatStatus()" class="bg-stone-800 text-white px-3 py-1 rounded font-bold hover:bg-stone-700 whitespace-nowrap">更新</button>
                 </div>
             </div>
 
-            <div class="bg-amber-50/60 p-3 rounded-xl border border-amber-200 flex items-center justify-between text-xs">
-                <span class="font-bold text-amber-900"><i class="fa-solid fa-share-nodes"></i> 推しネコをシェア:</span>
+            <div class="bg-amber-50/60 p-3 rounded-xl border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <span class="font-bold text-amber-900 whitespace-nowrap"><i class="fa-solid fa-share-nodes"></i> 推しネコをシェア:</span>
                 <div class="flex gap-1.5 flex-wrap">
-                    <button onclick="shareSNS('twitter')" class="bg-stone-900 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-black transition">
+                    <button onclick="shareSNS('twitter')" class="bg-stone-900 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-black transition whitespace-nowrap">
                         <i class="fa-brands fa-x-twitter"></i> X
                     </button>
-                    <button onclick="shareSNS('line')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-emerald-700 transition">
+                    <button onclick="shareSNS('line')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-emerald-700 transition whitespace-nowrap">
                         <i class="fa-brands fa-line"></i> LINE
                     </button>
-                    <button onclick="shareSNS('instagram')" class="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:opacity-90 transition">
+                    <button onclick="shareSNS('instagram')" class="bg-gradient-to-r from-purple-500 via-pink-500 to-yellow-500 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:opacity-90 transition whitespace-nowrap">
                         <i class="fa-brands fa-instagram"></i> Instagram
                     </button>
                 </div>
@@ -323,9 +325,9 @@
             </div>
 
             <div class="flex border-b border-stone-200 text-xs font-bold text-center">
-                <button onclick="switchModalTab('updates')" id="modalTabUpdates" class="flex-1 pb-2 border-b-2 border-amber-600 text-amber-900">📖 近況報告</button>
-                <button onclick="switchModalTab('comments')" id="modalTabComments" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400">💬 推し活メッセージ</button>
-                <button onclick="switchModalTab('apply')" id="modalTabApply" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400">🏠 里親・お見合い応募</button>
+                <button onclick="switchModalTab('updates')" id="modalTabUpdates" class="flex-1 pb-2 border-b-2 border-amber-600 text-amber-900 whitespace-nowrap">📖 近況報告</button>
+                <button onclick="switchModalTab('comments')" id="modalTabComments" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">💬 推し活メッセージ</button>
+                <button onclick="switchModalTab('apply')" id="modalTabApply" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🏠 里親・お見合い応募</button>
             </div>
 
             <div id="updatesTimeline" class="space-y-4">
@@ -407,14 +409,14 @@
             <div class="text-xs text-stone-700 leading-relaxed space-y-4">
                 <div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
                     <p class="font-bold text-amber-900">保護活動へのご参加ありがとうございます！</p>
-                    <p class="text-[11px] text-amber-800 mt-1">RescuCatを使って、猫ちゃんの登録や里親募集をスムーズに行う手順をご案内します。</p>
+                    <p class="text-[11px] text-amber-800 mt-1">RescuCatを使って、ネコちゃんの登録や里親募集をスムーズに行う手順をご案内します。</p>
                 </div>
                 <div class="space-y-1.5 border-b pb-3">
                     <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span> ログイン方法</h4>
                     <p class="pl-6 text-stone-600">フッターにある **「ボランティア・管理者ログイン / 登録」** を押し、メールアドレスとパスワードを入力してログインします。</p>
                 </div>
                 <div class="space-y-1.5 border-b pb-3">
-                    <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span> 新しい猫ちゃんの登録手順</h4>
+                    <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span> 新しいネコちゃんの登録手順</h4>
                     <p class="pl-6 text-stone-600">**「新しい保護ネコちゃんを登録」** フォームから名前・団体名・写真・動画URLなどを入力し公開します。</p>
                 </div>
                 <div class="space-y-1.5 border-b pb-3">
@@ -546,15 +548,15 @@
                 <span>🐾 保護ネコ応援プラットフォーム RescuCat（推し活支援）</span>
             </div>
 
-            <div class="flex justify-center gap-4 text-[11px] text-stone-400">
-                <button onclick="openPolicyModal('terms')" class="hover:text-amber-300 underline">利用規約</button>
+            <div class="flex justify-center gap-4 text-[11px] text-stone-400 flex-wrap">
+                <button onclick="openPolicyModal('terms')" class="hover:text-amber-300 underline whitespace-nowrap">利用規約</button>
                 <span>•</span>
-                <button onclick="openPolicyModal('privacy')" class="hover:text-amber-300 underline">プライバシーポリシー</button>
+                <button onclick="openPolicyModal('privacy')" class="hover:text-amber-300 underline whitespace-nowrap">プライバシーポリシー</button>
                 <span>•</span>
-                <button onclick="openPolicyModal('tokusho')" class="hover:text-amber-300 underline">特定商取引法に基づく表記</button>
+                <button onclick="openPolicyModal('tokusho')" class="hover:text-amber-300 underline whitespace-nowrap">特定商取引法に基づく表記</button>
             </div>
 
-            <div class="flex justify-center items-center gap-4 pt-2">
+            <div class="flex justify-center items-center gap-4 pt-2 flex-wrap">
                 <button onclick="toggleAuthForm()" style="background: none; border: none; color: #a8a29e; text-decoration: underline; font-size: 0.8rem; cursor: pointer; padding: 5px;">
                     ボランティア・管理者ログイン / 登録
                 </button>
@@ -777,7 +779,7 @@
             const grid = document.getElementById('catGrid');
             grid.innerHTML = '';
             if (cats.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center py-12 text-stone-400 font-bold">まだ該当する推し猫ちゃんが登録されていません 🐾</div>';
+                grid.innerHTML = '<div class="col-span-full text-center py-12 text-stone-400 font-bold">まだ該当する推しネコちゃんが登録されていません 🐾</div>';
                 return;
             }
             cats.forEach(cat => {
@@ -813,7 +815,7 @@
                             </div>
                             <div>
                                 <button onclick="filterCatsByShelter('${shelterName}')" class="text-xs text-amber-900 font-bold bg-amber-50 hover:bg-amber-100 border border-amber-200 px-2.5 py-1 rounded-lg transition flex items-center gap-1">
-                                    <i class="fa-solid fa-house-chimney"></i> ${shelterName} の猫を見る
+                                    <i class="fa-solid fa-house-chimney"></i> ${shelterName} のネコを見る
                                 </button>
                             </div>
                             <p class="text-xs text-stone-600 line-clamp-2">「${cat.message || ''}」</p>
@@ -848,9 +850,9 @@
                 container.innerHTML = '<span class="text-stone-400">登録団体なし</span>';
                 return;
             }
-            container.innerHTML = `<button onclick="filterCats('all')" class="bg-stone-100 text-stone-700 px-2 py-0.5 rounded hover:bg-stone-200">全員</button>`;
+            container.innerHTML = `<button onclick="filterCats('all')" class="bg-stone-100 text-stone-700 px-2 py-0.5 rounded hover:bg-stone-200 whitespace-nowrap">全員</button>`;
             shelters.forEach(s => {
-                container.innerHTML += `<button onclick="filterCatsByShelter('${s}')" class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-medium hover:bg-amber-200">${s}</button>`;
+                container.innerHTML += `<button onclick="filterCatsByShelter('${s}')" class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded font-medium hover:bg-amber-200 whitespace-nowrap">${s}</button>`;
             });
         }
 
@@ -917,7 +919,7 @@
             if (error) {
                 showToast("登録エラー: " + error.message, "error");
             } else {
-                showToast("🎉 新しい推し猫ちゃんを登録しました！");
+                showToast("🎉 新しい推しネコちゃんを登録しました！");
                 document.getElementById('addCatForm').reset();
                 document.getElementById('compress-status').innerText = "";
                 fetchCats();
@@ -976,19 +978,19 @@
             updatesTimeline.classList.add('hidden');
             commentsSection.classList.add('hidden');
             applySection.classList.add('hidden');
-            btnUpdates.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400";
-            btnComments.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400";
-            btnApply.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400";
+            btnUpdates.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap";
+            btnComments.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap";
+            btnApply.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap";
 
             if (tab === 'updates') {
                 updatesTimeline.classList.remove('hidden');
-                btnUpdates.className = "flex-1 pb-2 border-b-2 border-amber-600 text-amber-900 font-bold";
+                btnUpdates.className = "flex-1 pb-2 border-b-2 border-amber-600 text-amber-900 font-bold whitespace-nowrap";
             } else if (tab === 'comments') {
                 commentsSection.classList.remove('hidden');
-                btnComments.className = "flex-1 pb-2 border-b-2 border-rose-500 text-rose-600 font-bold";
+                btnComments.className = "flex-1 pb-2 border-b-2 border-rose-500 text-rose-600 font-bold whitespace-nowrap";
             } else if (tab === 'apply') {
                 applySection.classList.remove('hidden');
-                btnApply.className = "flex-1 pb-2 border-b-2 border-amber-600 text-amber-900 font-bold";
+                btnApply.className = "flex-1 pb-2 border-b-2 border-amber-600 text-amber-900 font-bold whitespace-nowrap";
             }
         };
 
@@ -1142,7 +1144,7 @@
 
             listEl.innerHTML = '';
             apps.forEach(app => {
-                const catName = app.cats ? app.cats.name : '不明な猫';
+                const catName = app.cats ? app.cats.name : '不明なネコ';
                 const dateStr = new Date(app.created_at).toLocaleString('ja-JP');
                 const appStatus = app.status || '未対応';
 
@@ -1212,11 +1214,11 @@
                     <div class="border border-stone-200 rounded-xl p-4 bg-stone-50/50 space-y-2 text-xs">
                         <div class="flex justify-between items-center border-b pb-1.5 flex-wrap gap-1">
                             <div class="flex items-center gap-2 flex-wrap">
-                                <span class="bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-md text-[10px]">${item.category || 'お知らせ'}</span>
-                                ${shelterName ? `<span class="bg-stone-200 text-stone-700 font-bold px-2 py-0.5 rounded-md text-[10px]">${shelterName}</span>` : ''}
+                                <span class="bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded-md text-[10px] whitespace-nowrap">${item.category || 'お知らせ'}</span>
+                                ${shelterName ? `<span class="bg-stone-200 text-stone-700 font-bold px-2 py-0.5 rounded-md text-[10px] whitespace-nowrap">${shelterName}</span>` : ''}
                                 <h4 class="font-bold text-sm text-stone-800">${item.title}</h4>
                             </div>
-                            <span class="text-[10px] text-stone-400">${dateStr}</span>
+                            <span class="text-[10px] text-stone-400 whitespace-nowrap">${dateStr}</span>
                         </div>
                         <p class="text-stone-700 leading-relaxed whitespace-pre-wrap">${item.content}</p>
                         ${item.image_url ? `<img src="${item.image_url}" class="rounded-lg max-h-56 object-cover mt-2 w-full md:w-auto">` : ''}
