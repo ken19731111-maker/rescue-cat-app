@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>保護ネコ支援プラットフォーム - RescuCat</title>
+    <title>保護ネコ支援プラットフォーム RescuCat｜推し活で猫の明日をつくる</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Supabase JS Client (v2) -->
@@ -32,7 +32,7 @@
             </div>
             <div class="flex items-center space-x-3">
                 <button id="favHeaderBtn" class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-full font-bold flex items-center gap-1">
-                    <i class="fa-solid fa-heart"></i> お気に入り <span id="favBadge" class="bg-rose-500 text-white rounded-full px-1.5 py-0.2 text-[10px]">0</span>
+                    <i class="fa-solid fa-heart"></i> マイ推し猫 <span id="favBadge" class="bg-rose-500 text-white rounded-full px-1.5 py-0.2 text-[10px]">0</span>
                 </button>
             </div>
         </div>
@@ -45,11 +45,11 @@
         <section class="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-5 text-white shadow-md space-y-4">
             <div class="flex justify-between items-end">
                 <div>
-                    <span class="text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full uppercase tracking-wider">今月のプラットフォーム全体支援</span>
-                    <h2 class="text-2xl font-black mt-1">あなたのひと押しが、<span class="inline-block">ネコの明日をつくる</span></h2>
+                    <span class="text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full uppercase tracking-wider">🐾 推し猫を見つけて応援する保護ネコ支援</span>
+                    <h2 class="text-2xl font-black mt-1">「推し活」で、<span class="inline-block">ネコの明日をつくる。</span></h2>
                 </div>
                 <div class="text-right">
-                    <span class="text-2xl font-black opacity-90">支援金額</span>
+                    <span class="text-xs opacity-90">今月の推し活目標: 200,000円</span>
                     <p class="text-xl font-extrabold" id="globalAmount">0円</p>
                 </div>
             </div>
@@ -109,7 +109,7 @@
         <section class="bg-white rounded-2xl p-5 shadow-sm border border-amber-100 space-y-4">
             <div class="flex justify-between items-center border-b pb-2">
                 <h3 class="font-extrabold text-amber-900 text-base flex items-center gap-2">
-                    <span>📰 活動レポート・団体からのお知らせ</span>
+                    <span>📰 推し猫の日常＆保護活動レポート</span>
                 </h3>
                 <button id="addNewsBtn" onclick="toggleNewsForm()" class="text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg hidden transition">
                     ✍️ お知らせを投稿する
@@ -191,7 +191,7 @@
                 <div>
                     <label class="block text-stone-600 mb-1">里親ステータス</label>
                     <select id="cat-status" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none bg-white">
-                        <option value="募集中">🏠 里親・支援 募集中</option>
+                        <option value="募集中">🏠 里親・推し活 募集中</option>
                         <option value="トライアル中">🐾 トライアル中</option>
                         <option value="譲渡決定">🎉 正式譲渡決定</option>
                     </select>
@@ -235,12 +235,12 @@
         <!-- 絞り込みタグ ＆ 団体フィルター -->
         <section class="space-y-2">
             <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none text-sm font-medium">
-                <button onclick="filterCats('all')" class="filter-btn active-filter bg-amber-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm">すべて</button>
+                <button onclick="filterCats('all')" class="filter-btn active-filter bg-amber-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm">みんなの推し猫</button>
                 <button onclick="filterCats('video')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">🎥 動画あり</button>
                 <button onclick="filterCats('kitten')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🐱 子ネコ</button>
                 <button onclick="filterCats('urgent')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🚨 緊急支援</button>
                 <button onclick="filterCats('adopted')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🎉 譲渡決定</button>
-                <button onclick="filterCats('fav')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">♥ お気に入り</button>
+                <button onclick="filterCats('fav')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">♥ マイ推し猫</button>
             </div>
             <div id="shelterFilterContainer" class="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-stone-600">
                 <span class="font-bold whitespace-nowrap text-amber-900">🏠 団体別:</span>
@@ -251,7 +251,7 @@
         <!-- 保護ネコカード一覧 -->
         <section id="catGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="col-span-full text-center py-12 text-stone-400 font-bold">
-                🐾 データを読み込んでいます...
+                🐾 推し猫データを読み込んでいます...
             </div>
         </section>
 
@@ -273,7 +273,7 @@
 
             <!-- 動画リンク表示エリア -->
             <div id="modalVideoContainer" class="hidden bg-stone-900 p-3 rounded-xl text-white space-y-2 text-xs">
-                <p class="font-bold text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-video"></i> 紹介動画・SNSリンク</p>
+                <p class="font-bold text-amber-400 flex items-center gap-1.5"><i class="fa-solid fa-video"></i> 推し猫の紹介動画・SNSリンク</p>
                 <a id="modalVideoLink" href="#" target="_blank" class="block bg-amber-600 hover:bg-amber-700 text-white text-center font-bold py-2 rounded-lg transition truncate px-3">
                     🎥 動画を開いて視聴する
                 </a>
@@ -292,7 +292,7 @@
             </div>
 
             <div class="bg-amber-50/60 p-3 rounded-xl border border-amber-200 flex items-center justify-between text-xs">
-                <span class="font-bold text-amber-900"><i class="fa-solid fa-share-nodes"></i> SNSで応援シェア:</span>
+                <span class="font-bold text-amber-900"><i class="fa-solid fa-share-nodes"></i> SNSで推し活をシェア:</span>
                 <div class="flex gap-1.5 flex-wrap">
                     <button onclick="shareSNS('twitter')" class="bg-stone-900 text-white px-2.5 py-1.5 rounded-lg font-bold flex items-center gap-1 hover:bg-black transition">
                         <i class="fa-brands fa-x-twitter"></i> X
@@ -307,7 +307,7 @@
             </div>
 
             <div id="admin-add-update-box" class="bg-amber-50/80 p-4 rounded-xl border border-amber-200 space-y-3 hidden">
-                <h4 class="text-xs font-extrabold text-amber-900">✍️ 新しい近況報告（日記）を追加</h4>
+                <h4 class="text-xs font-extrabold text-amber-900">✍️ 推し猫の新しい近況報告（日記）を追加</h4>
                 <form id="addUpdateForm" onsubmit="handleCreateUpdate(event)" class="space-y-3 text-xs">
                     <textarea id="update-message" rows="2" required placeholder="今日の様子など..." class="w-full border border-stone-300 rounded-lg p-2 outline-none bg-white"></textarea>
                     <div>
@@ -324,7 +324,7 @@
 
             <div class="flex border-b border-stone-200 text-xs font-bold text-center">
                 <button onclick="switchModalTab('updates')" id="modalTabUpdates" class="flex-1 pb-2 border-b-2 border-amber-600 text-amber-900">📖 近況報告</button>
-                <button onclick="switchModalTab('comments')" id="modalTabComments" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400">💬 応援コメント</button>
+                <button onclick="switchModalTab('comments')" id="modalTabComments" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400">💬 推し活メッセージ</button>
                 <button onclick="switchModalTab('apply')" id="modalTabApply" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400">🏠 里親・お見合い応募</button>
             </div>
 
@@ -334,13 +334,13 @@
 
             <div id="commentsSection" class="space-y-4 hidden">
                 <form onsubmit="handleCreateComment(event)" class="bg-stone-50 p-3 rounded-xl border border-stone-200 space-y-2 text-xs">
-                    <p class="font-bold text-stone-700">✨ 温かい応援メッセージを送る</p>
+                    <p class="font-bold text-stone-700">✨ 推し猫に愛を伝えるメッセージを送る</p>
                     <input type="text" id="comment-username" required placeholder="お名前" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
-                    <textarea id="comment-message" rows="2" required placeholder="頑張ってね！" class="w-full border border-stone-300 rounded p-2 bg-white outline-none"></textarea>
-                    <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 rounded shadow transition">❤️ 応援メッセージを送る</button>
+                    <textarea id="comment-message" rows="2" required placeholder="ずっと応援してるよ！" class="w-full border border-stone-300 rounded p-2 bg-white outline-none"></textarea>
+                    <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 rounded shadow transition">❤️ メッセージを送る</button>
                 </form>
                 <div id="commentsList" class="space-y-2">
-                    <p class="text-xs text-stone-400 text-center py-2">コメント読み込み中...</p>
+                    <p class="text-xs text-stone-400 text-center py-2">メッセージ読み込み中...</p>
                 </div>
             </div>
 
@@ -436,11 +436,11 @@
     <div id="tipModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
             <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-lg text-stone-800">応援投げ銭を送る</h3>
+                <h3 class="font-bold text-lg text-stone-800">推し猫に愛を届ける（推し活投げ銭）</h3>
                 <button onclick="closeModal('tipModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <div>
-                <p class="text-xs text-stone-500 mb-2">金額を選択してください</p>
+                <p class="text-xs text-stone-500 mb-2">支援金額を選択してください（ごはん・医療費になります🐾）</p>
                 <div class="grid grid-cols-3 gap-2 mb-3">
                     <button onclick="selectAmount(500, this)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">500円</button>
                     <button onclick="selectAmount(1000, this)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 active">1,000円</button>
@@ -450,7 +450,7 @@
                     <input type="number" id="customAmount" placeholder="金額を自由入力 (円)" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm outline-none">
                 </div>
             </div>
-            <button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">投げ銭を確定する</button>
+            <button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">推し活で支援を確定する</button>
         </div>
     </div>
 
@@ -543,10 +543,9 @@
     <footer class="bg-stone-800 text-stone-300 text-xs py-8 mt-12 border-t border-stone-700">
         <div class="max-w-6xl mx-auto px-4 text-center space-y-4">
             <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="font-bold text-amber-400 text-sm cursor-pointer hover:underline inline-flex items-center gap-1.5">
-                <span>🐾 保護ネコ応援プラットフォーム RescuCat</span>
+                <span>🐾 保護ネコ応援プラットフォーム RescuCat（推し活支援）</span>
             </div>
 
-            <!-- 👇 特商法表記のリンクを追加しました -->
             <div class="flex justify-center gap-4 text-[11px] text-stone-400">
                 <button onclick="openPolicyModal('terms')" class="hover:text-amber-300 underline">利用規約</button>
                 <span>•</span>
@@ -778,7 +777,7 @@
             const grid = document.getElementById('catGrid');
             grid.innerHTML = '';
             if (cats.length === 0) {
-                grid.innerHTML = '<div class="col-span-full text-center py-12 text-stone-400 font-bold">まだ該当するネコちゃんが登録されていません 🐾</div>';
+                grid.innerHTML = '<div class="col-span-full text-center py-12 text-stone-400 font-bold">まだ該当する推し猫ちゃんが登録されていません 🐾</div>';
                 return;
             }
             cats.forEach(cat => {
@@ -820,7 +819,7 @@
                             <p class="text-xs text-stone-600 line-clamp-2">「${cat.message || ''}」</p>
                             <div class="space-y-1">
                                 <div class="flex justify-between text-xs font-bold">
-                                    <span class="text-stone-500">支援額</span>
+                                    <span class="text-stone-500">推し活支援額</span>
                                     <span class="text-amber-700">${current.toLocaleString()}円 / ${target.toLocaleString()}円</span>
                                 </div>
                                 <div class="w-full bg-stone-100 rounded-full h-2 overflow-hidden">
@@ -833,7 +832,7 @@
                                 <i class="fa-solid fa-book-open"></i> 詳細・里親応募・近況を見る
                             </button>
                             <button onclick="openTipModal(${cat.id})" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl shadow-sm text-sm transition flex items-center justify-center gap-1">
-                                <span>🐾 応援する (投げ銭)</span>
+                                <span>🐾 推し活で応援する</span>
                             </button>
                         </div>
                     </div>
@@ -918,7 +917,7 @@
             if (error) {
                 showToast("登録エラー: " + error.message, "error");
             } else {
-                showToast("🎉 新しいネコちゃんを登録しました！");
+                showToast("🎉 新しい推し猫ちゃんを登録しました！");
                 document.getElementById('addCatForm').reset();
                 document.getElementById('compress-status').innerText = "";
                 fetchCats();
@@ -932,7 +931,7 @@
             const cat = catsData.find(c => c.id === catId);
             if (!cat) return;
 
-            document.getElementById('modalCatName').innerText = cat.name + ' の詳細・応募';
+            document.getElementById('modalCatName').innerText = cat.name + ' の詳細・推し活';
             document.getElementById('modalCatShelter').innerText = '🏠 ' + (cat.shelter || '保護団体');
             document.getElementById('modalCatStatusBadge').innerText = cat.status || '募集中';
             document.getElementById('updatesModal').classList.remove('hidden');
@@ -1008,7 +1007,7 @@
         window.shareSNS = function(platform) {
             const cat = catsData.find(c => c.id === currentSelectedCatId);
             if (!cat) return;
-            const text = `保護ネコ支援プラットフォーム RescuCatで「${cat.name}」ちゃんを応援中！🐾`;
+            const text = `保護ネコ支援プラットフォーム RescuCatで「${cat.name}」ちゃんを推し活中！🐾`;
             const url = window.location.href;
 
             if (platform === 'twitter') {
@@ -1017,7 +1016,7 @@
                 window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
             } else if (platform === 'instagram') {
                 navigator.clipboard.writeText(`${text}\n${url}`).then(() => {
-                    showToast(`📸 紹介テキストとURLをコピーしました！`);
+                    showToast(`📸 推し活テキストとURLをコピーしました！`);
                     window.open('https://www.instagram.com/', '_blank');
                 }).catch(() => {
                     window.open('https://www.instagram.com/', '_blank');
@@ -1063,7 +1062,7 @@
             const list = document.getElementById('commentsList');
             const { data } = await window.supabaseClient.from('cat_comments').select('*').eq('cat_id', catId).order('id', { ascending: false });
             if (!data || data.length === 0) {
-                list.innerHTML = '<p class="text-xs text-stone-400 text-center py-2">まだ応援コメントがありません。</p>';
+                list.innerHTML = '<p class="text-xs text-stone-400 text-center py-2">まだメッセージがありません。</p>';
                 return;
             }
             list.innerHTML = '';
@@ -1089,7 +1088,7 @@
             }]);
             if (error) showToast("エラー: " + error.message, "error");
             else {
-                showToast("❤️ 応援メッセージを送信しました！");
+                showToast("❤️ 推し活メッセージを送信しました！");
                 document.getElementById('comment-message').value = '';
                 await fetchComments(currentSelectedCatId);
             }
@@ -1266,7 +1265,6 @@
             document.getElementById('manualModal').classList.remove('hidden');
         };
 
-        /* ================= 利用規約・プライバシー・特商法 モーダル制御 ================= */
         window.openPolicyModal = function(type) {
             const titleEl = document.getElementById('policyModalTitle');
             const contentEl = document.getElementById('policyModalContent');
@@ -1289,7 +1287,7 @@
                 contentEl.innerHTML = `
 <p class="font-bold text-stone-800">【特定商取引法に基づく表記】</p>
 <p><strong>事業者の名称:</strong> 保護ねこ支援 RescuCat 運営事務局</p>
-<p><strong>連絡先メールアドレス:</strong> support@resducat.example.com（※適宜ご自身の連絡先に変更ください）</p>
+<p><strong>連絡先メールアドレス:</strong> support@resducat.example.com</p>
 <p><strong>販売価格・支援金額:</strong> 各支援決済画面（500円、1,000円、3,000円）に表示</p>
 <p><strong>代金の支払時期・方法:</strong> クレジットカード決済（Stripeによる即時決済）</p>
 <p><strong>役務または商品の提供時期:</strong> 支援金決済完了後、直ちに保護ネコ活動資金として計上されます。</p>
@@ -1403,9 +1401,9 @@
 
         window.submitTip = function() {
             const stripeLinks = {
-                500: "https://buy.stripe.com/00wdRbetL8rvceL8Nvcs801",
-                1000: "https://buy.stripe.com/fZu5kF99rePTgv11l3cs800",
-                3000: "https://buy.stripe.com/eVqcN70CVbDH1A7bZHcs802"
+                500: "https://buy.stripe.com/test_bJe14navA7gNfi0bgc3Je00",
+                1000: "https://buy.stripe.com/test_eVq8wPcDI7gNd9SgAw3Je01",
+                3000: "https://buy.stripe.com/test_5kQdR9cDI7gN2ve3NK3Je02"
             };
             let amount = window.rescueCatDonationAmount || 1000;
             let targetUrl = stripeLinks[amount] || stripeLinks[1000];
@@ -1414,7 +1412,7 @@
                 localStorage.setItem('pending_tip_cat_id', currentSelectedCatId);
             }
 
-            showToast(`🐾 ${amount.toLocaleString()}円の支援決済ページへ移動します。`);
+            showToast(`🐾 ${amount.toLocaleString()}円の推し活支援ページへ移動します。`);
             setTimeout(() => {
                 window.location.href = targetUrl;
             }, 1000);
@@ -1445,7 +1443,7 @@
                             .eq('id', catId);
 
                         if (!updateErr) {
-                            showToast(`🎉 ${catData.name}ちゃんに ${addedAmount.toLocaleString()}円の支援が完了しました！ありがとう！`);
+                            showToast(`🎉 ${catData.name}ちゃんへの推し活支援（${addedAmount.toLocaleString()}円）が完了しました！ありがとう！`);
                             localStorage.removeItem('pending_tip_cat_id');
                             window.history.replaceState({}, document.title, window.location.pathname);
                             fetchCats();
