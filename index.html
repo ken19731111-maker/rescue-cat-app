@@ -1525,26 +1525,6 @@ const savedShelter = localStorage.getItem('my_shelter_name');
 if (savedShelter) {
     document.getElementById('cat-shelter').value = savedShelter;
 }
-        // 👇【追加】ネコちゃんを削除する関数
-        window.deleteCat = async function() {
-            if (!currentSelectedCatId) return;
-            if (!confirm("本当にこのネコちゃんの情報を削除しますか？\n（※この操作は元に戻せません）")) return;
-            if (!window.supabaseClient) return;
-
-            const { error } = await window.supabaseClient
-                .from('cats')
-                .delete()
-                .eq('id', currentSelectedCatId);
-
-            if (error) {
-                showToast("削除エラー: " + error.message, "error");
-            } else {
-                showToast("🗑️ ネコちゃんの情報を削除しました。");
-                closeModal('updatesModal');
-                fetchCats(); // 一覧を更新
-            }
-        };
-
-          </script>
+                 </script>
 </body>
 </html>
