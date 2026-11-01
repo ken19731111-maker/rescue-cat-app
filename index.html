@@ -1545,15 +1545,6 @@ if (savedShelter) {
             }
         };
 
-        // 👇【追加】ページ読み込み時やモーダルが開いたときに団体名を自動入力
-        window.addEventListener('DOMContentLoaded', () => {
-            const rememberedShelter = localStorage.getItem('rescue_cat_shelter');
-            if (rememberedShelter) {
-                const shelterInput = document.getElementById('cat-shelter');
-                if (shelterInput) shelterInput.value = rememberedShelter;
-            }
-        });
-        
-    </script>
+          </script>
 </body>
 </html>
