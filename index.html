@@ -1479,6 +1479,18 @@
             fetchNews();
             checkPaymentSuccess();
         });
+    // 登録成功時に団体名を記憶
+localStorage.setItem('my_shelter_name', document.getElementById('cat-shelter').value);
+// 記憶している団体名があれば自動入力
+const savedShelter = localStorage.getItem('my_shelter_name');
+if (savedShelter) {
+    document.getElementById('cat-shelter').value = savedShelter;
+}
+// 記憶している団体名があれば自動入力
+const savedShelter = localStorage.getItem('my_shelter_name');
+if (savedShelter) {
+    document.getElementById('cat-shelter').value = savedShelter;
+}
     </script>
 </body>
 </html>
