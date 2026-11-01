@@ -281,6 +281,7 @@
                 </a>
             </div>
 
+            <!-- ステータス変更ボックス -->
             <div id="admin-status-box" class="bg-stone-50 p-3 rounded-xl border border-stone-200 flex items-center justify-between text-xs hidden">
                 <span class="font-bold text-stone-700 whitespace-nowrap">🏠 ステータス変更:</span>
                 <div class="flex gap-2">
@@ -291,6 +292,13 @@
                     </select>
                     <button onclick="updateCatStatus()" class="bg-stone-800 text-white px-3 py-1 rounded font-bold hover:bg-stone-700 whitespace-nowrap">更新</button>
                 </div>
+            </div>
+
+            <!-- 👇【追加】管理者専用の削除ボタン -->
+            <div id="admin-delete-box" class="hidden text-right">
+                <button onclick="deleteCat()" class="text-[11px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-3 py-1.5 rounded-lg transition">
+                    🗑️ このネコちゃんを削除する
+                </button>
             </div>
 
             <div class="bg-amber-50/60 p-3 rounded-xl border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
@@ -899,10 +907,11 @@
 
             const videoUrl = document.getElementById('cat-video-url').value;
             const hasVideoCheck = document.getElementById('cat-has-video').checked;
+            const shelterName = document.getElementById('cat-shelter').value; // 団体名を取得
 
             const { error } = await window.supabaseClient.from('cats').insert([{
                 name: document.getElementById('cat-name').value,
-                shelter: document.getElementById('cat-shelter').value,
+                shelter: shelterName,
                 age: document.getElementById('cat-age').value,
                 target_amount: parseInt(document.getElementById('cat-target').value) || 20000,
                 current_amount: 0,
@@ -915,6 +924,28 @@
                 is_urgent: document.getElementById('cat-is-urgent').checked,
                 user_id: user ? user.id : null
             }]);
+
+            if (error) {
+                showToast("登録エラー: " + error.message, "error");
+            } else {
+                // 👇【追加】次回のために団体名をブラウザに記憶させる
+                localStorage.setItem('rescue_cat_shelter', shelterName);
+
+                showToast("🎉 新しい推しネコちゃんを登録しました！");
+                document.getElementById('addCatForm').reset();
+                document.getElementById('compress-status').innerText = "";
+                
+                // 👇【追加】登録後も記憶した団体名を自動で再セット
+                const rememberedShelter = localStorage.getItem('rescue_cat_shelter');
+                if (rememberedShelter) {
+                    document.getElementById('cat-shelter').value = rememberedShelter;
+                }
+
+                fetchCats();
+            }
+            submitBtn.disabled = false;
+            submitBtn.innerText = "🐾 このネコちゃんを登録・公開する";
+        };
 
             if (error) {
                 showToast("登録エラー: " + error.message, "error");
@@ -949,6 +980,7 @@
 
             const adminUpdateBox = document.getElementById('admin-add-update-box');
             const adminStatusBox = document.getElementById('admin-status-box');
+            const adminDeleteBox = document.getElementById('admin-delete-box'); // 👇【追加】
 
             const { data: { user } } = await window.supabaseClient.auth.getUser();
             const isOwner = user && cat.user_id && user.id === cat.user_id;
@@ -956,10 +988,12 @@
             if (isOwner) {
                 adminUpdateBox.classList.remove('hidden');
                 adminStatusBox.classList.remove('hidden');
+                if (adminDeleteBox) adminDeleteBox.classList.remove('hidden'); // 👇【追加】
                 document.getElementById('modalStatusSelect').value = cat.status || '募集中';
             } else {
                 adminUpdateBox.classList.add('hidden');
                 adminStatusBox.classList.add('hidden');
+                if (adminDeleteBox) adminDeleteBox.classList.add('hidden'); // 👇【追加】
             }
 
             switchModalTab('updates');
@@ -1491,6 +1525,35 @@ const savedShelter = localStorage.getItem('my_shelter_name');
 if (savedShelter) {
     document.getElementById('cat-shelter').value = savedShelter;
 }
+        // 👇【追加】ネコちゃんを削除する関数
+        window.deleteCat = async function() {
+            if (!currentSelectedCatId) return;
+            if (!confirm("本当にこのネコちゃんの情報を削除しますか？\n（※この操作は元に戻せません）")) return;
+            if (!window.supabaseClient) return;
+
+            const { error } = await window.supabaseClient
+                .from('cats')
+                .delete()
+                .eq('id', currentSelectedCatId);
+
+            if (error) {
+                showToast("削除エラー: " + error.message, "error");
+            } else {
+                showToast("🗑️ ネコちゃんの情報を削除しました。");
+                closeModal('updatesModal');
+                fetchCats(); // 一覧を更新
+            }
+        };
+
+        // 👇【追加】ページ読み込み時やモーダルが開いたときに団体名を自動入力
+        window.addEventListener('DOMContentLoaded', () => {
+            const rememberedShelter = localStorage.getItem('rescue_cat_shelter');
+            if (rememberedShelter) {
+                const shelterInput = document.getElementById('cat-shelter');
+                if (shelterInput) shelterInput.value = rememberedShelter;
+            }
+        });
+        
     </script>
 </body>
 </html>
