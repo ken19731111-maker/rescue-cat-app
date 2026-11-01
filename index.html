@@ -1496,22 +1496,36 @@
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
         // 👇【追加】ネコちゃんを削除する関数
+        // 修正版：ネコちゃんを削除する関数
         window.deleteCat = async function() {
-            if (!currentSelectedCatId) return;
-            if (!confirm("本当にこのネコちゃんの情報を削除しますか？\n（※この操作は元に戻せません）")) return;
-            if (!window.supabaseClient) return;
+            if (!currentSelectedCatId) {
+                showToast("⚠️ 削除するネコちゃんが選択されていません。", "error");
+                return;
+            }
 
+            if (!confirm("本当にこのネコちゃんの情報を削除しますか？\n（※この操作は元に戻せません）")) return;
+            if (!window.supabaseClient) {
+                showToast("⚠️ データベースに接続されていません。", "error");
+                return;
+            }
+
+            // Supabaseから削除を実行
             const { error } = await window.supabaseClient
                 .from('cats')
                 .delete()
                 .eq('id', currentSelectedCatId);
 
             if (error) {
+                // エラー内容を分かりやすく表示
                 showToast("削除エラー: " + error.message, "error");
+                console.error("削除失敗の詳細:", error);
             } else {
+                // 余計なコードを出さず、シンプルに成功メッセージのみを表示
                 showToast("🗑️ ネコちゃんの情報を削除しました。");
                 closeModal('updatesModal');
-                fetchCats(); // 一覧を更新
+                
+                // データを再読み込みして画面から消す
+                await fetchCats();
             }
         };
 
