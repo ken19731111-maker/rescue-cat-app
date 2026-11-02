@@ -22,7 +22,8 @@
 
     <!-- トースト通知コンテナ -->
     <div id="toastContainer" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
-        <!-- ヘッダー -->
+
+    <!-- ヘッダー -->
     <header class="bg-white border-b border-amber-100 sticky top-0 z-30 shadow-sm">
         <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
             <div class="flex items-center space-x-3">
@@ -30,7 +31,7 @@
                     <span class="text-2xl">🐾</span>
                     <span class="font-extrabold text-xl text-amber-900 tracking-tight">RescuCat</span>
                 </div>
-                <!-- 👇【追加】ヘッダーロゴのとなりのボタン -->
+                <!-- ヘッダーロゴのとなりのボタン -->
                 <button onclick="openModal('aboutModal')" class="text-[11px] bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-2.5 py-1 rounded-full font-bold transition flex items-center gap-1 whitespace-nowrap">
                     <span>💡 お金と運営のお話</span>
                 </button>
@@ -554,6 +555,47 @@
         </div>
     </div>
 
+    <!-- 👇【追加】モーダル: 🐾 お金と運営のお話（ここが正しい配置場所です！） -->
+    <div id="aboutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4 relative border-2 border-amber-200">
+            <!-- 閉じるボタン -->
+            <button onclick="closeModal('aboutModal')" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <!-- ヘッダーイラスト＆タイトル -->
+            <div class="text-center space-y-1">
+                <span class="text-4xl block">🐾💬</span>
+                <h3 class="font-black text-lg text-amber-900">RescuCatのお金と運営のお話</h3>
+                <p class="text-[11px] text-amber-700 font-bold">〜 温かい目で見守っていただけると幸いです 〜</p>
+            </div>
+
+            <!-- 本文カード -->
+            <div class="bg-amber-50/70 p-4 rounded-xl border border-amber-200 text-xs text-stone-700 leading-relaxed space-y-3">
+                <p>
+                    ネコちゃんの登録や里親募集など、基本機能は<strong>ずっと完全無料</strong>で使っていただけます！
+                </p>
+                <div class="bg-white/80 p-3 rounded-lg border border-amber-200/80 space-y-1">
+                    <p class="font-bold text-amber-900 text-[11px]">…ちょっとだけ言い訳をさせてください🙇‍♂️</p>
+                    <p class="text-[11px] text-stone-600">
+                        サイトを安全に動かしたり、決済システムを維持するためにどうしても費用がかかってしまいます。そのため、集まった支援金をお振り込みする際、<strong>20%だけ運営費として手数料をいただいています。</strong><br>
+                        <span class="text-[10px] text-amber-800 font-bold">（※残りの80%がそのままボランティア様の活動費に届きます！）</span>
+                    </p>
+                </div>
+                <p>
+                    個人で手探りで運営しているサイトですが、1頭でも多くのネコちゃんを救うために長く続けていきたいと思っています。どうか温かく見守っていただけると嬉しいです🐾
+                </p>
+            </div>
+
+            <!-- 閉じるボタン -->
+            <div class="pt-1">
+                <button onclick="closeModal('aboutModal')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2.5 rounded-xl shadow transition text-xs">
+                    了解しました！閉じる
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- フッター -->
     <footer class="bg-stone-800 text-stone-300 text-xs py-8 mt-12 border-t border-stone-700">
         <div class="max-w-6xl mx-auto px-4 text-center space-y-4">
@@ -933,14 +975,12 @@
             if (error) {
                 showToast("登録エラー: " + error.message, "error");
             } else {
-                // 登録成功時に団体名をブラウザに記憶させる
                 localStorage.setItem('rescue_cat_shelter', shelterName);
 
                 showToast("🎉 新しい推しネコちゃんを登録しました！");
                 document.getElementById('addCatForm').reset();
                 document.getElementById('compress-status').innerText = "";
                 
-                // 登録後も記憶した団体名を自動で再セット
                 const rememberedShelter = localStorage.getItem('rescue_cat_shelter');
                 if (rememberedShelter) {
                     document.getElementById('cat-shelter').value = rememberedShelter;
@@ -1500,8 +1540,7 @@
 
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-        // 👇【追加】ネコちゃんを削除する関数
-        // 修正版：ネコちゃんを削除する関数
+        // ネコちゃんを削除する関数
         window.deleteCat = async function() {
             if (!currentSelectedCatId) {
                 showToast("⚠️ 削除するネコちゃんが選択されていません。", "error");
@@ -1514,22 +1553,17 @@
                 return;
             }
 
-            // Supabaseから削除を実行
             const { error } = await window.supabaseClient
                 .from('cats')
                 .delete()
                 .eq('id', currentSelectedCatId);
 
             if (error) {
-                // エラー内容を分かりやすく表示
                 showToast("削除エラー: " + error.message, "error");
                 console.error("削除失敗の詳細:", error);
             } else {
-                // 余計なコードを出さず、シンプルに成功メッセージのみを表示
                 showToast("🗑️ ネコちゃんの情報を削除しました。");
                 closeModal('updatesModal');
-                
-                // データを再読み込みして画面から消す
                 await fetchCats();
             }
         };
@@ -1540,54 +1574,12 @@
             fetchNews();
             checkPaymentSuccess();
 
-            // 👇 ページ読み込み時に前回の団体名を自動入力
             const rememberedShelter = localStorage.getItem('rescue_cat_shelter');
             if (rememberedShelter) {
                 const shelterInput = document.getElementById('cat-shelter');
                 if (shelterInput) shelterInput.value = rememberedShelter;
             }
         });
-            <!-- モーダル: 🐾 お金と運営のお話 -->
-    <div id="aboutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4 relative border-2 border-amber-200">
-            <!-- 閉じるボタン -->
-            <button onclick="closeModal('aboutModal')" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-
-            <!-- ヘッダーイラスト＆タイトル -->
-            <div class="text-center space-y-1">
-                <span class="text-4xl block">🐾💬</span>
-                <h3 class="font-black text-lg text-amber-900">RescuCatのお金と運営のお話</h3>
-                <p class="text-[11px] text-amber-700 font-bold">〜 温かい目で見守っていただけると幸いです 〜</p>
-            </div>
-
-            <!-- 本文カード -->
-            <div class="bg-amber-50/70 p-4 rounded-xl border border-amber-200 text-xs text-stone-700 leading-relaxed space-y-3">
-                <p>
-                    ネコちゃんの登録や里親募集など、基本機能は<strong>ずっと完全無料</strong>で使っていただけます！
-                </p>
-                <div class="bg-white/80 p-3 rounded-lg border border-amber-200/80 space-y-1">
-                    <p class="font-bold text-amber-900 text-[11px]">…ちょっとだけ言い訳をさせてください🙇‍♂️</p>
-                    <p class="text-[11px] text-stone-600">
-                        サイトを安全に動かしたり、決済システムを維持するためにどうしても費用がかかってしまいます。そのため、集まった支援金をお振り込みする際、<strong>20%だけ運営費として手数料をいただいています。</strong><br>
-                        <span class="text-[10px] text-amber-800 font-bold">（※残りの80%がそのままボランティア様の活動費に届きます！）</span>
-                    </p>
-                </div>
-                <p>
-                    個人で手探りで運営しているサイトですが、1頭でも多くのネコちゃんを救うために長く続けていきたいと思っています。どうか温かく見守っていただけると嬉しいです🐾
-                </p>
-            </div>
-
-            <!-- 閉じるボタン -->
-            <div class="pt-1">
-                <button onclick="closeModal('aboutModal')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2.5 rounded-xl shadow transition text-xs">
-                    了解しました！閉じる
-                </button>
-            </div>
-        </div>
-    </div>
-
     </script>
 </body>
 </html>
