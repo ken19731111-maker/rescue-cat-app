@@ -663,8 +663,9 @@
         }
 
         let catsData = [];
-        let favorites = [];
-        let currentSelectedCatId = null;
+// 👇 ブラウザに保存されている「マイ推しネコ」のIDリストを読み込む（なければ空配列）
+let favorites = JSON.parse(localStorage.getItem('rescue_cat_favorites') || '[]');
+let currentSelectedCatId = null;
         let isLoggedIn = false;
 
         /* ================= トースト通知 ================= */
@@ -1379,11 +1380,15 @@
         }
 
         function toggleFav(id) {
-            if (favorites.includes(id)) favorites = favorites.filter(fId => fId !== id);
-            else favorites.push(id);
-            document.getElementById('favBadge').innerText = favorites.length;
-            renderCats(catsData);
-        }
+    if (favorites.includes(id)) favorites = favorites.filter(fId => fId !== id);
+    else favorites.push(id);
+    
+    // 👇 追加：最新のお気に入りリストをブラウザ（localStorage）に保存
+    localStorage.setItem('rescue_cat_favorites', JSON.stringify(favorites));
+
+    document.getElementById('favBadge').innerText = favorites.length;
+    renderCats(catsData);
+}
 
         function filterCats(type) {
             if (type === 'all') renderCats(catsData);
@@ -1574,17 +1579,22 @@ window.openModal = function(id) {
         };
 
         window.addEventListener('DOMContentLoaded', () => {
-            checkUserSession();
-            fetchCats();
-            fetchNews();
-            checkPaymentSuccess();
+    checkUserSession();
+    fetchCats();
+    fetchNews();
+    checkPaymentSuccess();
 
-            const rememberedShelter = localStorage.getItem('rescue_cat_shelter');
-            if (rememberedShelter) {
-                const shelterInput = document.getElementById('cat-shelter');
-                if (shelterInput) shelterInput.value = rememberedShelter;
-            }
-        });
+    // 👇 追加：読み込み時に「マイ推しネコ」のバッジ数を更新する
+    const favBadge = document.getElementById('favBadge');
+    if (favBadge) favBadge.innerText = favorites.length;
+
+    const rememberedShelter = localStorage.getItem('rescue_cat_shelter');
+    if (rememberedShelter) {
+        const shelterInput = document.getElementById('cat-shelter');
+        if (shelterInput) shelterInput.value = rememberedShelter;
+    }
+});
+
     </script>
 </body>
 </html>
