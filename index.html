@@ -1539,6 +1539,11 @@
         }
 
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+// モーダルを開く汎用関数
+window.openModal = function(id) {
+    const modal = document.getElementById(id);
+    if (modal) modal.classList.remove('hidden');
+};
 
         // ネコちゃんを削除する関数
         window.deleteCat = async function() {
