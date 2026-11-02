@@ -37,7 +37,8 @@
                 </button>
             </div>
             <div class="flex items-center space-x-3">
-                <button id="favHeaderBtn" class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-full font-bold flex items-center gap-1 whitespace-nowrap">
+                <!-- マイ推しネコボタン：押すと推し活タブへスクロール＆絞り込み -->
+                <button id="favHeaderBtn" onclick="scrollToFavCats()" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-full font-bold flex items-center gap-1 whitespace-nowrap transition">
                     <i class="fa-solid fa-heart"></i> マイ推しネコ <span id="favBadge" class="bg-rose-500 text-white rounded-full px-1.5 py-0.2 text-[10px]">0</span>
                 </button>
             </div>
@@ -241,14 +242,14 @@
         </section>
 
         <!-- 絞り込みタグ ＆ 団体フィルター -->
-        <section class="space-y-2">
+        <section id="catSearchSection" class="space-y-2">
             <div class="flex gap-2 overflow-x-auto pb-1 scrollbar-none text-sm font-medium">
-                <button onclick="filterCats('all')" class="filter-btn active-filter bg-amber-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm">みんなの推しネコ</button>
-                <button onclick="filterCats('video')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">🎥 動画あり</button>
-                <button onclick="filterCats('kitten')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🐱 子ネコ</button>
-                <button onclick="filterCats('urgent')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🚨 緊急支援</button>
-                <button onclick="filterCats('adopted')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🎉 譲渡決定</button>
-                <button onclick="filterCats('fav')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">♥ マイ推しネコ</button>
+                <button id="btn-filter-all" onclick="filterCats('all')" class="filter-btn active-filter bg-amber-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm">みんなの推しネコ</button>
+                <button id="btn-filter-video" onclick="filterCats('video')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">🎥 動画あり</button>
+                <button id="btn-filter-kitten" onclick="filterCats('kitten')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🐱 子ネコ</button>
+                <button id="btn-filter-urgent" onclick="filterCats('urgent')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🚨 緊急支援</button>
+                <button id="btn-filter-adopted" onclick="filterCats('adopted')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap">🎉 譲渡決定</button>
+                <button id="btn-filter-fav" onclick="filterCats('fav')" class="filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1">♥ マイ推しネコ</button>
             </div>
             <div id="shelterFilterContainer" class="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-stone-600">
                 <span class="font-bold whitespace-nowrap text-amber-900">🏠 団体別:</span>
@@ -287,24 +288,27 @@
                 </a>
             </div>
 
-            <!-- ステータス変更ボックス -->
-            <div id="admin-status-box" class="bg-stone-50 p-3 rounded-xl border border-stone-200 flex items-center justify-between text-xs hidden">
-                <span class="font-bold text-stone-700 whitespace-nowrap">🏠 ステータス変更:</span>
-                <div class="flex gap-2">
-                    <select id="modalStatusSelect" class="border border-stone-300 rounded px-2 py-1 bg-white outline-none">
-                        <option value="募集中">募集中</option>
-                        <option value="トライアル中">トライアル中</option>
-                        <option value="譲渡決定">譲渡決定</option>
-                    </select>
-                    <button onclick="updateCatStatus()" class="bg-stone-800 text-white px-3 py-1 rounded font-bold hover:bg-stone-700 whitespace-nowrap">更新</button>
+            <!-- ステータス変更 ＆ 編集・削除ボタン（登録ボランティア専用） -->
+            <div id="admin-status-box" class="bg-stone-50 p-3 rounded-xl border border-stone-200 space-y-2 text-xs hidden">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-stone-700 whitespace-nowrap">🏠 ステータス変更:</span>
+                    <div class="flex gap-2">
+                        <select id="modalStatusSelect" class="border border-stone-300 rounded px-2 py-1 bg-white outline-none">
+                            <option value="募集中">募集中</option>
+                            <option value="トライアル中">トライアル中</option>
+                            <option value="譲渡決定">譲渡決定</option>
+                        </select>
+                        <button onclick="updateCatStatus()" class="bg-stone-800 text-white px-3 py-1 rounded font-bold hover:bg-stone-700 whitespace-nowrap">更新</button>
+                    </div>
                 </div>
-            </div>
-
-            <!-- 管理者専用の削除ボタン -->
-            <div id="admin-delete-box" class="hidden text-right">
-                <button onclick="deleteCat()" class="text-[11px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-3 py-1.5 rounded-lg transition">
-                    🗑️ このネコちゃんを削除する
-                </button>
+                <div class="flex justify-end gap-2 pt-1 border-t border-stone-200">
+                    <button onclick="openEditCatModal()" class="text-[11px] bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 font-bold px-3 py-1.5 rounded-lg transition">
+                        ✏️ 登録情報を編集する
+                    </button>
+                    <button onclick="deleteCat()" class="text-[11px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-3 py-1.5 rounded-lg transition">
+                        🗑️ 削除する
+                    </button>
+                </div>
             </div>
 
             <div class="bg-amber-50/60 p-3 rounded-xl border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
@@ -394,6 +398,69 @@
                     </button>
                 </form>
             </div>
+        </div>
+    </div>
+
+    <!-- モーダル: 🐾【新規機能】ボランティア専用・ネコちゃん情報編集 -->
+    <div id="editCatModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-amber-900 flex items-center gap-2">
+                    <span>✏️ 保護ネコ情報の編集</span>
+                </h3>
+                <button onclick="closeModal('editCatModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form onsubmit="handleUpdateCatInfo(event)" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs font-medium">
+                <div>
+                    <label class="block text-stone-600 mb-1">ネコちゃんの名前 <span class="text-rose-500">*</span></label>
+                    <input type="text" id="edit-cat-name" required class="w-full border border-stone-300 rounded p-2 outline-none">
+                </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">所属団体・グループ名 <span class="text-rose-500">*</span></label>
+                    <input type="text" id="edit-cat-shelter" required class="w-full border border-stone-300 rounded p-2 outline-none">
+                </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">年齢・推定月齢</label>
+                    <input type="text" id="edit-cat-age" class="w-full border border-stone-300 rounded p-2 outline-none">
+                </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">支援目標金額 (円)</label>
+                    <input type="number" id="edit-cat-target" class="w-full border border-stone-300 rounded p-2 outline-none">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-stone-600 mb-1">写真変更 (変更する場合のみアップロード)</label>
+                    <input type="file" accept="image/*" onchange="processImage(event, 'edit-cat-image-url', 'edit-compress-status')" class="w-full text-xs text-stone-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-amber-100 file:text-amber-800">
+                    <input type="hidden" id="edit-cat-image-url">
+                    <p id="edit-compress-status" class="text-[10px] text-amber-700 font-bold mt-1"></p>
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-stone-600 mb-1">🎥 紹介動画URL</label>
+                    <input type="url" id="edit-cat-video-url" class="w-full border border-stone-300 rounded p-2 outline-none">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-stone-600 mb-1">保護主からのメッセージ・紹介文</label>
+                    <textarea id="edit-cat-message" rows="3" class="w-full border border-stone-300 rounded p-2 outline-none"></textarea>
+                </div>
+                <div class="flex items-center space-x-6 md:col-span-2 py-1 flex-wrap gap-y-2">
+                    <label class="flex items-center space-x-1.5 cursor-pointer">
+                        <input type="checkbox" id="edit-cat-has-video" class="rounded text-amber-600">
+                        <span>🎥 SNS・動画あり</span>
+                    </label>
+                    <label class="flex items-center space-x-1.5 cursor-pointer">
+                        <input type="checkbox" id="edit-cat-is-kitten" class="rounded text-amber-600">
+                        <span>🐱 子ネコ</span>
+                    </label>
+                    <label class="flex items-center space-x-1.5 cursor-pointer">
+                        <input type="checkbox" id="edit-cat-is-urgent" class="rounded text-amber-600">
+                        <span class="text-rose-600 font-bold">🚨 緊急支援</span>
+                    </label>
+                </div>
+                <div class="md:col-span-2 pt-2">
+                    <button type="submit" id="submitEditCatBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2.5 rounded-xl shadow transition">
+                        ✨ 変更を保存して更新する
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -555,7 +622,7 @@
         </div>
     </div>
 
-    <!-- 👇【追加】モーダル: 🐾 お金と運営のお話（ここが正しい配置場所です！） -->
+    <!-- モーダル: 🐾 お金と運営のお話 -->
     <div id="aboutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4 relative border-2 border-amber-200">
             <!-- 閉じるボタン -->
@@ -663,9 +730,9 @@
         }
 
         let catsData = [];
-// 👇 ブラウザに保存されている「マイ推しネコ」のIDリストを読み込む（なければ空配列）
-let favorites = JSON.parse(localStorage.getItem('rescue_cat_favorites') || '[]');
-let currentSelectedCatId = null;
+        // ブラウザから記憶を復元
+        let favorites = JSON.parse(localStorage.getItem('rescue_cat_favorites') || '[]');
+        let currentSelectedCatId = null;
         let isLoggedIn = false;
 
         /* ================= トースト通知 ================= */
@@ -1014,7 +1081,6 @@ let currentSelectedCatId = null;
 
             const adminUpdateBox = document.getElementById('admin-add-update-box');
             const adminStatusBox = document.getElementById('admin-status-box');
-            const adminDeleteBox = document.getElementById('admin-delete-box');
 
             const { data: { user } } = await window.supabaseClient.auth.getUser();
             const isOwner = user && cat.user_id && user.id === cat.user_id;
@@ -1022,17 +1088,80 @@ let currentSelectedCatId = null;
             if (isOwner) {
                 adminUpdateBox.classList.remove('hidden');
                 adminStatusBox.classList.remove('hidden');
-                if (adminDeleteBox) adminDeleteBox.classList.remove('hidden');
                 document.getElementById('modalStatusSelect').value = cat.status || '募集中';
             } else {
                 adminUpdateBox.classList.add('hidden');
                 adminStatusBox.classList.add('hidden');
-                if (adminDeleteBox) adminDeleteBox.classList.add('hidden');
             }
 
             switchModalTab('updates');
             await fetchUpdates(catId);
             await fetchComments(catId);
+        };
+
+        /* アップデート機能3: 登録内容の編集 */
+        window.openEditCatModal = function() {
+            const cat = catsData.find(c => c.id === currentSelectedCatId);
+            if (!cat) return;
+
+            document.getElementById('edit-cat-name').value = cat.name || '';
+            document.getElementById('edit-cat-shelter').value = cat.shelter || '';
+            document.getElementById('edit-cat-age').value = cat.age || '';
+            document.getElementById('edit-cat-target').value = cat.target_amount || 20000;
+            document.getElementById('edit-cat-video-url').value = cat.video_url || '';
+            document.getElementById('edit-cat-message').value = cat.message || '';
+            document.getElementById('edit-cat-has-video').checked = !!cat.has_video;
+            document.getElementById('edit-cat-is-kitten').checked = !!cat.is_kitten;
+            document.getElementById('edit-cat-is-urgent').checked = !!cat.is_urgent;
+            document.getElementById('edit-cat-image-url').value = '';
+            document.getElementById('edit-compress-status').innerText = '';
+
+            document.getElementById('editCatModal').classList.remove('hidden');
+        };
+
+        window.handleUpdateCatInfo = async function(event) {
+            event.preventDefault();
+            if (!window.supabaseClient || !currentSelectedCatId) return;
+
+            const submitBtn = document.getElementById('submitEditCatBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "✨ 保存中...";
+
+            const newImg = document.getElementById('edit-cat-image-url').value;
+            const videoUrl = document.getElementById('edit-cat-video-url').value;
+            const hasVideoCheck = document.getElementById('edit-cat-has-video').checked;
+
+            const updateData = {
+                name: document.getElementById('edit-cat-name').value,
+                shelter: document.getElementById('edit-cat-shelter').value,
+                age: document.getElementById('edit-cat-age').value,
+                target_amount: parseInt(document.getElementById('edit-cat-target').value) || 20000,
+                video_url: videoUrl,
+                message: document.getElementById('edit-cat-message').value,
+                has_video: hasVideoCheck || !!(videoUrl && videoUrl.trim() !== ""),
+                is_kitten: document.getElementById('edit-cat-is-kitten').checked,
+                is_urgent: document.getElementById('edit-cat-is-urgent').checked
+            };
+
+            if (newImg) {
+                updateData.image_url = newImg;
+            }
+
+            const { error } = await window.supabaseClient
+                .from('cats')
+                .update(updateData)
+                .eq('id', currentSelectedCatId);
+
+            if (error) {
+                showToast("更新エラー: " + error.message, "error");
+            } else {
+                showToast("✨ ネコちゃんの情報を更新しました！");
+                closeModal('editCatModal');
+                fetchCats();
+                openUpdatesModal(currentSelectedCatId);
+            }
+            submitBtn.disabled = false;
+            submitBtn.innerText = "✨ 変更を保存して更新する";
         };
 
         window.switchModalTab = function(tab) {
@@ -1074,10 +1203,12 @@ let currentSelectedCatId = null;
             }
         };
 
+        /* アップデート機能2: SNSシェア文章＆ハッシュタグ強化 */
         window.shareSNS = function(platform) {
             const cat = catsData.find(c => c.id === currentSelectedCatId);
             if (!cat) return;
-            const text = `保護ネコ支援プラットフォーム RescuCatで「${cat.name}」ちゃんを推し活中！🐾`;
+            const shelterStr = cat.shelter ? `（${cat.shelter}）` : '';
+            const text = `保護ネコ支援プラットフォーム RescuCatで「${cat.name}」ちゃん${shelterStr}を推し活中！🐾\n#RescuCat #保護猫 #猫のいる暮らし #推しネコ #里親募集`;
             const url = window.location.href;
 
             if (platform === 'twitter') {
@@ -1086,7 +1217,7 @@ let currentSelectedCatId = null;
                 window.open(`https://social-plugins.line.me/lineit/share?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`, '_blank');
             } else if (platform === 'instagram') {
                 navigator.clipboard.writeText(`${text}\n${url}`).then(() => {
-                    showToast(`📸 推し活テキストとURLをコピーしました！`);
+                    showToast(`📸 ハッシュタグ付きテキストとURLをコピーしました！`);
                     window.open('https://www.instagram.com/', '_blank');
                 }).catch(() => {
                     window.open('https://www.instagram.com/', '_blank');
@@ -1380,17 +1511,33 @@ let currentSelectedCatId = null;
         }
 
         function toggleFav(id) {
-    if (favorites.includes(id)) favorites = favorites.filter(fId => fId !== id);
-    else favorites.push(id);
-    
-    // 👇 追加：最新のお気に入りリストをブラウザ（localStorage）に保存
-    localStorage.setItem('rescue_cat_favorites', JSON.stringify(favorites));
+            if (favorites.includes(id)) favorites = favorites.filter(fId => fId !== id);
+            else favorites.push(id);
+            
+            // ローカルストレージに保存
+            localStorage.setItem('rescue_cat_favorites', JSON.stringify(favorites));
 
-    document.getElementById('favBadge').innerText = favorites.length;
-    renderCats(catsData);
-}
+            document.getElementById('favBadge').innerText = favorites.length;
+            renderCats(catsData);
+        }
+
+        /* アップデート機能1: ヘッダーのマイ推しネコボタンで絞り込み＆スクロール */
+        window.scrollToFavCats = function() {
+            filterCats('fav');
+            const section = document.getElementById('catSearchSection');
+            if (section) section.scrollIntoView({ behavior: 'smooth' });
+        };
 
         function filterCats(type) {
+            // タブの見た目のアクティブ表示切り替え
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.className = "filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1";
+            });
+            const activeBtn = document.getElementById(`btn-filter-${type}`);
+            if (activeBtn) {
+                activeBtn.className = "filter-btn active-filter bg-amber-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm flex items-center gap-1";
+            }
+
             if (type === 'all') renderCats(catsData);
             else if (type === 'video') renderCats(catsData.filter(c => c.has_video || (c.video_url && c.video_url.trim() !== "")));
             else if (type === 'kitten') renderCats(catsData.filter(c => c.is_kitten));
@@ -1544,11 +1691,11 @@ let currentSelectedCatId = null;
         }
 
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-// モーダルを開く汎用関数
-window.openModal = function(id) {
-    const modal = document.getElementById(id);
-    if (modal) modal.classList.remove('hidden');
-};
+
+        window.openModal = function(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.classList.remove('hidden');
+        };
 
         // ネコちゃんを削除する関数
         window.deleteCat = async function() {
@@ -1579,22 +1726,21 @@ window.openModal = function(id) {
         };
 
         window.addEventListener('DOMContentLoaded', () => {
-    checkUserSession();
-    fetchCats();
-    fetchNews();
-    checkPaymentSuccess();
+            checkUserSession();
+            fetchCats();
+            fetchNews();
+            checkPaymentSuccess();
 
-    // 👇 追加：読み込み時に「マイ推しネコ」のバッジ数を更新する
-    const favBadge = document.getElementById('favBadge');
-    if (favBadge) favBadge.innerText = favorites.length;
+            // マイ推しネコの初期バッジ数
+            const favBadge = document.getElementById('favBadge');
+            if (favBadge) favBadge.innerText = favorites.length;
 
-    const rememberedShelter = localStorage.getItem('rescue_cat_shelter');
-    if (rememberedShelter) {
-        const shelterInput = document.getElementById('cat-shelter');
-        if (shelterInput) shelterInput.value = rememberedShelter;
-    }
-});
-
+            const rememberedShelter = localStorage.getItem('rescue_cat_shelter');
+            if (rememberedShelter) {
+                const shelterInput = document.getElementById('cat-shelter');
+                if (shelterInput) shelterInput.value = rememberedShelter;
+            }
+        });
     </script>
 </body>
 </html>
