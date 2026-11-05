@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>保護ネコ支援プラットフォーム RescuCat｜推し活でネコの明日をつくる</title>
+    <!-- 🐾 ファビコン（ネコの足跡アイコン） -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🐾</text></svg>">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Supabase JS Client (v2) -->
@@ -31,13 +34,11 @@
                     <span class="text-2xl">🐾</span>
                     <span class="font-extrabold text-xl text-amber-900 tracking-tight">RescuCat</span>
                 </div>
-                <!-- ヘッダーロゴのとなりのボタン -->
                 <button onclick="openModal('aboutModal')" class="text-[11px] bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 px-2.5 py-1 rounded-full font-bold transition flex items-center gap-1 whitespace-nowrap">
                     <span>💡 お金と運営のお話</span>
                 </button>
             </div>
             <div class="flex items-center space-x-3">
-                <!-- マイ推しネコボタン：押すと推し活タブへスクロール＆絞り込み -->
                 <button id="favHeaderBtn" onclick="scrollToFavCats()" class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-full font-bold flex items-center gap-1 whitespace-nowrap transition">
                     <i class="fa-solid fa-heart"></i> マイ推しネコ <span id="favBadge" class="bg-rose-500 text-white rounded-full px-1.5 py-0.2 text-[10px]">0</span>
                 </button>
@@ -342,28 +343,42 @@
                 </form>
             </div>
 
+            <!-- タブ切り替え（近況報告・非公開メッセージ・里親応募） -->
             <div class="flex border-b border-stone-200 text-xs font-bold text-center">
                 <button onclick="switchModalTab('updates')" id="modalTabUpdates" class="flex-1 pb-2 border-b-2 border-amber-600 text-amber-900 whitespace-nowrap">📖 近況報告</button>
-                <button onclick="switchModalTab('comments')" id="modalTabComments" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">💬 推し活メッセージ</button>
+                <button onclick="switchModalTab('message')" id="modalTabMessage" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">💌 運営・保護主に送る</button>
                 <button onclick="switchModalTab('apply')" id="modalTabApply" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🏠 里親・お見合い応募</button>
             </div>
 
+            <!-- 近況報告タイムライン -->
             <div id="updatesTimeline" class="space-y-4">
                 <p class="text-xs text-stone-400 text-center py-4">読み込み中...</p>
             </div>
 
-            <div id="commentsSection" class="space-y-4 hidden">
-                <form onsubmit="handleCreateComment(event)" class="bg-stone-50 p-3 rounded-xl border border-stone-200 space-y-2 text-xs">
-                    <p class="font-bold text-stone-700">✨ 推しネコに愛を伝えるメッセージを送る</p>
-                    <input type="text" id="comment-username" required placeholder="お名前" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
-                    <textarea id="comment-message" rows="2" required placeholder="ずっと応援してるよ！" class="w-full border border-stone-300 rounded p-2 bg-white outline-none"></textarea>
-                    <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-2 rounded shadow transition">❤️ メッセージを送る</button>
+            <!-- 🐾 【非公開メッセージ送信フォーム】あなた（管理者・保護主）だけが管理画面で見られます -->
+            <div id="messageSection" class="space-y-4 hidden">
+                <form onsubmit="handleCreatePrivateMessage(event)" class="bg-amber-50/60 p-4 rounded-xl border border-amber-200 space-y-3 text-xs">
+                    <p class="font-extrabold text-amber-900">💌 保護主・運営へのひそやかなメッセージ送信</p>
+                    <p class="text-[11px] text-stone-600">このメッセージは一般公開されず、保護主（あなた）の管理画面でのみ確認できます。</p>
+                    <div>
+                        <label class="block text-stone-600 mb-1">お名前 <span class="text-rose-500">*</span></label>
+                        <input type="text" id="priv-msg-name" required placeholder="応援者 太郎" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-stone-600 mb-1">ご連絡先メールアドレス <span class="text-rose-500">*</span></label>
+                        <input type="email" id="priv-msg-email" required placeholder="example@email.com" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-stone-600 mb-1">メッセージ内容 <span class="text-rose-500">*</span></label>
+                        <textarea id="priv-msg-content" rows="3" required placeholder="この子について質問があります、応援しています等..." class="w-full border border-stone-300 rounded p-2 bg-white outline-none"></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2.5 rounded-lg shadow transition">
+                        🔒 管理画面にひそやかに送信する
+                    </button>
                 </form>
-                <div id="commentsList" class="space-y-2">
-                    <p class="text-xs text-stone-400 text-center py-2">メッセージ読み込み中...</p>
-                </div>
             </div>
 
+            <!-- 里親・お見合い応募 -->
             <div id="applySection" class="space-y-4 hidden">
                 <form onsubmit="handleCreateApplication(event)" class="bg-amber-50/50 p-4 rounded-xl border border-amber-200 space-y-3 text-xs">
                     <p class="font-extrabold text-amber-900">🏠 このネコちゃんとの里親・お見合いエントリー</p>
@@ -401,7 +416,7 @@
         </div>
     </div>
 
-    <!-- モーダル: 🐾【新規機能】ボランティア専用・ネコちゃん情報編集 -->
+    <!-- モーダル: 🐾 ボランティア専用・ネコちゃん情報編集 -->
     <div id="editCatModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
@@ -460,6 +475,40 @@
                         ✨ 変更を保存して更新する
                     </button>
                 </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- モーダル: 📨 お問い合わせフォーム（Supabase連携） -->
+    <div id="contactModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex justify-between items-center border-b pb-3">
+                <h3 class="font-bold text-lg text-stone-800 flex items-center gap-2">
+                    <i class="fa-solid fa-envelope text-amber-600"></i>
+                    <span>運営にお問い合わせ</span>
+                </h3>
+                <button onclick="closeModal('contactModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form onsubmit="handleContactSubmit(event)" class="space-y-3 text-xs font-medium">
+                <div>
+                    <label class="block text-stone-600 mb-1">お名前 <span class="text-rose-500">*</span></label>
+                    <input type="text" id="contact-name" required placeholder="例: 猫野 太郎" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">メールアドレス <span class="text-rose-500">*</span></label>
+                    <input type="email" id="contact-email" required placeholder="example@email.com" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">件名</label>
+                    <input type="text" id="contact-subject" placeholder="例: サイトの使い方について" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+                </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">お問い合わせ内容 <span class="text-rose-500">*</span></label>
+                    <textarea id="contact-message" rows="4" required placeholder="ご質問やご要望をご記入ください..." class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+                </div>
+                <button type="submit" id="submitContactBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-3 rounded-xl shadow transition">
+                    ✉️ 送信する
+                </button>
             </form>
         </div>
     </div>
@@ -584,36 +633,95 @@
         </div>
     </div>
 
-    <!-- モーダル: 管理者専用・支援金申請管理ダッシュボード -->
+    <!-- モーダル: 管理者専用・各種管理ダッシュボード -->
     <div id="payoutManagerModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-4xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3">
                 <div class="flex items-center gap-2">
                     <i class="fa-solid fa-shield-halved text-amber-600 text-xl"></i>
-                    <h3 class="font-bold text-lg text-stone-800">【管理者】支援金振込申請 一覧</h3>
+                    <h3 class="font-bold text-lg text-stone-800">【管理者】ダッシュボード</h3>
                 </div>
                 <button onclick="closePayoutManagerModal()" class="text-stone-400 hover:text-stone-600">
                     <i class="fa-solid fa-xmark text-xl"></i>
                 </button>
             </div>
-            <p class="text-xs text-stone-500">ボランティアからの振込申請をリアルタイムで確認・振込完了処理を行います。</p>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-sm">
-                    <thead>
-                        <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
-                            <th class="p-3">ボランティア名</th>
-                            <th class="p-3">申請日時</th>
-                            <th class="p-3">申請額</th>
-                            <th class="p-3">振込予定額 (20%引)</th>
-                            <th class="p-3">振込先口座</th>
-                            <th class="p-3 text-center">操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminPayoutList" class="divide-y divide-stone-200 text-stone-700">
-                        <tr><td colspan="6" class="p-4 text-center text-stone-400">データを取得中...</td></tr>
-                    </tbody>
-                </table>
+
+            <!-- タブ切り替え -->
+            <div class="flex border-b text-xs font-bold overflow-x-auto">
+                <button onclick="switchAdminTab('payouts')" id="adminTabPayouts" class="px-4 py-2 border-b-2 border-amber-600 text-amber-900 whitespace-nowrap">
+                    💰 支援金振込申請 一覧
+                </button>
+                <button onclick="switchAdminTab('contacts')" id="adminTabContacts" class="px-4 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">
+                    📩 サイトお問い合わせ 一覧
+                </button>
+                <button onclick="switchAdminTab('privmsgs')" id="adminTabPrivMsgs" class="px-4 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">
+                    💌 非公開ネコ宛てメッセージ 一覧
+                </button>
             </div>
+
+            <!-- 支援金申請一覧 -->
+            <div id="adminPayoutsSection">
+                <p class="text-xs text-stone-500 mb-2">ボランティアからの振込申請をリアルタイムで確認・振込完了処理を行います。</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
+                                <th class="p-3">ボランティア名</th>
+                                <th class="p-3">申請日時</th>
+                                <th class="p-3">申請額</th>
+                                <th class="p-3">振込予定額 (20%引)</th>
+                                <th class="p-3">振込先口座</th>
+                                <th class="p-3 text-center">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminPayoutList" class="divide-y divide-stone-200 text-stone-700">
+                            <tr><td colspan="6" class="p-4 text-center text-stone-400">データを取得中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- お問い合わせ一覧 -->
+            <div id="adminContactsSection" class="hidden">
+                <p class="text-xs text-stone-500 mb-2">フッターのお問い合わせフォームから届いたメッセージです。</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
+                                <th class="p-3">お名前 / メール</th>
+                                <th class="p-3">日時</th>
+                                <th class="p-3">件名 / 内容</th>
+                                <th class="p-3 text-center">ステータス</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminContactList" class="divide-y divide-stone-200 text-stone-700">
+                            <tr><td colspan="4" class="p-4 text-center text-stone-400">データを取得中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 非公開ネコ宛てメッセージ一覧 -->
+            <div id="adminPrivMsgsSection" class="hidden">
+                <p class="text-xs text-stone-500 mb-2">ネコちゃんの詳細画面から送信された「非公開メッセージ」一覧です（あなただけが確認できます）。</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead>
+                            <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
+                                <th class="p-3">対象ネコちゃん</th>
+                                <th class="p-3">送信者 / メール</th>
+                                <th class="p-3">日時</th>
+                                <th class="p-3">メッセージ内容</th>
+                                <th class="p-3 text-center">ステータス</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminPrivMsgList" class="divide-y divide-stone-200 text-stone-700">
+                            <tr><td colspan="5" class="p-4 text-center text-stone-400">データを取得中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="pt-3 border-t border-stone-200 flex justify-end">
                 <button onclick="closePayoutManagerModal()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 text-sm font-bold px-5 py-2 rounded-xl transition">
                     閉じる
@@ -625,19 +733,14 @@
     <!-- モーダル: 🐾 お金と運営のお話 -->
     <div id="aboutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4 relative border-2 border-amber-200">
-            <!-- 閉じるボタン -->
             <button onclick="closeModal('aboutModal')" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
-
-            <!-- ヘッダーイラスト＆タイトル -->
             <div class="text-center space-y-1">
                 <span class="text-4xl block">🐾💬</span>
                 <h3 class="font-black text-lg text-amber-900">RescuCatのお金と運営のお話</h3>
                 <p class="text-[11px] text-amber-700 font-bold">〜 温かい目で見守っていただけると幸いです 〜</p>
             </div>
-
-            <!-- 本文カード -->
             <div class="bg-amber-50/70 p-4 rounded-xl border border-amber-200 text-xs text-stone-700 leading-relaxed space-y-3">
                 <p>
                     ネコちゃんの登録や里親募集など、基本機能は<strong>ずっと完全無料</strong>で使っていただけます！
@@ -653,8 +756,6 @@
                     個人で手探りで運営しているサイトですが、1頭でも多くのネコちゃんを救うために長く続けていきたいと思っています。どうか温かく見守っていただけると嬉しいです🐾
                 </p>
             </div>
-
-            <!-- 閉じるボタン -->
             <div class="pt-1">
                 <button onclick="closeModal('aboutModal')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2.5 rounded-xl shadow transition text-xs">
                     了解しました！閉じる
@@ -676,6 +777,8 @@
                 <button onclick="openPolicyModal('privacy')" class="hover:text-amber-300 underline whitespace-nowrap">プライバシーポリシー</button>
                 <span>•</span>
                 <button onclick="openPolicyModal('tokusho')" class="hover:text-amber-300 underline whitespace-nowrap">特定商取引法に基づく表記</button>
+                <span>•</span>
+                <button onclick="openModal('contactModal')" class="hover:text-amber-300 underline whitespace-nowrap font-bold text-amber-400">✉️ お問い合わせ</button>
             </div>
 
             <div class="flex justify-center items-center gap-4 pt-2 flex-wrap">
@@ -730,7 +833,6 @@
         }
 
         let catsData = [];
-        // ブラウザから記憶を復元
         let favorites = JSON.parse(localStorage.getItem('rescue_cat_favorites') || '[]');
         let currentSelectedCatId = null;
         let isLoggedIn = false;
@@ -754,6 +856,62 @@
                 setTimeout(() => toast.remove(), 300);
             }, 3500);
         }
+
+        /* ================= お問い合わせ送信（Supabase保存） ================= */
+        window.handleContactSubmit = async function(event) {
+            event.preventDefault();
+            if (!window.supabaseClient) return;
+
+            const submitBtn = document.getElementById('submitContactBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "送信中...";
+
+            const { error } = await window.supabaseClient.from('contact_inquiries').insert([{
+                name: document.getElementById('contact-name').value,
+                email: document.getElementById('contact-email').value,
+                subject: document.getElementById('contact-subject').value,
+                message: document.getElementById('contact-message').value,
+                status: '未対応'
+            }]);
+
+            if (error) {
+                showToast("送信失敗: " + error.message, "error");
+            } else {
+                showToast("🎉 お問い合わせを送信しました！運営にて確認いたします。");
+                document.getElementById('contact-name').value = '';
+                document.getElementById('contact-email').value = '';
+                document.getElementById('contact-subject').value = '';
+                document.getElementById('contact-message').value = '';
+                closeModal('contactModal');
+            }
+
+            submitBtn.disabled = false;
+            submitBtn.innerText = "✉️ 送信する";
+        };
+
+        /* ================= 🐾 非公開ネコ宛てメッセージ送信 ================= */
+        window.handleCreatePrivateMessage = async function(event) {
+            event.preventDefault();
+            if (!window.supabaseClient || !currentSelectedCatId) return;
+
+            const { error } = await window.supabaseClient.from('private_cat_messages').insert([{
+                cat_id: currentSelectedCatId,
+                sender_name: document.getElementById('priv-msg-name').value,
+                sender_email: document.getElementById('priv-msg-email').value,
+                message: document.getElementById('priv-msg-content').value,
+                status: '未対応'
+            }]);
+
+            if (error) {
+                showToast("送信エラー: " + error.message, "error");
+            } else {
+                showToast("🔒 保護主にひそやかなメッセージを送信しました！");
+                document.getElementById('priv-msg-name').value = '';
+                document.getElementById('priv-msg-email').value = '';
+                document.getElementById('priv-msg-content').value = '';
+                switchModalTab('updates');
+            }
+        };
 
         /* ================= 支援金申請モーダル ================= */
         window.openVolunteerPayoutModal = function() {
@@ -815,7 +973,10 @@
             const input = prompt("【管理者認証】パスコードを入力してください:");
             if (input === ADMIN_PASS) {
                 document.getElementById('payoutManagerModal').classList.remove('hidden');
+                switchAdminTab('payouts');
                 fetchAdminPayoutRequests();
+                fetchAdminContacts();
+                fetchAdminPrivateMessages();
             } else if (input !== null) {
                 showToast("パスコードが正しくありません。", "error");
             }
@@ -823,6 +984,36 @@
         window.closePayoutManagerModal = function() {
             document.getElementById('payoutManagerModal').classList.add('hidden');
         };
+
+        window.switchAdminTab = function(tab) {
+            const payoutsSec = document.getElementById('adminPayoutsSection');
+            const contactsSec = document.getElementById('adminContactsSection');
+            const privMsgsSec = document.getElementById('adminPrivMsgsSection');
+            
+            const btnPayouts = document.getElementById('adminTabPayouts');
+            const btnContacts = document.getElementById('adminTabContacts');
+            const btnPrivMsgs = document.getElementById('adminTabPrivMsgs');
+
+            payoutsSec.classList.add('hidden');
+            contactsSec.classList.add('hidden');
+            privMsgsSec.classList.add('hidden');
+
+            btnPayouts.className = "px-4 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap";
+            btnContacts.className = "px-4 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap";
+            btnPrivMsgs.className = "px-4 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap";
+
+            if (tab === 'payouts') {
+                payoutsSec.classList.remove('hidden');
+                btnPayouts.className = "px-4 py-2 border-b-2 border-amber-600 text-amber-900 whitespace-nowrap";
+            } else if (tab === 'contacts') {
+                contactsSec.classList.remove('hidden');
+                btnContacts.className = "px-4 py-2 border-b-2 border-amber-600 text-amber-900 whitespace-nowrap";
+            } else if (tab === 'privmsgs') {
+                privMsgsSec.classList.remove('hidden');
+                btnPrivMsgs.className = "px-4 py-2 border-b-2 border-amber-600 text-amber-900 whitespace-nowrap";
+            }
+        };
+
         async function fetchAdminPayoutRequests() {
             const listEl = document.getElementById('adminPayoutList');
             if (!listEl || !window.supabaseClient) return;
@@ -866,6 +1057,111 @@
                 `;
             });
         }
+
+        async function fetchAdminContacts() {
+            const listEl = document.getElementById('adminContactList');
+            if (!listEl || !window.supabaseClient) return;
+            listEl.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-stone-400">データを取得中...</td></tr>';
+
+            const { data, error } = await window.supabaseClient
+                .from('contact_inquiries')
+                .select('*')
+                .order('id', { ascending: false });
+
+            if (error) {
+                listEl.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-rose-500 font-bold">取得エラー: ${error.message}</td></tr>`;
+                return;
+            }
+            const contacts = data || [];
+            if (contacts.length === 0) {
+                listEl.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-stone-400">現在、届いているお問い合わせはありません 🐾</td></tr>';
+                return;
+            }
+            listEl.innerHTML = '';
+            contacts.forEach(c => {
+                const dateStr = new Date(c.created_at).toLocaleString('ja-JP');
+                const isPending = (c.status || '未対応') === '未対応';
+                listEl.innerHTML += `
+                    <tr class="${isPending ? 'bg-rose-50/20' : 'bg-stone-50'}">
+                        <td class="p-3 font-medium">${c.name}<br><a href="mailto:${c.email}" class="text-blue-600 underline text-xs">${c.email}</a></td>
+                        <td class="p-3 text-xs text-stone-500">${dateStr}</td>
+                        <td class="p-3 text-xs">
+                            <p class="font-bold text-amber-900">${c.subject || '（件名なし）'}</p>
+                            <p class="text-stone-700 whitespace-pre-wrap mt-1">${c.message}</p>
+                        </td>
+                        <td class="p-3 text-center">
+                            <select onchange="updateContactStatus(${c.id}, this.value)" class="text-xs font-bold border rounded px-2 py-1 outline-none ${isPending ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
+                                <option value="未対応" ${isPending ? 'selected' : ''}>🔴 未対応</option>
+                                <option value="対応済み" ${!isPending ? 'selected' : ''}>🟢 対応済み</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        async function fetchAdminPrivateMessages() {
+            const listEl = document.getElementById('adminPrivMsgList');
+            if (!listEl || !window.supabaseClient) return;
+            listEl.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-stone-400">データを取得中...</td></tr>';
+
+            const { data, error } = await window.supabaseClient
+                .from('private_cat_messages')
+                .select(`*, cats ( name, shelter )`)
+                .order('id', { ascending: false });
+
+            if (error) {
+                listEl.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-rose-500 font-bold">取得エラー: ${error.message} (※SQL未実行の場合は下記SQLを実行してください)</td></tr>`;
+                return;
+            }
+            const msgs = data || [];
+            if (msgs.length === 0) {
+                listEl.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-stone-400">現在、届いている非公開メッセージはありません 🐾</td></tr>';
+                return;
+            }
+            listEl.innerHTML = '';
+            msgs.forEach(m => {
+                const catName = m.cats ? m.cats.name : '不明なネコ';
+                const dateStr = new Date(m.created_at).toLocaleString('ja-JP');
+                const isPending = (m.status || '未対応') === '未対応';
+
+                listEl.innerHTML += `
+                    <tr class="${isPending ? 'bg-rose-50/20' : 'bg-stone-50'}">
+                        <td class="p-3 font-bold text-amber-900">🐱 ${catName}</td>
+                        <td class="p-3 font-medium">${m.sender_name}<br><a href="mailto:${m.sender_email}" class="text-blue-600 underline text-xs">${m.sender_email}</a></td>
+                        <td class="p-3 text-xs text-stone-500">${dateStr}</td>
+                        <td class="p-3 text-xs text-stone-700 whitespace-pre-wrap">${m.message}</td>
+                        <td class="p-3 text-center">
+                            <select onchange="updatePrivateMessageStatus(${m.id}, this.value)" class="text-xs font-bold border rounded px-2 py-1 outline-none ${isPending ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
+                                <option value="未対応" ${isPending ? 'selected' : ''}>🔴 未対応</option>
+                                <option value="対応済み" ${!isPending ? 'selected' : ''}>🟢 対応済み</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        window.updatePrivateMessageStatus = async function(id, newStatus) {
+            if (!window.supabaseClient) return;
+            const { error } = await window.supabaseClient.from('private_cat_messages').update({ status: newStatus }).eq('id', id);
+            if (error) showToast("更新エラー: " + error.message, "error");
+            else {
+                showToast("ステータスを更新しました！");
+                fetchAdminPrivateMessages();
+            }
+        };
+
+        window.updateContactStatus = async function(id, newStatus) {
+            if (!window.supabaseClient) return;
+            const { error } = await window.supabaseClient.from('contact_inquiries').update({ status: newStatus }).eq('id', id);
+            if (error) showToast("更新エラー: " + error.message, "error");
+            else {
+                showToast("ステータスを更新しました！");
+                fetchAdminContacts();
+            }
+        };
+
         window.processPayout = async function(requestId) {
             if (!confirm("この申請を「振込完了」に更新しますか？")) return;
             if (!window.supabaseClient) return;
@@ -1096,10 +1392,8 @@
 
             switchModalTab('updates');
             await fetchUpdates(catId);
-            await fetchComments(catId);
         };
 
-        /* アップデート機能3: 登録内容の編集 */
         window.openEditCatModal = function() {
             const cat = catsData.find(c => c.id === currentSelectedCatId);
             if (!cat) return;
@@ -1166,25 +1460,27 @@
 
         window.switchModalTab = function(tab) {
             const updatesTimeline = document.getElementById('updatesTimeline');
-            const commentsSection = document.getElementById('commentsSection');
+            const messageSection = document.getElementById('messageSection');
             const applySection = document.getElementById('applySection');
+            
             const btnUpdates = document.getElementById('modalTabUpdates');
-            const btnComments = document.getElementById('modalTabComments');
+            const btnMessage = document.getElementById('modalTabMessage');
             const btnApply = document.getElementById('modalTabApply');
 
             updatesTimeline.classList.add('hidden');
-            commentsSection.classList.add('hidden');
+            messageSection.classList.add('hidden');
             applySection.classList.add('hidden');
+            
             btnUpdates.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap";
-            btnComments.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap";
+            btnMessage.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap";
             btnApply.className = "flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap";
 
             if (tab === 'updates') {
                 updatesTimeline.classList.remove('hidden');
                 btnUpdates.className = "flex-1 pb-2 border-b-2 border-amber-600 text-amber-900 font-bold whitespace-nowrap";
-            } else if (tab === 'comments') {
-                commentsSection.classList.remove('hidden');
-                btnComments.className = "flex-1 pb-2 border-b-2 border-rose-500 text-rose-600 font-bold whitespace-nowrap";
+            } else if (tab === 'message') {
+                messageSection.classList.remove('hidden');
+                btnMessage.className = "flex-1 pb-2 border-b-2 border-amber-600 text-amber-900 font-bold whitespace-nowrap";
             } else if (tab === 'apply') {
                 applySection.classList.remove('hidden');
                 btnApply.className = "flex-1 pb-2 border-b-2 border-amber-600 text-amber-900 font-bold whitespace-nowrap";
@@ -1203,12 +1499,11 @@
             }
         };
 
-        /* アップデート機能2: SNSシェア文章＆ハッシュタグ強化 */
         window.shareSNS = function(platform) {
             const cat = catsData.find(c => c.id === currentSelectedCatId);
             if (!cat) return;
             const shelterStr = cat.shelter ? `（${cat.shelter}）` : '';
-            const text = `保護ネコ支援プラットフォーム RescuCatで「${cat.name}」ちゃん${shelterStr}を推し活中！🐾\n#RescuCat #保護猫 #猫のいる暮らし #推しネコ #里親募集`;
+            const text = `保護ネコ支援プラットフォーム RescuCatで「${cat.name}」ちゃん${shelterStr}を推し活中！🐾\n#RescuCat #保護猫 #推し活 #里親募集`;
             const url = window.location.href;
 
             if (platform === 'twitter') {
@@ -1256,42 +1551,6 @@
                 showToast("🎉 近況報告を投稿しました！");
                 document.getElementById('addUpdateForm').reset();
                 await fetchUpdates(currentSelectedCatId);
-            }
-        };
-
-        async function fetchComments(catId) {
-            const list = document.getElementById('commentsList');
-            const { data } = await window.supabaseClient.from('cat_comments').select('*').eq('cat_id', catId).order('id', { ascending: false });
-            if (!data || data.length === 0) {
-                list.innerHTML = '<p class="text-xs text-stone-400 text-center py-2">まだメッセージがありません。</p>';
-                return;
-            }
-            list.innerHTML = '';
-            data.forEach(c => {
-                list.innerHTML += `
-                    <div class="bg-rose-50/40 border border-rose-100 rounded-lg p-2.5 space-y-1 text-xs">
-                        <div class="flex justify-between font-bold text-rose-900">
-                            <span>💬 ${c.user_name}</span>
-                        </div>
-                        <p class="text-stone-700 whitespace-pre-wrap">${c.message}</p>
-                    </div>
-                `;
-            });
-        }
-
-        window.handleCreateComment = async function(event) {
-            event.preventDefault();
-            if (!window.supabaseClient || !currentSelectedCatId) return;
-            const { error } = await window.supabaseClient.from('cat_comments').insert([{
-                cat_id: currentSelectedCatId,
-                user_name: document.getElementById('comment-username').value,
-                message: document.getElementById('comment-message').value
-            }]);
-            if (error) showToast("エラー: " + error.message, "error");
-            else {
-                showToast("❤️ 推し活メッセージを送信しました！");
-                document.getElementById('comment-message').value = '';
-                await fetchComments(currentSelectedCatId);
             }
         };
 
@@ -1514,14 +1773,11 @@
             if (favorites.includes(id)) favorites = favorites.filter(fId => fId !== id);
             else favorites.push(id);
             
-            // ローカルストレージに保存
             localStorage.setItem('rescue_cat_favorites', JSON.stringify(favorites));
-
             document.getElementById('favBadge').innerText = favorites.length;
             renderCats(catsData);
         }
 
-        /* アップデート機能1: ヘッダーのマイ推しネコボタンで絞り込み＆スクロール */
         window.scrollToFavCats = function() {
             filterCats('fav');
             const section = document.getElementById('catSearchSection');
@@ -1529,7 +1785,6 @@
         };
 
         function filterCats(type) {
-            // タブの見た目のアクティブ表示切り替え
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.className = "filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1";
             });
@@ -1697,7 +1952,6 @@
             if (modal) modal.classList.remove('hidden');
         };
 
-        // ネコちゃんを削除する関数
         window.deleteCat = async function() {
             if (!currentSelectedCatId) {
                 showToast("⚠️ 削除するネコちゃんが選択されていません。", "error");
@@ -1717,7 +1971,6 @@
 
             if (error) {
                 showToast("削除エラー: " + error.message, "error");
-                console.error("削除失敗の詳細:", error);
             } else {
                 showToast("🗑️ ネコちゃんの情報を削除しました。");
                 closeModal('updatesModal');
@@ -1731,7 +1984,6 @@
             fetchNews();
             checkPaymentSuccess();
 
-            // マイ推しネコの初期バッジ数
             const favBadge = document.getElementById('favBadge');
             if (favBadge) favBadge.innerText = favorites.length;
 
