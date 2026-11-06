@@ -968,19 +968,29 @@
         };
 
         /* ================= 管理者専用ダッシュボード (パスコード 7777) ================= */
-        window.openPayoutManagerModal = function() {
-            const ADMIN_PASS = "7777";
-            const input = prompt("【管理者認証】パスコードを入力してください:");
-            if (input === ADMIN_PASS) {
-                document.getElementById('payoutManagerModal').classList.remove('hidden');
-                switchAdminTab('payouts');
-                fetchAdminPayoutRequests();
-                fetchAdminContacts();
-                fetchAdminPrivateMessages();
-            } else if (input !== null) {
-                showToast("パスコードが正しくありません。", "error");
-            }
-        };
+        window.openPayoutManagerModal = async function() {
+    if (!window.supabaseClient) return;
+
+    // 👇 追加：まずログインしているかどうかをチェックする
+    const { data: { session } } = await window.supabaseClient.auth.getSession();
+    if (!session) {
+        showToast("⚠️ 管理者専用機能は、ログイン中のみ利用できます。", "error");
+        return; // ログインしていなければここでストップ！
+    }
+
+    const ADMIN_PASS = "7777";
+    const input = prompt("【管理者認証】パスコードを入力してください:");
+    if (input === ADMIN_PASS) {
+        document.getElementById('payoutManagerModal').classList.remove('hidden');
+        switchAdminTab('payouts');
+        fetchAdminPayoutRequests();
+        fetchAdminContacts();
+        fetchAdminPrivateMessages();
+    } else if (input !== null) {
+        showToast("パスコードが正しくありません。", "error");
+    }
+};
+
         window.closePayoutManagerModal = function() {
             document.getElementById('payoutManagerModal').classList.add('hidden');
         };
