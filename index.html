@@ -861,7 +861,7 @@
         }
 
         /* ================= お問い合わせ送信（Supabase保存） ================= */
-       window.handleContactSubmit = async function(event) {
+      window.handleContactSubmit = async function(event) {
     event.preventDefault();
     if (!window.supabaseClient) return;
 
@@ -869,9 +869,9 @@
     submitBtn.disabled = true;
     submitBtn.innerText = "送信中...";
 
-    // プレーンなオブジェクトとしてデータを送信
+    // データベースのカラム名にあわせて 'sender_name' に変更
     const payload = {
-        name: document.getElementById('contact-name').value,
+        sender_name: document.getElementById('contact-name').value,
         email: document.getElementById('contact-email').value,
         subject: document.getElementById('contact-subject').value || '',
         message: document.getElementById('contact-message').value,
@@ -882,12 +882,10 @@
         .from('contact_inquiries')
         .insert([payload]);
 
-if (error) {
-        // エラーオブジェクトの詳細をコンソールに展開して表示する
+    if (error) {
         console.error("Supabase Error Details:", JSON.stringify(error, null, 2));
-        showToast("送信失敗: " + (error.message || JSON.stringify(error)), "error");
-    }
-    else {
+        showToast("送信失敗: " + error.message, "error");
+    } else {
         showToast("🎉 お問い合わせを送信しました！運営にて確認いたします。");
         document.getElementById('contact-name').value = '';
         document.getElementById('contact-email').value = '';
@@ -899,7 +897,6 @@ if (error) {
     submitBtn.disabled = false;
     submitBtn.innerText = "✉️ 送信する";
 };
-
         /* ================= 🐾 非公開ネコ宛てメッセージ送信 ================= */
         window.handleCreatePrivateMessage = async function(event) {
             event.preventDefault();
