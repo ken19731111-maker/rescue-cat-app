@@ -861,7 +861,7 @@
         }
 
         /* ================= お問い合わせ送信（Supabase保存） ================= */
-      window.handleContactSubmit = async function(event) {
+     window.handleContactSubmit = async function(event) {
     event.preventDefault();
     if (!window.supabaseClient) return;
 
@@ -869,10 +869,10 @@
     submitBtn.disabled = true;
     submitBtn.innerText = "送信中...";
 
-    // データベースのカラム名にあわせて 'sender_name' に変更
+    // データベースのカラム名にあわせて 'sender_name' と 'sender_email' に修正
     const payload = {
         sender_name: document.getElementById('contact-name').value,
-        email: document.getElementById('contact-email').value,
+        sender_email: document.getElementById('contact-email').value,
         subject: document.getElementById('contact-subject').value || '',
         message: document.getElementById('contact-message').value,
         status: '未対応'
