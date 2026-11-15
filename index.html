@@ -98,7 +98,7 @@
                                 <i class="fa-solid fa-inbox"></i> 里親応募 <span id="appCountBadge" class="bg-white text-amber-800 text-[10px] px-1.5 py-0.2 rounded-full font-black">0件</span>
                             </button>
                             <button onclick="switchDashboardTab('messages')" id="dashTabMsgBtn" class="font-bold text-white/70 hover:text-white px-3 py-1 rounded-lg transition whitespace-nowrap">
-                                <i class="fa-solid fa-lock"></i> 非公開メッセージ <span id="privMsgCountBadge" class="bg-white/30 text-white text-[10px] px-1.5 py-0.2 rounded-full font-black">0件</span>
+                                <i class="fa-solid fa-lock"></i> メッセージ <span id="privMsgCountBadge" class="bg-white/30 text-white text-[10px] px-1.5 py-0.2 rounded-full font-black">0件</span>
                             </button>
                         </div>
 
@@ -359,7 +359,7 @@
             <!-- タブ切り替え（近況報告・非公開メッセージ・里親応募） -->
             <div class="flex border-b border-stone-200 text-xs font-bold text-center">
                 <button onclick="switchModalTab('updates')" id="modalTabUpdates" class="flex-1 pb-2 border-b-2 border-amber-600 text-amber-900 whitespace-nowrap">📖 近況報告</button>
-                <button onclick="switchModalTab('message')" id="modalTabMessage" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">💌 運営・保護主に送る</button>
+                <button onclick="switchModalTab('message')" id="modalTabMessage" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">💌 保護主・保護団体に送る</button>
                 <button onclick="switchModalTab('apply')" id="modalTabApply" class="flex-1 pb-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">🏠 里親・お見合い応募</button>
             </div>
 
@@ -371,8 +371,8 @@
             <!-- 非公開メッセージ送信フォーム -->
             <div id="messageSection" class="space-y-4 hidden">
                 <form onsubmit="handleCreatePrivateMessage(event)" class="bg-amber-50/60 p-4 rounded-xl border border-amber-200 space-y-3 text-xs">
-                    <p class="font-extrabold text-amber-900">💌 保護主・運営へのひそやかなメッセージ送信</p>
-                    <p class="text-[11px] text-stone-600">このメッセージは一般公開されず、保護主（あなた）の管理画面でのみ確認できます。</p>
+                    <p class="font-extrabold text-amber-900">💌 保護主・保護団体へのメッセージ送信</p>
+                    <p class="text-[11px] text-stone-600">このメッセージは一般公開されず、保護主・保護団体の管理画面でのみ確認できます。</p>
                     <div>
                         <label class="block text-stone-600 mb-1">お名前 <span class="text-rose-500">*</span></label>
                         <input type="text" id="priv-msg-name" required placeholder="応援者 太郎" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
