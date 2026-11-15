@@ -1117,7 +1117,6 @@
                 const isPending = (c.status || '未対応') === '未対応';
                 listEl.innerHTML += `
                     <tr class="${isPending ? 'bg-rose-50/20' : 'bg-stone-50'}">
-                        <%-- ここを c.name から c.sender_name に修正 --%>
                         <td class="p-3 font-medium">${c.sender_name}<br><a href="mailto:${c.sender_email}" class="text-blue-600 underline text-xs">${c.sender_email}</a></td>
                         <td class="p-3 text-xs text-stone-500">${dateStr}</td>
                         <td class="p-3 text-xs">
@@ -1133,6 +1132,7 @@
                     </tr>
                 `;
             });
+        }
         async function fetchAdminPrivateMessages() {
             const listEl = document.getElementById('adminPrivMsgList');
             if (!listEl || !window.supabaseClient) return;
