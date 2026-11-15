@@ -861,7 +861,7 @@
         }
 
         /* ================= お問い合わせ送信（Supabase保存） ================= */
-     window.handleContactSubmit = async function(event) {
+    window.handleContactSubmit = async function(event) {
     event.preventDefault();
     if (!window.supabaseClient) return;
 
@@ -869,12 +869,25 @@
     submitBtn.disabled = true;
     submitBtn.innerText = "送信中...";
 
-    // サイト全体のお問い合わせ用データ（cat_idは不要なので含めません）
+    // 複数のID候補から値を探して取得する（どれが使われていても対応可能）
+    const nameInput = document.getElementById('contact-name') || document.getElementById('name') || document.getElementById('priv-msg-name');
+    const emailInput = document.getElementById('contact-email') || document.getElementById('email') || document.getElementById('priv-msg-email');
+    const subjectInput = document.getElementById('contact-subject') || document.getElementById('subject');
+    const messageInput = document.getElementById('contact-message') || document.getElementById('message') || document.getElementById('priv-msg-message');
+
+    const nameVal = nameInput ? nameInput.value : '';
+    const emailVal = emailInput ? emailInput.value : '';
+    const subjectVal = subjectInput ? subjectInput.value : '';
+    const messageVal = messageInput ? messageInput.value : '';
+
+    // F12コンソールで正しく値が取れているか確認用ログ
+    console.log("送信データ確認:", { nameVal, emailVal, subjectVal, messageVal });
+
     const payload = {
-        sender_name: document.getElementById('contact-name').value,
-        sender_email: document.getElementById('contact-email').value,
-        subject: document.getElementById('contact-subject').value || '',
-        message: document.getElementById('contact-message').value,
+        sender_name: nameVal,
+        sender_email: emailVal,
+        subject: subjectVal,
+        message: messageVal,
         status: '未対応'
     };
 
@@ -887,10 +900,10 @@
         showToast("送信失敗: " + error.message, "error");
     } else {
         showToast("🎉 お問い合わせを送信しました！運営にて確認いたします。");
-        document.getElementById('contact-name').value = '';
-        document.getElementById('contact-email').value = '';
-        document.getElementById('contact-subject').value = '';
-        document.getElementById('contact-message').value = '';
+        if (nameInput) nameInput.value = '';
+        if (emailInput) emailInput.value = '';
+        if (subjectInput) subjectInput.value = '';
+        if (messageInput) messageInput.value = '';
         closeModal('contactModal');
     }
 
