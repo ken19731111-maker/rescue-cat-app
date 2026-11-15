@@ -94,7 +94,24 @@
                         <h4 class="font-bold text-sm text-white flex items-center gap-1.5 whitespace-nowrap">
                             <i class="fa-solid fa-inbox"></i> 届いた里親・お見合い応募 受信トレイ <span id="appCountBadge" class="bg-white text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black">0件</span>
                         </h4>
+                        <!-- ボランティア専用 非公開メッセージ受信トレイ -->
+                <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3 mt-4">
+                    <div class="flex justify-between items-center flex-wrap gap-2">
+                        <h4 class="font-bold text-sm text-white flex items-center gap-1.5 whitespace-nowrap">
+                            <i class="fa-solid fa-lock"></i> 届いた非公開メッセージ <span id="privMsgCountBadge" class="bg-white text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-black">0件</span>
+                        </h4>
                         
+                        <div class="flex items-center gap-1.5">
+                            <button onclick="fetchVolunteerPrivateMessages()" class="text-[11px] bg-white/20 hover:bg-white/30 text-white px-2.5 py-1 rounded transition font-bold whitespace-nowrap">
+                                <i class="fa-solid fa-rotate"></i> 更新
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="volunteerPrivMsgList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                        <p class="text-xs text-white/70 text-center py-2">非公開メッセージデータを読み込んでいます...</p>
+                    </div>
+                </div>
                         <div class="flex items-center gap-1.5">
                             <button onclick="openVolunteerPayoutModal()" class="text-[11px] bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1 rounded transition font-bold flex items-center gap-1 whitespace-nowrap">
                                 <i class="fa-solid fa-yen-sign"></i> 支援金を申請する
@@ -1670,6 +1687,95 @@
             });
         }
 
+        // 🐾 ログイン中のボランティアが登録したネコちゃん宛ての非公開メッセージを取得
+        async function fetchVolunteerPrivateMessages() {
+            const listEl = document.getElementById('volunteerPrivMsgList');
+            const badgeEl = document.getElementById('privMsgCountBadge');
+            if (!listEl || !window.supabaseClient) return;
+
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            if (!user) return;
+
+            // 1. まずログイン中のユーザーが登録したネコちゃんのID一覧を取得
+            const { data: myCats, error: catErr } = await window.supabaseClient
+                .from('cats')
+                .select('id, name')
+                .eq('user_id', user.id);
+
+            if (catErr || !myCats || myCats.length === 0) {
+                badgeEl.innerText = '0件';
+                listEl.innerHTML = '<p class="text-xs text-white/70 text-center py-3">登録されているネコちゃんがまだありません。</p>';
+                return;
+            }
+
+            const catIds = myCats.map(c => c.id);
+
+            // 2. そのネコちゃんたち宛ての非公開メッセージを取得
+            const { data: msgs, error: msgErr } = await window.supabaseClient
+                .from('private_cat_messages')
+                .select(`*, cats ( name, shelter )`)
+                .in('cat_id', catIds)
+                .order('id', { ascending: false });
+
+            if (msgErr) {
+                listEl.innerHTML = '<p class="text-xs text-white/80 text-center py-2">メッセージの取得に失敗しました</p>';
+                return;
+            }
+
+            const messages = msgs || [];
+            badgeEl.innerText = messages.length + '件';
+
+            if (messages.length === 0) {
+                listEl.innerHTML = '<p class="text-xs text-white/70 text-center py-3">現在、届いている非公開メッセージはありません。</p>';
+                return;
+            }
+
+            listEl.innerHTML = '';
+            messages.forEach(m => {
+                const catName = m.cats ? m.cats.name : '不明なネコ';
+                const dateStr = new Date(m.created_at).toLocaleString('ja-JP');
+                const msgStatus = m.status || '未対応';
+
+                const statusColor = msgStatus === '未対応' 
+                    ? "bg-rose-100 text-rose-800 border-rose-300" 
+                    : "bg-emerald-100 text-emerald-800 border-emerald-300";
+
+                listEl.innerHTML += `
+                    <div class="bg-white text-stone-800 rounded-lg p-3 space-y-2 text-xs shadow-sm">
+                        <div class="flex justify-between items-center border-b pb-1.5 flex-wrap gap-1">
+                            <span class="font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded">🐱 宛先ネコ: ${catName}</span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-[10px] text-stone-400">${dateStr}</span>
+                                <select onchange="updateVolunteerPrivateMessageStatus(${m.id}, this.value)" class="text-[11px] font-bold border rounded px-1.5 py-0.5 outline-none ${statusColor}">
+                                    <option value="未対応" ${msgStatus === '未対応' ? 'selected' : ''}>🔴 未対応</option>
+                                    <option value="対応済み" ${msgStatus === '対応済み' ? 'selected' : ''}>🟢 対応済み</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-1 text-[11px]">
+                            <p><strong>送信者:</strong> ${m.sender_name} 様</p>
+                            <p><strong>メール:</strong> <a href="mailto:${m.sender_email}" class="text-blue-600 underline">${m.sender_email}</a></p>
+                        </div>
+                        <div class="bg-stone-50 p-2 rounded text-[11px] text-stone-600"><strong>メッセージ内容:</strong><br>${m.message}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // ボランティアが自分の画面からステータスを更新できるようにする関数
+        window.updateVolunteerPrivateMessageStatus = async function(msgId, newStatus) {
+            if (!window.supabaseClient) return;
+            const { error } = await window.supabaseClient
+                .from('private_cat_messages')
+                .update({ status: newStatus })
+                .eq('id', msgId);
+
+            if (error) {
+                showToast("ステータス更新エラー: " + error.message, "error");
+            } else {
+                fetchVolunteerPrivateMessages();
+            }
+        };
         window.updateApplicationStatus = async function(appId, newStatus) {
             if (!window.supabaseClient) return;
             const { error } = await window.supabaseClient
@@ -1989,6 +2095,22 @@
 
             if (session) {
                 fetchApplications();
+                async function checkUserSession() {
+            if (!window.supabaseClient) return;
+            const { data: { session } } = await window.supabaseClient.auth.getSession();
+            isLoggedIn = !!session;
+            document.getElementById('admin-add-cat-section').classList.toggle('hidden', !session);
+            document.getElementById('volunteerDashboard').classList.toggle('hidden', !session);
+            document.getElementById('addNewsBtn').classList.toggle('hidden', !session);
+            document.getElementById('login-form-container').style.display = session ? 'none' : 'block';
+            document.getElementById('signup-form-container').style.display = 'none';
+            document.getElementById('logout-section').style.display = session ? 'block' : 'none';
+
+            if (session) {
+                fetchApplications();
+                fetchVolunteerPrivateMessages(); // ← ここを追加！
+            }
+        }
             }
         }
 
