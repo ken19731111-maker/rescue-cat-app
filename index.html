@@ -882,10 +882,12 @@
         .from('contact_inquiries')
         .insert([payload]);
 
-    if (error) {
-        console.error("Supabase Error:", error);
-        showToast("送信失敗: " + error.message, "error");
-    } else {
+if (error) {
+        // エラーオブジェクトの詳細をコンソールに展開して表示する
+        console.error("Supabase Error Details:", JSON.stringify(error, null, 2));
+        showToast("送信失敗: " + (error.message || JSON.stringify(error)), "error");
+    }
+    else {
         showToast("🎉 お問い合わせを送信しました！運営にて確認いたします。");
         document.getElementById('contact-name').value = '';
         document.getElementById('contact-email').value = '';
