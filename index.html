@@ -870,11 +870,11 @@
     submitBtn.innerText = "送信中...";
 
     // データベースのカラム名にあわせて 'sender_name' と 'sender_email' に修正
-    const payload = {
-        sender_name: document.getElementById('contact-name').value,
-        sender_email: document.getElementById('contact-email').value,
-        subject: document.getElementById('contact-subject').value || '',
-        message: document.getElementById('contact-message').value,
+const payload = {
+        cat_id: currentCatId, // 紐づくネコちゃんのIDなど
+        sender_name: document.getElementById('priv-msg-name').value,
+        sender_email: document.getElementById('priv-msg-email').value,
+        message: document.getElementById('priv-msg-message').value,
         status: '未対応'
     };
 
