@@ -861,55 +861,56 @@
         }
 
         /* ================= お問い合わせ送信（Supabase保存） ================= */
-    window.handleContactSubmit = async function(event) {
-    event.preventDefault();
-    if (!window.supabaseClient) return;
+    /* ================= お問い合わせ送信（Supabase保存） ================= */
+        window.handleContactSubmit = async function(event) {
+            event.preventDefault();
+            if (!window.supabaseClient) return;
 
-    const submitBtn = document.getElementById('submitContactBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerText = "送信中...";
+            const submitBtn = document.getElementById('submitContactBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "送信中...";
 
-    // 複数のID候補から値を探して取得する（どれが使われていても対応可能）
-    const nameInput = document.getElementById('contact-name') || document.getElementById('name') || document.getElementById('priv-msg-name');
-    const emailInput = document.getElementById('contact-email') || document.getElementById('email') || document.getElementById('priv-msg-email');
-    const subjectInput = document.getElementById('contact-subject') || document.getElementById('subject');
-    const messageInput = document.getElementById('contact-message') || document.getElementById('message') || document.getElementById('priv-msg-message');
+            // 実際のHTMLのID（contact-name, contact-email 等）から確実に値を取得する
+            const nameEl = document.getElementById('contact-name');
+            const emailEl = document.getElementById('contact-email');
+            const subjectEl = document.getElementById('contact-subject');
+            const messageEl = document.getElementById('contact-message');
 
-    const nameVal = nameInput ? nameInput.value : '';
-    const emailVal = emailInput ? emailInput.value : '';
-    const subjectVal = subjectInput ? subjectInput.value : '';
-    const messageVal = messageInput ? messageInput.value : '';
+            const nameVal = nameEl ? nameEl.value : '';
+            const emailVal = emailEl ? emailEl.value : '';
+            const subjectVal = subjectEl ? subjectEl.value : '';
+            const messageVal = messageEl ? messageEl.value : '';
 
-    // F12コンソールで正しく値が取れているか確認用ログ
-    console.log("送信データ確認:", { nameVal, emailVal, subjectVal, messageVal });
+            // F12コンソールで正しく値が取れているか確認用ログ
+            console.log("送信データ確認:", { nameVal, emailVal, subjectVal, messageVal });
 
-    const payload = {
-        sender_name: nameVal,
-        sender_email: emailVal,
-        subject: subjectVal,
-        message: messageVal,
-        status: '未対応'
-    };
+            const payload = {
+                sender_name: nameVal,
+                sender_email: emailVal,
+                subject: subjectVal,
+                message: messageVal,
+                status: '未対応'
+            };
 
-    const { data, error } = await window.supabaseClient
-        .from('contact_inquiries')
-        .insert([payload]);
+            const { data, error } = await window.supabaseClient
+                .from('contact_inquiries')
+                .insert([payload]);
 
-    if (error) {
-        console.error("Supabase Error Details:", JSON.stringify(error, null, 2));
-        showToast("送信失敗: " + error.message, "error");
-    } else {
-        showToast("🎉 お問い合わせを送信しました！運営にて確認いたします。");
-        if (nameInput) nameInput.value = '';
-        if (emailInput) emailInput.value = '';
-        if (subjectInput) subjectInput.value = '';
-        if (messageInput) messageInput.value = '';
-        closeModal('contactModal');
-    }
+            if (error) {
+                console.error("Supabase Error Details:", JSON.stringify(error, null, 2));
+                showToast("送信失敗: " + error.message, "error");
+            } else {
+                showToast("🎉 お問い合わせを送信しました！運営にて確認いたします。");
+                if (nameEl) nameEl.value = '';
+                if (emailEl) emailEl.value = '';
+                if (subjectEl) subjectEl.value = '';
+                if (messageEl) messageEl.value = '';
+                closeModal('contactModal');
+            }
 
-    submitBtn.disabled = false;
-    submitBtn.innerText = "✉️ 送信する";
-};
+            submitBtn.disabled = false;
+            submitBtn.innerText = "✉️ 送信する";
+        };
         /* ================= 🐾 非公開ネコ宛てメッセージ送信 ================= */
         window.handleCreatePrivateMessage = async function(event) {
             event.preventDefault();
