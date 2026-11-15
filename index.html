@@ -2132,7 +2132,7 @@
             }
         }
 
-        async function checkUserSession() {
+       async function checkUserSession() {
             if (!window.supabaseClient) return;
             const { data: { session } } = await window.supabaseClient.auth.getSession();
             isLoggedIn = !!session;
@@ -2145,22 +2145,8 @@
 
             if (session) {
                 fetchApplications();
-                async function checkUserSession() {
-            if (!window.supabaseClient) return;
-            const { data: { session } } = await window.supabaseClient.auth.getSession();
-            isLoggedIn = !!session;
-            document.getElementById('admin-add-cat-section').classList.toggle('hidden', !session);
-            document.getElementById('volunteerDashboard').classList.toggle('hidden', !session);
-            document.getElementById('addNewsBtn').classList.toggle('hidden', !session);
-            document.getElementById('login-form-container').style.display = session ? 'none' : 'block';
-            document.getElementById('signup-form-container').style.display = 'none';
-            document.getElementById('logout-section').style.display = session ? 'block' : 'none';
-
-            if (session) {
-                fetchApplications();
-                fetchVolunteerPrivateMessages(); // ← ここを追加！
-            }
-        }
+                fetchVolunteerPrivateMessages();
+                setupRealtimeListeners(); // ← 💡 ここでリアルタイム監視をスタート！
             }
         }
 
