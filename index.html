@@ -861,36 +861,37 @@
         }
 
         /* ================= お問い合わせ送信（Supabase保存） ================= */
-        window.handleContactSubmit = async function(event) {
-            event.preventDefault();
-            if (!window.supabaseClient) return;
+       window.handleContactSubmit = async function(event) {
+    event.preventDefault();
+    if (!window.supabaseClient) return;
 
-            const submitBtn = document.getElementById('submitContactBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerText = "送信中...";
+    const submitBtn = document.getElementById('submitContactBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerText = "送信中...";
 
-            const { error } = await window.supabaseClient.from('contact_inquiries').insert([{
-                name: document.getElementById('contact-name').value,
-                email: document.getElementById('contact-email').value,
-                subject: document.getElementById('contact-subject').value,
-                message: document.getElementById('contact-message').value,
-                status: '未対応'
-            }]);
+    // 余計な .select() やカラム指定をつけず、純粋に .insert() のみにする
+    const { error } = await window.supabaseClient.from('contact_inquiries').insert([{
+        name: document.getElementById('contact-name').value,
+        email: document.getElementById('contact-email').value,
+        subject: document.getElementById('contact-subject').value,
+        message: document.getElementById('contact-message').value,
+        status: '未対応'
+    }]);
 
-            if (error) {
-                showToast("送信失敗: " + error.message, "error");
-            } else {
-                showToast("🎉 お問い合わせを送信しました！運営にて確認いたします。");
-                document.getElementById('contact-name').value = '';
-                document.getElementById('contact-email').value = '';
-                document.getElementById('contact-subject').value = '';
-                document.getElementById('contact-message').value = '';
-                closeModal('contactModal');
-            }
+    if (error) {
+        showToast("送信失敗: " + error.message, "error");
+    } else {
+        showToast("🎉 お問い合わせを送信しました！運営にて確認いたします。");
+        document.getElementById('contact-name').value = '';
+        document.getElementById('contact-email').value = '';
+        document.getElementById('contact-subject').value = '';
+        document.getElementById('contact-message').value = '';
+        closeModal('contactModal');
+    }
 
-            submitBtn.disabled = false;
-            submitBtn.innerText = "✉️ 送信する";
-        };
+    submitBtn.disabled = false;
+    submitBtn.innerText = "✉️ 送信する";
+};
 
         /* ================= 🐾 非公開ネコ宛てメッセージ送信 ================= */
         window.handleCreatePrivateMessage = async function(event) {
