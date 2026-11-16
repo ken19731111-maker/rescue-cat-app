@@ -838,9 +838,6 @@
         const SUPABASE_URL = 'https://hoesxsdbbezzmgqipckv.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_-uX4NW-NQQADr1fzd_kIHA_W451CzXA';
 
-        // 🛡️ あなた専用の管理者メールアドレスを設定してください（例: "kentaro@example.com"）
-        const ADMIN_EMAIL = "ken.c.1173.surf@gmail.com"; 
-
         window.supabaseClient = null;
         try {
             window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -1013,12 +1010,22 @@
                 return;
             }
 
-            // 2. ログイン中のメールアドレスが管理者（ADMIN_EMAIL）と一致するかチェック
-            const userEmail = session.user.email;
-            if (userEmail !== ADMIN_EMAIL) {
-                showToast("⛔ このアカウントには管理者権限がありません。", "error");
-                return;
-            }
+            // ✅ 管理者かどうかを安全にチェックする関数
+async function checkIsAdmin() {
+    if (!window.supabaseClient) return false;
+    const { data: { user } } = await window.supabaseClient.auth.getUser();
+    if (!user) return false;
+
+    // admin_users テーブルに自分の user_id があるか確認（他人のIDは見えない設計）
+    const { data, error } = await window.supabaseClient
+        .from('admin_users')
+        .select('user_id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+    return !!data && !error;
+}
+
 
             // 3. 一致した場合のみダッシュボードを開く
             document.getElementById('payoutManagerModal').classList.remove('hidden');
