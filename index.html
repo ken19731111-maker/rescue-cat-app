@@ -2090,27 +2090,23 @@
                 const catId = localStorage.getItem('pending_tip_cat_id');
 
                 if (catId && addedAmount > 0 && window.supabaseClient) {
-                    const { data: catData, error: fetchErr } = await window.supabaseClient
-                        .from('cats')
-                        .select('current_amount, name')
-                        .eq('id', catId)
-                        .single();
+                                    if (catId && addedAmount > 0 && window.supabaseClient) {
+                    // ▼▼▼ 【変更後】セキュリティ的に安全なRPC関数を使用 ▼▼▼
+                    const { error: rpcErr } = await window.supabaseClient.rpc('increment_cat_amount', {
+                        target_cat_id: parseInt(catId, 10),
+                        add_amount: addedAmount
+                    });
 
-                    if (!fetchErr && catData) {
-                        const newTotal = (catData.current_amount || 0) + addedAmount;
-
-                        const { error: updateErr } = await window.supabaseClient
-                            .from('cats')
-                            .update({ current_amount: newTotal })
-                            .eq('id', catId);
-
-                        if (!updateErr) {
-                            showToast(`🎉 ${catData.name}ちゃんへの推し活支援（${addedAmount.toLocaleString()}円）が完了しました！ありがとう！`);
-                            localStorage.removeItem('pending_tip_cat_id');
-                            window.history.replaceState({}, document.title, window.location.pathname);
-                            fetchCats();
-                        }
+                    if (!rpcErr) {
+                        showToast(`🎉 推し活支援（${addedAmount.toLocaleString()}円）が完了しました！ありがとう！`);
+                        localStorage.removeItem('pending_tip_cat_id');
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        fetchCats();
+                    } else {
+                        showToast("⚠️ 支援金額の反映に失敗しました: " + rpcErr.message, "error");
                     }
+                }
+
                 }
             }
         }
