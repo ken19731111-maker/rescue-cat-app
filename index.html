@@ -1010,30 +1010,42 @@
                 return;
             }
 
-            // ✅ 管理者かどうかを安全にチェックする関数
-async function checkIsAdmin() {
-    if (!window.supabaseClient) return false;
-    const { data: { user } } = await window.supabaseClient.auth.getUser();
-    if (!user) return false;
+                   // ✅ 管理者かどうかを App Metadata で安全にチェックする関数
+        async function checkIsAdmin() {
+            if (!window.supabaseClient) return false;
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            if (!user) return false;
 
-    // admin_users テーブルに自分の user_id があるか確認（他人のIDは見えない設計）
-    const { data, error } = await window.supabaseClient
-        .from('admin_users')
-        .select('user_id')
-        .eq('user_id', user.id)
-        .maybeSingle();
+            // Supabaseの App Metadata に設定した role が 'admin' かどうかをチェック
+            return !!(user.app_metadata && user.app_metadata.role === 'admin');
+        }
 
-    return !!data && !error;
-}
+        /* ================= 🔒 管理者専用ダッシュボード（App Metadata 認証） ================= */
+        window.openPayoutManagerModal = async function() {
+            if (!window.supabaseClient) return;
 
+            // 1. 現在ログインしているか確認
+            const { data: { session }, error: sessionErr } = await window.supabaseClient.auth.getSession();
+            if (sessionErr || !session || !session.user) {
+                showToast("⚠️ 管理者専用機能は、管理者アカウントでのログインが必要です。", "error");
+                return;
+            }
 
-            // 3. 一致した場合のみダッシュボードを開く
+            // 2. 実際に管理者権限（role: admin）を持っているかチェック！
+            const isAdmin = await checkIsAdmin();
+            if (!isAdmin) {
+                showToast("⛔ 管理者権限がありません。運営管理者アカウントでログインしてください。", "error");
+                return; // ← ここで処理を止めるので、一般ユーザーは絶対に開けなくなります！
+            }
+
+            // 3. 管理者と確認できた場合のみダッシュボードを開く
             document.getElementById('payoutManagerModal').classList.remove('hidden');
             switchAdminTab('payouts');
             fetchAdminPayoutRequests();
             fetchAdminContacts();
             fetchAdminPrivateMessages();
         };
+
 
         window.closePayoutManagerModal = function() {
             document.getElementById('payoutManagerModal').classList.add('hidden');
