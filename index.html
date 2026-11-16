@@ -89,7 +89,6 @@
                 </div>
 
                 <!-- ボランティア専用 受信トレイ -->
-                <!-- ボランティア専用 受信トレイ（タブ切り替え式） -->
                 <div class="bg-white/10 rounded-xl p-4 backdrop-blur-sm space-y-3">
                     <div class="flex justify-between items-center flex-wrap gap-2 border-b border-white/20 pb-2">
                         <!-- タブボタン -->
@@ -126,6 +125,7 @@
                         <p class="text-xs text-white/70 text-center py-2">非公開メッセージデータを読み込んでいます...</p>
                     </div>
                 </div>
+            </div>
         </section>
 
         <!-- 全体活動レポート・お知らせセクション 📰 -->
@@ -815,10 +815,10 @@
                     </button>
                 </div>
                 <div id="login-form-container">
-    <input type="email" id="login-email" name="email" autocomplete="email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-    <input type="password" id="login-password" name="password" autocomplete="current-password" placeholder="パスワード" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-    <button onclick="handleLogin()" style="width: 100%; padding: 8px; background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
-</div>
+                    <input type="email" id="login-email" name="email" autocomplete="email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+                    <input type="password" id="login-password" name="password" autocomplete="current-password" placeholder="パスワード" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+                    <button onclick="handleLogin()" style="width: 100%; padding: 8px; background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
+                </div>
                 <div id="signup-form-container" style="display: none;">
                     <input type="email" id="signup-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
                     <input type="password" id="signup-password" placeholder="パスワード (6文字以上)" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
@@ -871,7 +871,6 @@
         }
 
         /* ================= お問い合わせ送信（Supabase保存） ================= */
-    /* ================= お問い合わせ送信（Supabase保存） ================= */
         window.handleContactSubmit = async function(event) {
             event.preventDefault();
             if (!window.supabaseClient) return;
@@ -880,7 +879,6 @@
             submitBtn.disabled = true;
             submitBtn.innerText = "送信中...";
 
-            // 実際のHTMLのID（contact-name, contact-email 等）から確実に値を取得する
             const nameEl = document.getElementById('contact-name');
             const emailEl = document.getElementById('contact-email');
             const subjectEl = document.getElementById('contact-subject');
@@ -890,9 +888,6 @@
             const emailVal = emailEl ? emailEl.value : '';
             const subjectVal = subjectEl ? subjectEl.value : '';
             const messageVal = messageEl ? messageEl.value : '';
-
-            // F12コンソールで正しく値が取れているか確認用ログ
-            console.log("送信データ確認:", { nameVal, emailVal, subjectVal, messageVal });
 
             const payload = {
                 sender_name: nameVal,
@@ -907,7 +902,6 @@
                 .insert([payload]);
 
             if (error) {
-                console.error("Supabase Error Details:", JSON.stringify(error, null, 2));
                 showToast("送信失敗: " + error.message, "error");
             } else {
                 showToast("🎉 お問い合わせを送信しました！運営にて確認いたします。");
@@ -921,6 +915,7 @@
             submitBtn.disabled = false;
             submitBtn.innerText = "✉️ 送信する";
         };
+
         /* ================= 🐾 非公開ネコ宛てメッセージ送信 ================= */
         window.handleCreatePrivateMessage = async function(event) {
             event.preventDefault();
@@ -999,53 +994,38 @@
             submitBtn.innerText = "🚀 この内容で振込申請を送信する";
         };
 
-        /* ================= 🔒 管理者専用ダッシュボード（メールアドレス認証による厳重化） ================= */
-        window.openPayoutManagerModal = async function() {
-            if (!window.supabaseClient) return;
-
-            // 1. 現在ログインしているユーザー情報を取得
-            const { data: { session }, error: sessionErr } = await window.supabaseClient.auth.getSession();
-            if (sessionErr || !session || !session.user) {
-                showToast("⚠️ 管理者専用機能は、管理者アカウントでのログインが必要です。", "error");
-                return;
-            }
-
-                   // ✅ 管理者かどうかを App Metadata で安全にチェックする関数
+        /* ================= 🔒 管理者かどうかをチェックする関数 ================= */
         async function checkIsAdmin() {
             if (!window.supabaseClient) return false;
             const { data: { user } } = await window.supabaseClient.auth.getUser();
             if (!user) return false;
 
-            // Supabaseの App Metadata に設定した role が 'admin' かどうかをチェック
+            // App Metadata の role が 'admin' かどうかを判定
             return !!(user.app_metadata && user.app_metadata.role === 'admin');
         }
 
-        /* ================= 🔒 管理者専用ダッシュボード（App Metadata 認証） ================= */
+        /* ================= 🔒 管理者専用ダッシュボードを開く関数 ================= */
         window.openPayoutManagerModal = async function() {
             if (!window.supabaseClient) return;
 
-            // 1. 現在ログインしているか確認
             const { data: { session }, error: sessionErr } = await window.supabaseClient.auth.getSession();
             if (sessionErr || !session || !session.user) {
                 showToast("⚠️ 管理者専用機能は、管理者アカウントでのログインが必要です。", "error");
                 return;
             }
 
-            // 2. 実際に管理者権限（role: admin）を持っているかチェック！
             const isAdmin = await checkIsAdmin();
             if (!isAdmin) {
                 showToast("⛔ 管理者権限がありません。運営管理者アカウントでログインしてください。", "error");
-                return; // ← ここで処理を止めるので、一般ユーザーは絶対に開けなくなります！
+                return;
             }
 
-            // 3. 管理者と確認できた場合のみダッシュボードを開く
             document.getElementById('payoutManagerModal').classList.remove('hidden');
             switchAdminTab('payouts');
             fetchAdminPayoutRequests();
             fetchAdminContacts();
             fetchAdminPrivateMessages();
         };
-
 
         window.closePayoutManagerModal = function() {
             document.getElementById('payoutManagerModal').classList.add('hidden');
@@ -1165,6 +1145,7 @@
                 `;
             });
         }
+
         async function fetchAdminPrivateMessages() {
             const listEl = document.getElementById('adminPrivMsgList');
             if (!listEl || !window.supabaseClient) return;
@@ -1702,7 +1683,6 @@
             });
         }
 
-        // 🐾 ログイン中のボランティアが登録したネコちゃん宛ての非公開メッセージを取得
         async function fetchVolunteerPrivateMessages() {
             const listEl = document.getElementById('volunteerPrivMsgList');
             const badgeEl = document.getElementById('privMsgCountBadge');
@@ -1711,7 +1691,6 @@
             const { data: { user } } = await window.supabaseClient.auth.getUser();
             if (!user) return;
 
-            // 1. まずログイン中のユーザーが登録したネコちゃんのID一覧を取得
             const { data: myCats, error: catErr } = await window.supabaseClient
                 .from('cats')
                 .select('id, name')
@@ -1725,7 +1704,6 @@
 
             const catIds = myCats.map(c => c.id);
 
-            // 2. そのネコちゃんたち宛ての非公開メッセージを取得
             const { data: msgs, error: msgErr } = await window.supabaseClient
                 .from('private_cat_messages')
                 .select(`*, cats ( name, shelter )`)
@@ -1777,7 +1755,6 @@
             });
         }
 
-        // ボランティアが自分の画面からステータスを更新できるようにする関数
         window.updateVolunteerPrivateMessageStatus = async function(msgId, newStatus) {
             if (!window.supabaseClient) return;
             const { error } = await window.supabaseClient
@@ -1791,6 +1768,7 @@
                 fetchVolunteerPrivateMessages();
             }
         };
+
         window.updateApplicationStatus = async function(appId, newStatus) {
             if (!window.supabaseClient) return;
             const { error } = await window.supabaseClient
@@ -1808,7 +1786,6 @@
             const listEl = document.getElementById('newsList');
             if (!window.supabaseClient) return;
             
-            // ログイン中のユーザー情報を取得（ログインしていれば削除ボタンを表示するため）
             const { data: { user } } = await window.supabaseClient.auth.getUser();
 
             const { data, error } = await window.supabaseClient.from('news_posts').select('*').order('id', { ascending: false });
@@ -1826,7 +1803,6 @@
                 const dateStr = new Date(item.created_at).toLocaleDateString('ja-JP');
                 const shelterName = item.shelter ? `🏠 ${item.shelter}` : '';
 
-                // ログイン中であれば削除ボタンを右上に表示する
                 const deleteBtnHtml = user ? `
                     <button onclick="deleteNewsPost(${item.id})" class="text-[11px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2.5 py-1 rounded-lg transition">
                         🗑️ 削除
@@ -1999,13 +1975,12 @@
                 checkUserSession();
             }
         };
-// 🔄 非公開メッセージや応募のリアルタイム監視を設定する関数
+
         async function setupRealtimeListeners() {
             if (!window.supabaseClient) return;
             const { data: { session } } = await window.supabaseClient.auth.getSession();
             if (!session || !session.user) return;
 
-            // 1. ログイン中のユーザーが管理するネコちゃんのIDを取得しておく
             const { data: myCats } = await window.supabaseClient
                 .from('cats')
                 .select('id')
@@ -2014,20 +1989,13 @@
             if (!myCats || myCats.length === 0) return;
             const catIds = myCats.map(c => c.id);
 
-            // 2. private_cat_messages テーブルの変更をリアルタイムで監視
             window.supabaseClient
                 .channel('public:private_cat_messages')
                 .on(
                     'postgres_changes',
-                    {
-                        event: 'INSERT', // 新しいメッセージが挿入されたとき
-                        schema: 'public',
-                        table: 'private_cat_messages'
-                    },
+                    { event: 'INSERT', schema: 'public', table: 'private_cat_messages' },
                     (payload) => {
-                        // 届いたメッセージが自分のネコちゃん宛てのものかチェック
                         if (catIds.includes(payload.new.cat_id)) {
-                            // トースト通知を出して、自動で一覧を再読み込みする
                             showToast("💌 新しい非公開メッセージが届きました！");
                             fetchVolunteerPrivateMessages();
                         }
@@ -2035,16 +2003,11 @@
                 )
                 .subscribe();
 
-            // 3. adoption_applications（里親応募）のリアルタイム監視もついでに！
             window.supabaseClient
                 .channel('public:adoption_applications')
                 .on(
                     'postgres_changes',
-                    {
-                        event: 'INSERT',
-                        schema: 'public',
-                        table: 'adoption_applications'
-                    },
+                    { event: 'INSERT', schema: 'public', table: 'adoption_applications' },
                     (payload) => {
                         if (catIds.includes(payload.new.cat_id)) {
                             showToast("🏠 新しい里親・お見合い応募が届きました！");
@@ -2054,6 +2017,7 @@
                 )
                 .subscribe();
         }
+
         window.handleSignUp = async function() {
             if (!window.supabaseClient) return;
             const { error } = await window.supabaseClient.auth.signUp({
@@ -2151,7 +2115,7 @@
             }
         }
 
-       async function checkUserSession() {
+        async function checkUserSession() {
             if (!window.supabaseClient) return;
             const { data: { session } } = await window.supabaseClient.auth.getSession();
             isLoggedIn = !!session;
@@ -2165,7 +2129,7 @@
             if (session) {
                 fetchApplications();
                 fetchVolunteerPrivateMessages();
-                setupRealtimeListeners(); // ← 💡 ここでリアルタイム監視をスタート！
+                setupRealtimeListeners();
             }
         }
 
@@ -2217,7 +2181,7 @@
                 if (shelterInput) shelterInput.value = rememberedShelter;
             }
         });
-        // 📰 活動レポート・お知らせの削除処理
+
         window.deleteNewsPost = async function(newsId) {
             if (!confirm("本当にこのお知らせ・レポートを削除しますか？\n（※この操作は元に戻せません）")) return;
             if (!window.supabaseClient) {
@@ -2234,10 +2198,10 @@
                 showToast("削除エラー: " + error.message, "error");
             } else {
                 showToast("🗑️ お知らせ・レポートを削除しました。");
-                fetchNews(); // 一覧を再読み込み
+                fetchNews();
             }
         };
-        // 📊 ボランティアダッシュボードのタブ切り替え
+
         window.switchDashboardTab = function(tab) {
             const appList = document.getElementById('volunteerApplicationsList');
             const msgList = document.getElementById('volunteerPrivMsgList');
@@ -2257,7 +2221,6 @@
             }
         };
 
-        // まとめて更新するボタン用
         window.refreshDashboardData = function() {
             fetchApplications();
             fetchVolunteerPrivateMessages();
