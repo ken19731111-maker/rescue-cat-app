@@ -148,7 +148,9 @@
                     </div>
                     <div>
                         <label class="block text-stone-600 mb-1">団体名・執筆者名 <span class="text-rose-500">*</span></label>
-                        <input type="text" id="news-shelter" required placeholder="例: 〇〇保護ネコの会" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                        <select id="news-shelter" class="w-full border border-stone-300 rounded p-2 bg-white outline-none">
+                            <option value="">🌐 全体向け（団体を指定しない）</option>
+                        </select>
                     </div>
                     <div>
                         <label class="block text-stone-600 mb-1">カテゴリ</label>
@@ -201,7 +203,9 @@
                 </div>
                 <div>
                     <label class="block text-stone-600 mb-1">所属団体・グループ名 <span class="text-rose-500">*</span></label>
-                    <input type="text" id="cat-shelter" required placeholder="例: 〇〇保護ネコの会" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none">
+                    <select id="cat-shelter" required class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none bg-white">
+                        <option value="">団体を選択してください</option>
+                    </select>
                 </div>
                 <div>
                     <label class="block text-stone-600 mb-1">年齢・推定月齢</label>
@@ -214,9 +218,9 @@
                 <div>
                     <label class="block text-stone-600 mb-1">里親ステータス</label>
                     <select id="cat-status" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none bg-white">
-                        <option value="募集中">🏠 里親・推し活 募集中</option>
-                        <option value="トライアル中">🐾 トライアル中</option>
-                        <option value="譲渡決定">🎉 正式譲渡決定</option>
+                        <option value="recruiting">🏠 里親・推し活 募集中</option>
+                        <option value="trial">🐾 トライアル中</option>
+                        <option value="adopted">🎉 正式譲渡決定</option>
                     </select>
                 </div>
                 <div>
@@ -243,7 +247,7 @@
                         <span>🐱 子ネコ</span>
                     </label>
                     <label class="flex items-center space-x-1.5 cursor-pointer whitespace-nowrap">
-                        <input type="checkbox" id="cat-is-urgent" class="rounded text-amber-600 focus:ring-amber-500">
+                        <input type="checkbox" id="cat-is-urgent" class="rounded text-rose-600 focus:ring-amber-500">
                         <span class="text-rose-600 font-bold">🚨 緊急支援が必要</span>
                     </label>
                 </div>
@@ -308,9 +312,9 @@
                     <span class="font-bold text-stone-700 whitespace-nowrap">🏠 ステータス変更:</span>
                     <div class="flex gap-2">
                         <select id="modalStatusSelect" class="border border-stone-300 rounded px-2 py-1 bg-white outline-none">
-                            <option value="募集中">募集中</option>
-                            <option value="トライアル中">トライアル中</option>
-                            <option value="譲渡決定">譲渡決定</option>
+                            <option value="recruiting">募集中</option>
+                            <option value="trial">トライアル中</option>
+                            <option value="adopted">譲渡決定</option>
                         </select>
                         <button onclick="updateCatStatus()" class="bg-stone-800 text-white px-3 py-1 rounded font-bold hover:bg-stone-700 whitespace-nowrap">更新</button>
                     </div>
@@ -445,7 +449,9 @@
                 </div>
                 <div>
                     <label class="block text-stone-600 mb-1">所属団体・グループ名 <span class="text-rose-500">*</span></label>
-                    <input type="text" id="edit-cat-shelter" required class="w-full border border-stone-300 rounded p-2 outline-none">
+                    <select id="edit-cat-shelter" required class="w-full border border-stone-300 rounded p-2 outline-none bg-white">
+                        <option value="">団体を選択してください</option>
+                    </select>
                 </div>
                 <div>
                     <label class="block text-stone-600 mb-1">年齢・推定月齢</label>
@@ -526,317 +532,318 @@
         </div>
     </div>
 
-    <!-- モーダル: 規約 ＆ プライバシーポリシー ＆ 特商法 -->
-    <div id="policyModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-2xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[85vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 id="policyModalTitle" class="font-bold text-lg text-stone-800">利用規約・プライバシーポリシー</h3>
-                <button onclick="closeModal('policyModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <div id="policyModalContent" class="text-xs text-stone-700 leading-relaxed space-y-3 whitespace-pre-wrap"></div>
-            <div class="pt-2 border-t text-right">
-                <button onclick="closeModal('policyModal')" class="bg-stone-800 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-stone-700 transition">閉じる</button>
-            </div>
-        </div>
-    </div>
+<!-- モーダル: 規約 ＆ プライバシーポリシー ＆ 特商法 -->
+<div id="policyModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+<div class="bg-white w-full max-w-2xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[85vh] overflow-y-auto">
+<div class="flex justify-between items-center border-b pb-3">
+<h3 id="policyModalTitle" class="font-bold text-lg text-stone-800">利用規約・プライバシーポリシー</h3>
+<button onclick="closeModal('policyModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+</div>
+<div id="policyModalContent" class="text-xs text-stone-700 leading-relaxed space-y-3 whitespace-pre-wrap"></div>
+<div class="pt-2 border-t text-right">
+<button onclick="closeModal('policyModal')" class="bg-stone-800 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-stone-700 transition">閉じる</button>
+</div>
+</div>
+</div>
 
-    <!-- モーダル: 🐾 ボランティア運用マニュアル -->
-    <div id="manualModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-2xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[85vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-extrabold text-lg text-amber-900 flex items-center gap-2">
-                    <span>🐾 【RescuCat】ボランティア運用マニュアル</span>
-                </h3>
-                <button onclick="closeModal('manualModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <div class="text-xs text-stone-700 leading-relaxed space-y-4">
-                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
-                    <p class="font-bold text-amber-900">保護活動へのご参加ありがとうございます！</p>
-                    <p class="text-[11px] text-amber-800 mt-1">RescuCatを使って、ネコちゃんの登録や里親募集をスムーズに行う手順をご案内します。</p>
-                </div>
-                <div class="space-y-1.5 border-b pb-3">
-                    <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span> ログイン方法</h4>
-                    <p class="pl-6 text-stone-600">フッターにある **「ボランティア・管理者ログイン / 登録」** を押し、メールアドレスとパスワードを入力してログインします。</p>
-                </div>
-                <div class="space-y-1.5 border-b pb-3">
-                    <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span> 新しいネコちゃんの登録手順</h4>
-                    <p class="pl-6 text-stone-600">**「新しい保護ネコちゃんを登録」** フォームから名前・団体名・写真・動画URLなどを入力し公開します。</p>
-                </div>
-                <div class="space-y-1.5 border-b pb-3">
-                    <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">3</span> 近況報告（写真日記）の投稿 ＆ ステータス更新</h4>
-                    <p class="pl-6 text-stone-600">ネコちゃんカードの **「詳細・応募」** から近況報告やステータス変更を行います。</p>
-                </div>
-                <div class="space-y-1.5">
-                    <h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">4</span> 支援金の申請手順</h4>
-                    <p class="pl-6 text-stone-600">累計獲得額が20,000円を超えたら、ダッシュボードの **「支援金を申請する」** ボタンから口座情報を入力して管理者に申請できます。</p>
-                </div>
-            </div>
-            <div class="pt-2 border-t text-right">
-                <button onclick="closeModal('manualModal')" class="bg-amber-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-amber-700 transition">理解しました！閉じる</button>
-            </div>
-        </div>
-    </div>
+<!-- モーダル: 🐾 ボランティア運用マニュアル -->
+<div id="manualModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+<div class="bg-white w-full max-w-2xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[85vh] overflow-y-auto">
+<div class="flex justify-between items-center border-b pb-3">
+<h3 class="font-extrabold text-lg text-amber-900 flex items-center gap-2">
+<span>🐾 ボランティア運用マニュアル</span>
+</h3>
+<button onclick="closeModal('manualModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+</div>
+<div class="text-xs text-stone-700 leading-relaxed space-y-4">
+<div class="bg-amber-50 p-3 rounded-xl border border-amber-200">
+<p class="font-bold text-amber-900">保護活動へのご参加ありがとうございます！</p>
+<p class="text-[11px] text-amber-800 mt-1">RescuCatを使って、ネコちゃんの登録や里親募集をスムーズに行う手順をご案内します。</p>
+</div>
+<div class="space-y-1.5 border-b pb-3">
+<h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">1</span> ログイン方法</h4>
+<p class="pl-6 text-stone-600">フッターにある **「ボランティア・管理者ログイン / 登録」** を押し、メールアドレスとパスワードを入力してログインします。</p>
+</div>
+<div class="space-y-1.5 border-b pb-3">
+<h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">2</span> 新しいネコちゃんの登録手順</h4>
+<p class="pl-6 text-stone-600">**「新しい保護ネコちゃんを登録」** フォームから名前・団体名・写真・動画URLなどを入力し公開します。</p>
+</div>
+<div class="space-y-1.5 border-b pb-3">
+<h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">3</span> 近況報告（写真日記）の投稿 ＆ ステータス更新</h4>
+<p class="pl-6 text-stone-600">ネコちゃんカードの **「詳細・応募」** から近況報告やステータス変更を行います。</p>
+</div>
+<div class="space-y-1.5">
+<h4 class="font-bold text-sm text-stone-800 flex items-center gap-1.5"><span class="bg-amber-600 text-white w-5 h-5 rounded-full flex items-center justify-center text-[10px]">4</span> 支援金の申請手順</h4>
+<p class="pl-6 text-stone-600">累計獲得額が20,000円を超えたら、ダッシュボードの **「支援金を申請する」** ボタンから口座情報を入力して管理者に申請できます。</p>
+</div>
+</div>
+<div class="pt-2 border-t text-right">
+<button onclick="closeModal('manualModal')" class="bg-amber-600 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-amber-700 transition">理解しました！閉じる</button>
+</div>
+</div>
+</div>
 
-    <!-- モーダル: 投げ銭 -->
-    <div id="tipModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-lg text-stone-800">推しネコに愛を届ける（推し活投げ銭）</h3>
-                <button onclick="closeModal('tipModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-            <div>
-                <p class="text-xs text-stone-500 mb-2">支援金額を選択してください（ごはん・医療費になります🐾）</p>
-                <div class="grid grid-cols-3 gap-2 mb-3">
-                    <button onclick="selectAmount(500, this)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">500円</button>
-                    <button onclick="selectAmount(1000, this)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 active">1,000円</button>
-                    <button onclick="selectAmount(3000, this)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">3,000円</button>
-                </div>
-                <div class="hidden">
-                    <input type="number" id="customAmount" placeholder="金額を自由入力 (円)" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm outline-none">
-                </div>
-            </div>
-            <button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">推し活で支援を確定する</button>
-        </div>
-    </div>
+<!-- モーダル: 投げ銭 -->
+<div id="tipModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+<div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4">
+<div class="flex justify-between items-center border-b pb-3">
+<h3 class="font-bold text-lg text-stone-800">推しネコに愛を届ける（推し活投げ銭）</h3>
+<button onclick="closeModal('tipModal')" class="text-stone-400 hover:text-stone-600"><i class="fa-solid fa-xmark text-xl"></i></button>
+</div>
+<div>
+<p class="text-xs text-stone-500 mb-2">支援金額を選択してください（ごはん・医療費になります🐾）</p>
+<div class="grid grid-cols-3 gap-2 mb-3">
+<button onclick="selectAmount(500, this)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">500円</button>
+<button onclick="selectAmount(1000, this)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800 active">1,000円</button>
+<button onclick="selectAmount(3000, this)" class="tip-preset-btn border border-amber-300 bg-amber-50 rounded-xl py-2 font-bold text-amber-800">3,000円</button>
+</div>
+<div class="hidden">
+<input type="number" id="customAmount" placeholder="金額を自由入力 (円)" class="w-full border border-stone-300 rounded-xl p-2.5 text-sm outline-none">
+</div>
+</div>
+<button onclick="submitTip()" class="w-full bg-amber-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-amber-700 transition">推し活で支援を確定する</button>
+</div>
+</div>
 
-    <!-- モーダル: ボランティア専用・支援金振込申請フォーム -->
-    <div id="volunteerPayoutApplyModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-4">
-            <div class="flex justify-between items-center border-b pb-3">
-                <h3 class="font-bold text-lg text-stone-800 flex items-center gap-2">
-                    <i class="fa-solid fa-hand-holding-dollar text-amber-600"></i>
-                    <span>支援金の振込申請</span>
-                </h3>
-                <button onclick="closeVolunteerPayoutModal()" class="text-stone-400 hover:text-stone-600">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
-            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 space-y-1">
-                <p class="font-bold">💡 振込申請のルール</p>
-                <p>・累計獲得支援金額が <strong>20,000円</strong> を超えた場合に申請可能です。</p>
-                <p>・振込時には手数料（20%）が控除されます。</p>
-            </div>
-            <form onsubmit="handleVolunteerPayoutSubmit(event)" class="space-y-3 text-xs font-medium">
-                <div>
-                    <label class="block text-stone-600 mb-1">お名前 (ボランティア名) <span class="text-rose-500">*</span></label>
-                    <input type="text" id="payout-volunteer-name" required placeholder="例: 山田 花子" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
-                </div>
-                <div>
-                    <label class="block text-stone-600 mb-1">ご連絡先メールアドレス <span class="text-rose-500">*</span></label>
-                    <input type="email" id="payout-volunteer-email" required placeholder="example@email.com" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-stone-600 mb-1">申請額 (円) <span class="text-rose-500">*</span></label>
-                        <input type="number" id="payout-requested-amount" required min="20000" placeholder="20000" oninput="calculateFinalAmount()" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
-                    </div>
-                    <div>
-                        <label class="block text-stone-600 mb-1">お振込予定額 (20%引)</label>
-                        <input type="text" id="payout-final-amount" readonly value="0円" class="w-full border border-stone-200 bg-stone-100 font-bold text-amber-700 rounded-lg p-2.5 outline-none">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-stone-600 mb-1">振込先銀行口座情報 <span class="text-rose-500">*</span></label>
-                    <textarea id="payout-bank-info" rows="3" required placeholder="〇〇銀行 渋谷支店&#10;普通 1234567&#10;口座名義: ネコ タロウ" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500"></textarea>
-                </div>
-                <button type="submit" id="submitPayoutBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-3 rounded-xl shadow transition">
-                    🚀 この内容で振込申請を送信する
-                </button>
-            </form>
-        </div>
-    </div>
+<!-- モーダル: ボランティア専用・支援金振込申請フォーム -->
+<div id="volunteerPayoutApplyModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+<div class="bg-white w-full max-w-lg rounded-2xl p-6 shadow-xl space-y-4">
+<div class="flex justify-between items-center border-b pb-3">
+<h3 class="font-bold text-lg text-stone-800 flex items-center gap-2">
+<i class="fa-solid fa-hand-holding-dollar text-amber-600"></i>
+<span>支援金の振込申請</span>
+</h3>
+<button onclick="closeVolunteerPayoutModal()" class="text-stone-400 hover:text-stone-600">
+<i class="fa-solid fa-xmark text-xl"></i>
+</button>
+</div>
+<div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-900 space-y-1">
+<p class="font-bold">💡 振込申請のルール</p>
+<p>・累計獲得支援金額が <strong>20,000円</strong> を超えた場合に申請可能です。</p>
+<p>・振込時には手数料（20%）が控除されます。</p>
+</div>
+<form onsubmit="handleVolunteerPayoutSubmit(event)" class="space-y-3 text-xs font-medium">
+<div>
+<label class="block text-stone-600 mb-1">お名前 (ボランティア名) <span class="text-rose-500">*</span></label>
+<input type="text" id="payout-volunteer-name" required placeholder="例: 山田 花子" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+</div>
+<div>
+<label class="block text-stone-600 mb-1">ご連絡先メールアドレス <span class="text-rose-500">*</span></label>
+<input type="email" id="payout-volunteer-email" required placeholder="example@email.com" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div>
+<label class="block text-stone-600 mb-1">申請額 (円) <span class="text-rose-500">*</span></label>
+<input type="number" id="payout-requested-amount" required min="20000" placeholder="20000" oninput="calculateFinalAmount()" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500">
+</div>
+<div>
+<label class="block text-stone-600 mb-1">お振込予定額 (20%引)</label>
+<input type="text" id="payout-final-amount" readonly value="0円" class="w-full border border-stone-200 bg-stone-100 font-bold text-amber-700 rounded-lg p-2.5 outline-none">
+</div>
+</div>
+<div>
+<label class="block text-stone-600 mb-1">振込先銀行口座情報 <span class="text-rose-500">*</span></label>
+<textarea id="payout-bank-info" rows="3" required placeholder="〇〇銀行 渋谷支店&#10;普通 1234567&#10;口座名義: ネコ タロウ" class="w-full border border-stone-300 rounded-lg p-2.5 outline-none focus:ring-2 focus:ring-amber-500"></textarea>
+</div>
+<button type="submit" id="submitPayoutBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-3 rounded-xl shadow transition">
+🚀 この内容で振込申請を送信する
+</button>
+</form>
+</div>
+</div>
 
-    <!-- モーダル: 管理者専用・各種管理ダッシュボード -->
-    <div id="payoutManagerModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-4xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center border-b pb-3">
-                <div class="flex items-center gap-2">
-                    <i class="fa-solid fa-shield-halved text-amber-600 text-xl"></i>
-                    <h3 class="font-bold text-lg text-stone-800">【管理者】ダッシュボード</h3>
-                </div>
-                <button onclick="closePayoutManagerModal()" class="text-stone-400 hover:text-stone-600">
-                    <i class="fa-solid fa-xmark text-xl"></i>
-                </button>
-            </div>
+<!-- モーダル: 管理者専用・各種管理ダッシュボード -->
+<div id="payoutManagerModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+<div class="bg-white w-full max-w-4xl rounded-2xl p-6 shadow-xl space-y-4 max-h-[90vh] overflow-y-auto">
+<div class="flex justify-between items-center border-b pb-3">
+<div class="flex items-center gap-2">
+<i class="fa-solid fa-shield-halved text-amber-600 text-xl"></i>
+<h3 class="font-bold text-lg text-stone-800">ダッシュボード</h3>
+</div>
+<button onclick="closePayoutManagerModal()" class="text-stone-400 hover:text-stone-600">
+<i class="fa-solid fa-xmark text-xl"></i>
+</button>
+</div>
 
-            <!-- タブ切り替え -->
-            <div class="flex border-b text-xs font-bold overflow-x-auto">
-                <button onclick="switchAdminTab('payouts')" id="adminTabPayouts" class="px-4 py-2 border-b-2 border-amber-600 text-amber-900 whitespace-nowrap">
-                    💰 支援金振込申請 一覧
-                </button>
-                <button onclick="switchAdminTab('contacts')" id="adminTabContacts" class="px-4 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">
-                    📩 サイトお問い合わせ 一覧
-                </button>
-                <button onclick="switchAdminTab('privmsgs')" id="adminTabPrivMsgs" class="px-4 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">
-                    💌 非公開ネコ宛てメッセージ 一覧
-                </button>
-            </div>
+<!-- タブ切り替え -->
+<div class="flex border-b text-xs font-bold overflow-x-auto">
+<button onclick="switchAdminTab('payouts')" id="adminTabPayouts" class="px-4 py-2 border-b-2 border-amber-600 text-amber-900 whitespace-nowrap">
+💰 支援金振込申請 一覧
+</button>
+<button onclick="switchAdminTab('contacts')" id="adminTabContacts" class="px-4 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">
+📩 サイトお問い合わせ 一覧
+</button>
+<button onclick="switchAdminTab('privmsgs')" id="adminTabPrivMsgs" class="px-4 py-2 border-b-2 border-transparent text-stone-400 whitespace-nowrap">
+💌 非公開ネコ宛てメッセージ 一覧
+</button>
+</div>
 
-            <!-- 支援金申請一覧 -->
-            <div id="adminPayoutsSection">
-                <p class="text-xs text-stone-500 mb-2">ボランティアからの振込申請をリアルタイムで確認・振込完了処理を行います。</p>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-sm">
-                        <thead>
-                            <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
-                                <th class="p-3">ボランティア名</th>
-                                <th class="p-3">申請日時</th>
-                                <th class="p-3">申請額</th>
-                                <th class="p-3">振込予定額 (20%引)</th>
-                                <th class="p-3">振込先口座</th>
-                                <th class="p-3 text-center">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminPayoutList" class="divide-y divide-stone-200 text-stone-700">
-                            <tr><td colspan="6" class="p-4 text-center text-stone-400">データを取得中...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<!-- 支援金申請一覧 -->
+<div id="adminPayoutsSection">
+<p class="text-xs text-stone-500 mb-2">ボランティアからの振込申請をリアルタイムで確認・振込完了処理を行います。</p>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-sm">
+<thead>
+<tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
+<th class="p-3">ボランティア名</th>
+<th class="p-3">申請日時</th>
+<th class="p-3">申請額</th>
+<th class="p-3">振込予定額 (20%引)</th>
+<th class="p-3">振込先口座</th>
+<th class="p-3 text-center">操作</th>
+</tr>
+</thead>
+<tbody id="adminPayoutList" class="divide-y divide-stone-200 text-stone-700">
+<tr><td colspan="6" class="p-4 text-center text-stone-400">データを取得中...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
 
-            <!-- お問い合わせ一覧 -->
-            <div id="adminContactsSection" class="hidden">
-                <p class="text-xs text-stone-500 mb-2">フッターのお問い合わせフォームから届いたメッセージです。</p>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-sm">
-                        <thead>
-                            <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
-                                <th class="p-3">お名前 / メール</th>
-                                <th class="p-3">日時</th>
-                                <th class="p-3">件名 / 内容</th>
-                                <th class="p-3 text-center">ステータス</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminContactList" class="divide-y divide-stone-200 text-stone-700">
-                            <tr><td colspan="4" class="p-4 text-center text-stone-400">データを取得中...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<!-- お問い合わせ一覧 -->
+<div id="adminContactsSection" class="hidden">
+<p class="text-xs text-stone-500 mb-2">フッターのお問い合わせフォームから届いたメッセージです。</p>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-sm">
+<thead>
+<tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
+<th class="p-3">お名前 / メール</th>
+<th class="p-3">日時</th>
+<th class="p-3">件名 / 内容</th>
+<th class="p-3 text-center">ステータス</th>
+</tr>
+</thead>
+<tbody id="adminContactList" class="divide-y divide-stone-200 text-stone-700">
+<tr><td colspan="4" class="p-4 text-center text-stone-400">データを取得中...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
 
-            <!-- 非公開ネコ宛てメッセージ一覧 -->
-            <div id="adminPrivMsgsSection" class="hidden">
-                <p class="text-xs text-stone-500 mb-2">ネコちゃんの詳細画面から送信された「非公開メッセージ」一覧です（あなただけが確認できます）。</p>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse text-sm">
-                        <thead>
-                            <tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
-                                <th class="p-3">対象ネコちゃん</th>
-                                <th class="p-3">送信者 / メール</th>
-                                <th class="p-3">日時</th>
-                                <th class="p-3">メッセージ内容</th>
-                                <th class="p-3 text-center">ステータス</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminPrivMsgList" class="divide-y divide-stone-200 text-stone-700">
-                            <tr><td colspan="5" class="p-4 text-center text-stone-400">データを取得中...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+<!-- 非公開ネコ宛てメッセージ一覧 -->
+<div id="adminPrivMsgsSection" class="hidden">
+<p class="text-xs text-stone-500 mb-2">ネコちゃんの詳細画面から送信された「非公開メッセージ」一覧です（あなただけが確認できます）。</p>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse text-sm">
+<thead>
+<tr class="bg-stone-100 text-stone-600 border-b border-stone-200 text-xs">
+<th class="p-3">対象ネコちゃん</th>
+<th class="p-3">送信者 / メール</th>
+<th class="p-3">日時</th>
+<th class="p-3">メッセージ内容</th>
+<th class="p-3 text-center">ステータス</th>
+</tr>
+</thead>
+<tbody id="adminPrivMsgList" class="divide-y divide-stone-200 text-stone-700">
+<tr><td colspan="5" class="p-4 text-center text-stone-400">データを取得中...</td></tr>
+</tbody>
+</table>
+</div>
+</div>
 
-            <div class="pt-3 border-t border-stone-200 flex justify-end">
-                <button onclick="closePayoutManagerModal()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 text-sm font-bold px-5 py-2 rounded-xl transition">
-                    閉じる
-                </button>
-            </div>
-        </div>
-    </div>
+<div class="pt-3 border-t border-stone-200 flex justify-end">
+<button onclick="closePayoutManagerModal()" class="bg-stone-200 hover:bg-stone-300 text-stone-700 text-sm font-bold px-5 py-2 rounded-xl transition">
+閉じる
+</button>
+</div>
+</div>
+</div>
 
-    <!-- モーダル: 🐾 お金と運営のお話 -->
-    <div id="aboutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4 relative border-2 border-amber-200">
-            <button onclick="closeModal('aboutModal')" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-            <div class="text-center space-y-1">
-                <span class="text-4xl block">🐾💬</span>
-                <h3 class="font-black text-lg text-amber-900">RescuCatのお金と運営のお話</h3>
-                <p class="text-[11px] text-amber-700 font-bold">〜 温かい目で見守っていただけると幸いです 〜</p>
-            </div>
-            <div class="bg-amber-50/70 p-4 rounded-xl border border-amber-200 text-xs text-stone-700 leading-relaxed space-y-3">
-                <p>
-                    ネコちゃんの登録や里親募集など、基本機能は<strong>ずっと完全無料</strong>で使っていただけます！
-                </p>
-                <div class="bg-white/80 p-3 rounded-lg border border-amber-200/80 space-y-1">
-                    <p class="font-bold text-amber-900 text-[11px]">…ちょっとだけ言い訳をさせてください🙇‍♂️</p>
-                    <p class="text-[11px] text-stone-600">
-                        サイトを安全に動かしたり、決済システムを維持するためにどうしても費用がかかってしまいます。そのため、集まった支援金をお振り込みする際、<strong>20%だけ運営費として手数料をいただいています。</strong><br>
-                        <span class="text-[10px] text-amber-800 font-bold">（※残りの80%がそのままボランティア様の活動費に届きます！）</span>
-                    </p>
-                </div>
-                <p>
-                    個人で手探りで運営しているサイトですが、1頭でも多くのネコちゃんを救うために長く続けていきたいと思っています。どうか温かく見守っていただけると嬉しいです🐾
-                </p>
-            </div>
-            <div class="pt-1">
-                <button onclick="closeModal('aboutModal')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2.5 rounded-xl shadow transition text-xs">
-                    了解しました！閉じる
-                </button>
-            </div>
-        </div>
-    </div>
+<!-- モーダル: 🐾 お金と運営のお話 -->
+<div id="aboutModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+<div class="bg-white w-full max-w-md rounded-2xl p-6 shadow-xl space-y-4 relative border-2 border-amber-200">
+<button onclick="closeModal('aboutModal')" class="absolute top-4 right-4 text-stone-400 hover:text-stone-600">
+<i class="fa-solid fa-xmark text-xl"></i>
+</button>
+<div class="text-center space-y-1">
+<span class="text-4xl block">🐾💬</span>
+<h3 class="font-black text-lg text-amber-900">RescuCatのお金と運営のお話</h3>
+<p class="text-[11px] text-amber-700 font-bold">〜 温かい目で見守っていただけると幸いです 〜</p>
+</div>
+<div class="bg-amber-50/70 p-4 rounded-xl border border-amber-200 text-xs text-stone-700 leading-relaxed space-y-3">
+<p>
+ネコちゃんの登録や里親募集など、基本機能は<strong>ずっと完全無料</strong>で使っていただけます！
+</p>
+<div class="bg-white/80 p-3 rounded-lg border border-amber-200/80 space-y-1">
+<p class="font-bold text-amber-900 text-[11px]">…ちょっとだけ言い訳をさせてください🙇‍♂️</p>
+<p class="text-[11px] text-stone-600">
+サイトを安全に動かしたり、決済システムを維持するためにどうしても費用がかかってしまいます。そのため、集まった支援金をお振り込みする際、<strong>20%だけ運営費として手数料をいただいています。</strong><br>
+<span class="text-[10px] text-amber-800 font-bold">（※残りの80%がそのままボランティア様の活動費に届きます！）</span>
+</p>
+</div>
+<p>
+個人で手探りで運営しているサイトですが、1頭でも多くのネコちゃんを救うために長く続けていきたいと思っています。どうか温かく見守っていただけると嬉しいです🐾
+</p>
+</div>
+<div class="pt-1">
+<button onclick="closeModal('aboutModal')" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-extrabold py-2.5 rounded-xl shadow transition text-xs">
+了解しました！閉じる
+</button>
+</div>
+</div>
+</div>
 
-    <!-- フッター -->
-    <footer class="bg-stone-800 text-stone-300 text-xs py-8 mt-12 border-t border-stone-700">
-        <div class="max-w-6xl mx-auto px-4 text-center space-y-4">
-            <div onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="font-bold text-amber-400 text-sm cursor-pointer hover:underline inline-flex items-center gap-1.5">
-                <span>🐾 保護ネコ応援プラットフォーム RescuCat（推し活支援）</span>
-            </div>
+<!-- フッター -->
+<footer class="bg-stone-800 text-stone-300 text-xs py-8 mt-12 border-t border-stone-700">
+<div class="max-w-6xl mx-auto px-4 text-center space-y-4">
+<div onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="font-bold text-amber-400 text-sm cursor-pointer hover:underline inline-flex items-center gap-1.5">
+<span>🐾 保護ネコ応援プラットフォーム RescuCat（推し活支援）</span>
+</div>
 
-            <div class="flex justify-center gap-4 text-[11px] text-stone-400 flex-wrap">
-                <button onclick="openPolicyModal('terms')" class="hover:text-amber-300 underline whitespace-nowrap">利用規約</button>
-                <span>•</span>
-                <button onclick="openPolicyModal('privacy')" class="hover:text-amber-300 underline whitespace-nowrap">プライバシーポリシー</button>
-                <span>•</span>
-                <button onclick="openPolicyModal('tokusho')" class="hover:text-amber-300 underline whitespace-nowrap">特定商取引法に基づく表記</button>
-                <span>•</span>
-                <button onclick="openModal('contactModal')" class="hover:text-amber-300 underline whitespace-nowrap font-bold text-amber-400">✉️ お問い合わせ</button>
-            </div>
+<div class="flex justify-center gap-4 text-[11px] text-stone-400 flex-wrap">
+<button onclick="openPolicyModal('terms')" class="hover:text-amber-300 underline whitespace-nowrap">利用規約</button>
+<span>•</span>
+<button onclick="openPolicyModal('privacy')" class="hover:text-amber-300 underline whitespace-nowrap">プライバシーポリシー</button>
+<span>•</span>
+<button onclick="openPolicyModal('tokusho')" class="hover:text-amber-300 underline whitespace-nowrap">特定商取引法に基づく表記</button>
+<span>•</span>
+<button onclick="openModal('contactModal')" class="hover:text-amber-300 underline whitespace-nowrap font-bold text-amber-400">✉️ お問い合わせ</button>
+</div>
 
-            <div class="flex justify-center items-center gap-4 pt-2 flex-wrap">
-                <button onclick="toggleAuthForm()" style="background: none; border: none; color: #a8a29e; text-decoration: underline; font-size: 0.8rem; cursor: pointer; padding: 5px;">
-                    ボランティア・管理者ログイン / 登録
-                </button>
-                <span class="text-stone-600 text-[10px]">•</span>
-                <button onclick="openPayoutManagerModal()" style="background: none; border: none; color: #78716c; font-size: 0.75rem; cursor: pointer; padding: 5px;" class="hover:text-amber-400">
-                    🔒 管理者専用
-                </button>
-            </div>
+<div class="flex justify-center items-center gap-4 pt-2 flex-wrap">
+<button onclick="toggleAuthForm()" style="background: none; border: none; color: #a8a29e; text-decoration: underline; font-size: 0.8rem; cursor: pointer; padding: 5px;">
+ボランティア・管理者ログイン / 登録
+</button>
+<span class="text-stone-600 text-[10px]">•</span>
+<button onclick="openPayoutManagerModal()" style="background: none; border: none; color: #78716c; font-size: 0.75rem; cursor: pointer; padding: 5px;" class="hover:text-amber-400">
+🔒 管理者専用
+</button>
+</div>
 
-            <div id="auth-section" style="display: none; margin: 20px auto; max-width: 360px; padding: 15px; background: #fff; border: 1px solid #444; border-radius: 8px; text-align: left; color: #333;">
-                <div style="display: flex; items-center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
-                    <div style="display: flex; gap: 10px;">
-                        <button onclick="switchAuthTab('login')" id="tabLoginBtn" style="background: none; border: none; font-weight: bold; color: #3182ce; cursor: pointer; font-size: 0.85rem;">ログイン</button>
-                        <button onclick="switchAuthTab('signup')" id="tabSignupBtn" style="background: none; border: none; color: #718096; cursor: pointer; font-size: 0.85rem;">新規登録</button>
-                    </div>
-                    <button type="button" onclick="openManualModal()" style="background: #fef3c7; color: #78350f; border: 1px solid #fde68a; border-radius: 4px; padding: 2px 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">
-                        📖 運用マニュアル
-                    </button>
-                </div>
-                <div id="login-form-container">
-                    <input type="email" id="login-email" name="email" autocomplete="email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-                    <input type="password" id="login-password" name="password" autocomplete="current-password" placeholder="パスワード" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-                    <button onclick="handleLogin()" style="width: 100%; padding: 8px; background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
-                </div>
-                <div id="signup-form-container" style="display: none;">
-                    <input type="email" id="signup-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-                    <input type="password" id="signup-password" placeholder="パスワード (6文字以上)" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-                    <button onclick="handleSignUp()" style="width: 100%; padding: 8px; background: #38a169; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">新規登録する</button>
-                </div>
-                <div id="logout-section" style="display: none; text-align: center;">
-                    <p style="color: #2b6cb0; font-weight: bold; margin-bottom: 10px;">ログイン中 🐾</p>
-                    <button onclick="handleLogout()" style="padding: 6px 12px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer;">ログアウト</button>
-                </div>
-            </div>
-            <p class="text-stone-500 text-[11px]">© 2026 RescuCat All Rights Reserved.</p>
-        </div>
-    </footer>
+<div id="auth-section" style="display: none; margin: 20px auto; max-width: 360px; padding: 15px; background: #fff; border: 1px solid #444; border-radius: 8px; text-align: left; color: #333;">
+<div style="display: flex; items-center; justify-content: space-between; margin-bottom: 12px; border-bottom: 1px solid #eee; padding-bottom: 8px;">
+<div style="display: flex; gap: 10px;">
+<button onclick="switchAuthTab('login')" id="tabLoginBtn" style="background: none; border: none; font-weight: bold; color: #3182ce; cursor: pointer; font-size: 0.85rem;">ログイン</button>
+<button onclick="switchAuthTab('signup')" id="tabSignupBtn" style="background: none; border: none; color: #718096; cursor: pointer; font-size: 0.85rem;">新規登録</button>
+</div>
+<button type="button" onclick="openManualModal()" style="background: #fef3c7; color: #78350f; border: 1px solid #fde68a; border-radius: 4px; padding: 2px 8px; font-size: 0.75rem; font-weight: bold; cursor: pointer;">
+📖 運用マニュアル
+</button>
+</div>
+<div id="login-form-container">
+<input type="email" id="login-email" name="email" autocomplete="email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+<input type="password" id="login-password" name="password" autocomplete="current-password" placeholder="パスワード" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+<button onclick="handleLogin()" style="width: 100%; padding: 8px; background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
+</div>
+<div id="signup-form-container" style="display: none;">
+<input type="email" id="signup-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+<input type="password" id="signup-password" placeholder="パスワード (6文字以上)" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+<button onclick="handleSignUp()" style="width: 100%; padding: 8px; background: #38a169; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">新規登録する</button>
+</div>
+<div id="logout-section" style="display: none; text-align: center;">
+<p style="color: #2b6cb0; font-weight: bold; margin-bottom: 10px;">ログイン中 🐾</p>
+<button onclick="handleLogout()" style="padding: 6px 12px; background: #e53e3e; color: white; border: none; border-radius: 4px; cursor: pointer;">ログアウト</button>
+</div>
+</div>
+<p class="text-stone-500 text-[11px]">© 2026 RescuCat All Rights Reserved.</p>
+</div>
+</footer>
 
     <!-- JavaScript 処理 -->
     <script>
-        const SUPABASE_URL = 'https://hoesxsdbbezzmgqipckv.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_-uX4NW-NQQADr1fzd_kIHA_W451CzXA';
+        // ★ 統一DB（共有プロジェクト）に接続
+        const SUPABASE_URL = 'https://fknneasutspaonhvmsae.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_bXjpXwx8EY2PBn3E6FqT8A_3s18sjFJ';
 
         window.supabaseClient = null;
         try {
@@ -845,7 +852,14 @@
             console.error("Supabase初期化エラー:", e);
         }
 
+        // ★ ステータスのコード→日本語ラベル変換
+        const STATUS_LABELS = { recruiting: '募集中', trial: 'トライアル中', adopted: '譲渡決定', graduated: '卒業', hidden: '非公開' };
+        function statusLabel(code) { return STATUS_LABELS[code] || '募集中'; }
+        // ★ 所属団体名（organizations join から取得）
+        function orgNameOf(cat) { return (cat && cat.organizations && cat.organizations.name) || '保護活動者'; }
+
         let catsData = [];
+        let organizationsData = [];
         let favorites = JSON.parse(localStorage.getItem('rescue_cat_favorites') || '[]');
         let currentSelectedCatId = null;
         let isLoggedIn = false;
@@ -870,7 +884,40 @@
             }, 3500);
         }
 
-        /* ================= お問い合わせ送信（Supabase保存） ================= */
+        /* ================= 団体リストの読み込み（セレクトボックス用） ================= */
+        async function loadOrganizations() {
+            if (!window.supabaseClient) return;
+            const { data, error } = await window.supabaseClient
+                .from('organizations')
+                .select('id, name')
+                .order('name');
+            if (error || !data) return;
+            organizationsData = data;
+
+            const fill = (selectId, firstOptionHtml) => {
+                const sel = document.getElementById(selectId);
+                if (!sel) return;
+                const current = sel.value;
+                sel.innerHTML = firstOptionHtml;
+                organizationsData.forEach(org => {
+                    const opt = document.createElement('option');
+                    opt.value = org.id;
+                    opt.textContent = org.name;
+                    sel.appendChild(opt);
+                });
+                if (current) sel.value = current;
+            };
+
+            fill('cat-shelter', '<option value="">団体を選択してください</option>');
+            fill('edit-cat-shelter', '<option value="">団体を選択してください</option>');
+            fill('news-shelter', '<option value="">🌐 全体向け（団体を指定しない）</option>');
+
+            const rememberedOrgId = localStorage.getItem('rescue_cat_org_id');
+            const catShelterSel = document.getElementById('cat-shelter');
+            if (rememberedOrgId && catShelterSel) catShelterSel.value = rememberedOrgId;
+        }
+
+        /* ================= お問い合わせ送信（inquiries: kind=general） ================= */
         window.handleContactSubmit = async function(event) {
             event.preventDefault();
             if (!window.supabaseClient) return;
@@ -884,21 +931,17 @@
             const subjectEl = document.getElementById('contact-subject');
             const messageEl = document.getElementById('contact-message');
 
-            const nameVal = nameEl ? nameEl.value : '';
-            const emailVal = emailEl ? emailEl.value : '';
-            const subjectVal = subjectEl ? subjectEl.value : '';
-            const messageVal = messageEl ? messageEl.value : '';
-
             const payload = {
-                sender_name: nameVal,
-                sender_email: emailVal,
-                subject: subjectVal,
-                message: messageVal,
+                kind: 'general',
+                sender_name: nameEl ? nameEl.value : '',
+                sender_email: emailEl ? emailEl.value : '',
+                subject: subjectEl ? subjectEl.value : '',
+                message: messageEl ? messageEl.value : '',
                 status: '未対応'
             };
 
-            const { data, error } = await window.supabaseClient
-                .from('contact_inquiries')
+            const { error } = await window.supabaseClient
+                .from('inquiries')
                 .insert([payload]);
 
             if (error) {
@@ -916,13 +959,17 @@
             submitBtn.innerText = "✉️ 送信する";
         };
 
-        /* ================= 🐾 非公開ネコ宛てメッセージ送信 ================= */
+        /* ================= 🐾 非公開ネコ宛てメッセージ送信（inquiries: kind=about_cat） ================= */
         window.handleCreatePrivateMessage = async function(event) {
             event.preventDefault();
             if (!window.supabaseClient || !currentSelectedCatId) return;
 
-            const { error } = await window.supabaseClient.from('private_cat_messages').insert([{
+            const cat = catsData.find(c => c.id === currentSelectedCatId);
+
+            const { error } = await window.supabaseClient.from('inquiries').insert([{
+                kind: 'about_cat',
                 cat_id: currentSelectedCatId,
+                organization_id: cat ? (cat.organization_id || null) : null,
                 sender_name: document.getElementById('priv-msg-name').value,
                 sender_email: document.getElementById('priv-msg-email').value,
                 message: document.getElementById('priv-msg-content').value,
@@ -972,7 +1019,10 @@
                 return;
             }
 
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+
             const { error } = await window.supabaseClient.from('payout_requests').insert([{
+                user_id: user ? user.id : null,
                 volunteer_name: document.getElementById('payout-volunteer-name').value,
                 volunteer_email: document.getElementById('payout-volunteer-email').value,
                 requested_amount: reqAmount,
@@ -1068,7 +1118,7 @@
             const { data, error } = await window.supabaseClient
                 .from('payout_requests')
                 .select('*')
-                .order('id', { ascending: false });
+                .order('created_at', { ascending: false });
 
             if (error) {
                 listEl.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-rose-500 font-bold">取得エラー: ${error.message}</td></tr>`;
@@ -1092,7 +1142,7 @@
                         <td class="p-3 text-xs whitespace-pre-wrap">${req.bank_info}</td>
                         <td class="p-3 text-center">
                             ${isPending ? `
-                                <button onclick="processPayout(${req.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
+                                <button onclick="processPayout('${req.id}')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow transition">
                                     振込完了にする
                                 </button>
                             ` : `
@@ -1110,9 +1160,10 @@
             listEl.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-stone-400">データを取得中...</td></tr>';
 
             const { data, error } = await window.supabaseClient
-                .from('contact_inquiries')
+                .from('inquiries')
                 .select('*')
-                .order('id', { ascending: false });
+                .eq('kind', 'general')
+                .order('created_at', { ascending: false });
 
             if (error) {
                 listEl.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-rose-500 font-bold">取得エラー: ${error.message}</td></tr>`;
@@ -1136,7 +1187,7 @@
                             <p class="text-stone-700 whitespace-pre-wrap mt-1">${c.message}</p>
                         </td>
                         <td class="p-3 text-center">
-                            <select onchange="updateContactStatus(${c.id}, this.value)" class="text-xs font-bold border rounded px-2 py-1 outline-none ${isPending ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
+                            <select onchange="updateContactStatus('${c.id}', this.value)" class="text-xs font-bold border rounded px-2 py-1 outline-none ${isPending ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
                                 <option value="未対応" ${isPending ? 'selected' : ''}>🔴 未対応</option>
                                 <option value="対応済み" ${!isPending ? 'selected' : ''}>🟢 対応済み</option>
                             </select>
@@ -1152,9 +1203,10 @@
             listEl.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-stone-400">データを取得中...</td></tr>';
 
             const { data, error } = await window.supabaseClient
-                .from('private_cat_messages')
-                .select(`*, cats ( name, shelter )`)
-                .order('id', { ascending: false });
+                .from('inquiries')
+                .select(`*, cats ( name )`)
+                .eq('kind', 'about_cat')
+                .order('created_at', { ascending: false });
 
             if (error) {
                 listEl.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-rose-500 font-bold">取得エラー: ${error.message}</td></tr>`;
@@ -1178,7 +1230,7 @@
                         <td class="p-3 text-xs text-stone-500">${dateStr}</td>
                         <td class="p-3 text-xs text-stone-700 whitespace-pre-wrap">${m.message}</td>
                         <td class="p-3 text-center">
-                            <select onchange="updatePrivateMessageStatus(${m.id}, this.value)" class="text-xs font-bold border rounded px-2 py-1 outline-none ${isPending ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
+                            <select onchange="updatePrivateMessageStatus('${m.id}', this.value)" class="text-xs font-bold border rounded px-2 py-1 outline-none ${isPending ? 'bg-rose-100 text-rose-800' : 'bg-emerald-100 text-emerald-800'}">
                                 <option value="未対応" ${isPending ? 'selected' : ''}>🔴 未対応</option>
                                 <option value="対応済み" ${!isPending ? 'selected' : ''}>🟢 対応済み</option>
                             </select>
@@ -1190,7 +1242,7 @@
 
         window.updatePrivateMessageStatus = async function(id, newStatus) {
             if (!window.supabaseClient) return;
-            const { error } = await window.supabaseClient.from('private_cat_messages').update({ status: newStatus }).eq('id', id);
+            const { error } = await window.supabaseClient.from('inquiries').update({ status: newStatus }).eq('id', id);
             if (error) showToast("更新エラー: " + error.message, "error");
             else {
                 showToast("ステータスを更新しました！");
@@ -1200,7 +1252,7 @@
 
         window.updateContactStatus = async function(id, newStatus) {
             if (!window.supabaseClient) return;
-            const { error } = await window.supabaseClient.from('contact_inquiries').update({ status: newStatus }).eq('id', id);
+            const { error } = await window.supabaseClient.from('inquiries').update({ status: newStatus }).eq('id', id);
             if (error) showToast("更新エラー: " + error.message, "error");
             else {
                 showToast("ステータスを更新しました！");
@@ -1228,7 +1280,7 @@
         async function fetchCats() {
             const grid = document.getElementById('catGrid');
             if (!window.supabaseClient) return;
-            const { data, error } = await window.supabaseClient.from('cats').select('*').order('id', { ascending: false });
+            const { data, error } = await window.supabaseClient.from('cats').select('*, organizations ( name )').order('created_at', { ascending: false });
             if (error) {
                 grid.innerHTML = '<div class="col-span-full text-center py-12 text-rose-500 font-bold">データの読み込みに失敗しました</div>';
                 return;
@@ -1252,14 +1304,14 @@
                 const current = cat.current_amount || 0;
                 const percent = Math.min(100, Math.round((current / target) * 100));
                 const isFav = favorites.includes(cat.id);
-                const shelterName = cat.shelter || '保護活動者';
-                const status = cat.status || '募集中';
+                const shelterName = orgNameOf(cat);
+                const status = cat.status || 'recruiting';
                 
                 const hasVideo = cat.has_video || (cat.video_url && cat.video_url.trim() !== "");
 
                 let statusBadgeClass = "bg-amber-100 text-amber-800";
-                if (status === 'トライアル中') statusBadgeClass = "bg-orange-100 text-orange-700";
-                if (status === '譲渡決定') statusBadgeClass = "bg-emerald-100 text-emerald-800";
+                if (status === 'trial') statusBadgeClass = "bg-orange-100 text-orange-700";
+                if (status === 'adopted') statusBadgeClass = "bg-emerald-100 text-emerald-800";
 
                 grid.innerHTML += `
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-amber-100 flex flex-col justify-between">
@@ -1267,15 +1319,15 @@
                             <img src="${cat.image_url || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop'}" alt="${cat.name}" class="w-full h-48 object-cover">
                             <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap">
                                 ${hasVideo ? '<span class="bg-rose-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full shadow">🎥 動画あり</span>' : ''}
-                                <span class="${statusBadgeClass} text-[11px] font-bold px-2 py-0.5 rounded-full shadow">${status}</span>
+                                <span class="${statusBadgeClass} text-[11px] font-bold px-2 py-0.5 rounded-full shadow">${statusLabel(status)}</span>
                             </div>
-                            <button onclick="toggleFav(${cat.id})" class="absolute top-3 right-3 bg-white/80 p-2 rounded-full text-rose-500 shadow-sm">
+                            <button onclick="toggleFav('${cat.id}')" class="absolute top-3 right-3 bg-white/80 p-2 rounded-full text-rose-500 shadow-sm">
                                 <i class="${isFav ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
                             </button>
                         </div>
                         <div class="p-4 space-y-3 flex-grow">
                             <div class="flex justify-between items-start">
-                                <h3 class="font-extrabold text-lg text-stone-800">${cat.name} <span class="text-xs text-stone-500 font-normal">(${cat.age || '不明'})</span></h3>
+                                <h3 class="font-extrabold text-lg text-stone-800">${cat.name} <span class="text-xs text-stone-500 font-normal">(${cat.age_text || '不明'})</span></h3>
                                 ${cat.is_urgent ? '<span class="bg-rose-100 text-rose-700 text-[10px] font-bold px-2 py-0.5 rounded">🚨 緊急</span>' : ''}
                             </div>
                             <div>
@@ -1295,10 +1347,10 @@
                             </div>
                         </div>
                         <div class="p-4 pt-0 space-y-2">
-                            <button onclick="openUpdatesModal(${cat.id})" class="w-full bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-1">
+                            <button onclick="openUpdatesModal('${cat.id}')" class="w-full bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-bold py-2 rounded-xl text-xs transition flex items-center justify-center gap-1">
                                 <i class="fa-solid fa-book-open"></i> 詳細・里親応募・近況を見る
                             </button>
-                            <button onclick="openTipModal(${cat.id})" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl shadow-sm text-sm transition flex items-center justify-center gap-1">
+                            <button onclick="openTipModal('${cat.id}')" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2.5 rounded-xl shadow-sm text-sm transition flex items-center justify-center gap-1">
                                 <span>🐾 推し活で応援する</span>
                             </button>
                         </div>
@@ -1310,7 +1362,7 @@
         function renderShelterFilters() {
             const container = document.getElementById('shelterButtons');
             if (!container) return;
-            const shelters = [...new Set(catsData.map(c => c.shelter).filter(Boolean))];
+            const shelters = [...new Set(catsData.map(c => orgNameOf(c)).filter(Boolean))];
             if (shelters.length === 0) {
                 container.innerHTML = '<span class="text-stone-400">登録団体なし</span>';
                 return;
@@ -1322,7 +1374,7 @@
         }
 
         window.filterCatsByShelter = function(shelterName) {
-            renderCats(catsData.filter(c => c.shelter === shelterName));
+            renderCats(catsData.filter(c => orgNameOf(c) === shelterName));
         }
 
         window.processImage = function(event, targetInputId, statusId) {
@@ -1364,12 +1416,12 @@
 
             const videoUrl = document.getElementById('cat-video-url').value;
             const hasVideoCheck = document.getElementById('cat-has-video').checked;
-            const shelterName = document.getElementById('cat-shelter').value;
+            const orgId = document.getElementById('cat-shelter').value || null;
 
             const { error } = await window.supabaseClient.from('cats').insert([{
                 name: document.getElementById('cat-name').value,
-                shelter: shelterName,
-                age: document.getElementById('cat-age').value,
+                organization_id: orgId,
+                age_text: document.getElementById('cat-age').value,
                 target_amount: parseInt(document.getElementById('cat-target').value) || 20000,
                 current_amount: 0,
                 status: document.getElementById('cat-status').value,
@@ -1379,21 +1431,21 @@
                 has_video: hasVideoCheck || !!(videoUrl && videoUrl.trim() !== ""),
                 is_kitten: document.getElementById('cat-is-kitten').checked,
                 is_urgent: document.getElementById('cat-is-urgent').checked,
-                user_id: user ? user.id : null
+                created_by: user ? user.id : null
             }]);
 
             if (error) {
                 showToast("登録エラー: " + error.message, "error");
             } else {
-                localStorage.setItem('rescue_cat_shelter', shelterName);
+                if (orgId) localStorage.setItem('rescue_cat_org_id', orgId);
 
                 showToast("🎉 新しい推しネコちゃんを登録しました！");
                 document.getElementById('addCatForm').reset();
                 document.getElementById('compress-status').innerText = "";
                 
-                const rememberedShelter = localStorage.getItem('rescue_cat_shelter');
-                if (rememberedShelter) {
-                    document.getElementById('cat-shelter').value = rememberedShelter;
+                const rememberedOrgId = localStorage.getItem('rescue_cat_org_id');
+                if (rememberedOrgId) {
+                    document.getElementById('cat-shelter').value = rememberedOrgId;
                 }
 
                 fetchCats();
@@ -1408,8 +1460,8 @@
             if (!cat) return;
 
             document.getElementById('modalCatName').innerText = cat.name + ' の詳細・推し活';
-            document.getElementById('modalCatShelter').innerText = '🏠 ' + (cat.shelter || '保護団体');
-            document.getElementById('modalCatStatusBadge').innerText = cat.status || '募集中';
+            document.getElementById('modalCatShelter').innerText = '🏠 ' + orgNameOf(cat);
+            document.getElementById('modalCatStatusBadge').innerText = statusLabel(cat.status);
             document.getElementById('updatesModal').classList.remove('hidden');
 
             const videoContainer = document.getElementById('modalVideoContainer');
@@ -1425,12 +1477,12 @@
             const adminStatusBox = document.getElementById('admin-status-box');
 
             const { data: { user } } = await window.supabaseClient.auth.getUser();
-            const isOwner = user && cat.user_id && user.id === cat.user_id;
+            const isOwner = user && cat.created_by && user.id === cat.created_by;
 
             if (isOwner) {
                 adminUpdateBox.classList.remove('hidden');
                 adminStatusBox.classList.remove('hidden');
-                document.getElementById('modalStatusSelect').value = cat.status || '募集中';
+                document.getElementById('modalStatusSelect').value = cat.status || 'recruiting';
             } else {
                 adminUpdateBox.classList.add('hidden');
                 adminStatusBox.classList.add('hidden');
@@ -1445,8 +1497,8 @@
             if (!cat) return;
 
             document.getElementById('edit-cat-name').value = cat.name || '';
-            document.getElementById('edit-cat-shelter').value = cat.shelter || '';
-            document.getElementById('edit-cat-age').value = cat.age || '';
+            document.getElementById('edit-cat-shelter').value = cat.organization_id || '';
+            document.getElementById('edit-cat-age').value = cat.age_text || '';
             document.getElementById('edit-cat-target').value = cat.target_amount || 20000;
             document.getElementById('edit-cat-video-url').value = cat.video_url || '';
             document.getElementById('edit-cat-message').value = cat.message || '';
@@ -1473,8 +1525,8 @@
 
             const updateData = {
                 name: document.getElementById('edit-cat-name').value,
-                shelter: document.getElementById('edit-cat-shelter').value,
-                age: document.getElementById('edit-cat-age').value,
+                organization_id: document.getElementById('edit-cat-shelter').value || null,
+                age_text: document.getElementById('edit-cat-age').value,
                 target_amount: parseInt(document.getElementById('edit-cat-target').value) || 20000,
                 video_url: videoUrl,
                 message: document.getElementById('edit-cat-message').value,
@@ -1539,7 +1591,7 @@
             const { error } = await window.supabaseClient.from('cats').update({ status: newStatus }).eq('id', currentSelectedCatId);
             if (error) showToast('更新エラー: ' + error.message, "error");
             else {
-                showToast('🎉 ステータスを「' + newStatus + '」に更新しました！');
+                showToast('🎉 ステータスを「' + statusLabel(newStatus) + '」に更新しました！');
                 fetchCats();
                 openUpdatesModal(currentSelectedCatId);
             }
@@ -1548,7 +1600,7 @@
         window.shareSNS = function(platform) {
             const cat = catsData.find(c => c.id === currentSelectedCatId);
             if (!cat) return;
-            const shelterStr = cat.shelter ? `（${cat.shelter}）` : '';
+            const shelterStr = cat.organizations ? `（${cat.organizations.name}）` : '';
             const text = `保護ネコ支援プラットフォーム RescuCatで「${cat.name}」ちゃん${shelterStr}を推し活中！🐾\n#RescuCat #保護猫 #推し活 #里親募集`;
             const url = window.location.href;
 
@@ -1568,7 +1620,7 @@
 
         async function fetchUpdates(catId) {
             const timeline = document.getElementById('updatesTimeline');
-            const { data } = await window.supabaseClient.from('cat_updates').select('*').eq('cat_id', catId).order('id', { ascending: false });
+            const { data } = await window.supabaseClient.from('cat_updates').select('*').eq('cat_id', catId).order('created_at', { ascending: false });
             if (!data || data.length === 0) {
                 timeline.innerHTML = '<p class="text-xs text-stone-400 text-center py-4">まだ近況報告がありません。</p>';
                 return;
@@ -1604,8 +1656,11 @@
             event.preventDefault();
             if (!window.supabaseClient || !currentSelectedCatId) return;
 
+            const cat = catsData.find(c => c.id === currentSelectedCatId);
+
             const { error } = await window.supabaseClient.from('adoption_applications').insert([{
                 cat_id: currentSelectedCatId,
+                organization_id: cat ? (cat.organization_id || null) : null,
                 applicant_name: document.getElementById('apply-name').value,
                 applicant_email: document.getElementById('apply-email').value,
                 applicant_phone: document.getElementById('apply-phone').value,
@@ -1630,8 +1685,8 @@
 
             const { data, error } = await window.supabaseClient
                 .from('adoption_applications')
-                .select(`*, cats ( name, shelter )`)
-                .order('id', { ascending: false });
+                .select(`*, cats ( name )`)
+                .order('created_at', { ascending: false });
 
             if (error) {
                 listEl.innerHTML = '<p class="text-xs text-white/80 text-center py-2">応募データの取得に失敗しました</p>';
@@ -1663,7 +1718,7 @@
                             <span class="font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded">🐱 応募先: ${catName}</span>
                             <div class="flex items-center gap-2">
                                 <span class="text-[10px] text-stone-400">${dateStr}</span>
-                                <select onchange="updateApplicationStatus(${app.id}, this.value)" class="text-[11px] font-bold border rounded px-1.5 py-0.5 outline-none ${statusColor}">
+                                <select onchange="updateApplicationStatus('${app.id}', this.value)" class="text-[11px] font-bold border rounded px-1.5 py-0.5 outline-none ${statusColor}">
                                     <option value="未対応" ${appStatus === '未対応' ? 'selected' : ''}>🔴 未対応</option>
                                     <option value="面談調整中" ${appStatus === '面談調整中' ? 'selected' : ''}>🟡 面談調整中</option>
                                     <option value="トライアル決定" ${appStatus === 'トライアル決定' ? 'selected' : ''}>🔵 トライアル決定</option>
@@ -1694,7 +1749,7 @@
             const { data: myCats, error: catErr } = await window.supabaseClient
                 .from('cats')
                 .select('id, name')
-                .eq('user_id', user.id);
+                .eq('created_by', user.id);
 
             if (catErr || !myCats || myCats.length === 0) {
                 badgeEl.innerText = '0件';
@@ -1705,10 +1760,11 @@
             const catIds = myCats.map(c => c.id);
 
             const { data: msgs, error: msgErr } = await window.supabaseClient
-                .from('private_cat_messages')
-                .select(`*, cats ( name, shelter )`)
+                .from('inquiries')
+                .select(`*, cats ( name )`)
+                .eq('kind', 'about_cat')
                 .in('cat_id', catIds)
-                .order('id', { ascending: false });
+                .order('created_at', { ascending: false });
 
             if (msgErr) {
                 listEl.innerHTML = '<p class="text-xs text-white/80 text-center py-2">メッセージの取得に失敗しました</p>';
@@ -1739,7 +1795,7 @@
                             <span class="font-black text-amber-900 bg-amber-100 px-2 py-0.5 rounded">🐱 宛先ネコ: ${catName}</span>
                             <div class="flex items-center gap-2">
                                 <span class="text-[10px] text-stone-400">${dateStr}</span>
-                                <select onchange="updateVolunteerPrivateMessageStatus(${m.id}, this.value)" class="text-[11px] font-bold border rounded px-1.5 py-0.5 outline-none ${statusColor}">
+                                <select onchange="updateVolunteerPrivateMessageStatus('${m.id}', this.value)" class="text-[11px] font-bold border rounded px-1.5 py-0.5 outline-none ${statusColor}">
                                     <option value="未対応" ${msgStatus === '未対応' ? 'selected' : ''}>🔴 未対応</option>
                                     <option value="対応済み" ${msgStatus === '対応済み' ? 'selected' : ''}>🟢 対応済み</option>
                                 </select>
@@ -1758,7 +1814,7 @@
         window.updateVolunteerPrivateMessageStatus = async function(msgId, newStatus) {
             if (!window.supabaseClient) return;
             const { error } = await window.supabaseClient
-                .from('private_cat_messages')
+                .from('inquiries')
                 .update({ status: newStatus })
                 .eq('id', msgId);
 
@@ -1788,7 +1844,7 @@
             
             const { data: { user } } = await window.supabaseClient.auth.getUser();
 
-            const { data, error } = await window.supabaseClient.from('news_posts').select('*').order('id', { ascending: false });
+            const { data, error } = await window.supabaseClient.from('news_posts').select('*, organizations ( name )').order('created_at', { ascending: false });
             if (error) {
                 listEl.innerHTML = '<p class="text-xs text-rose-500 text-center py-2">お知らせの読み込みに失敗しました</p>';
                 return;
@@ -1801,10 +1857,10 @@
             listEl.innerHTML = '';
             news.forEach(item => {
                 const dateStr = new Date(item.created_at).toLocaleDateString('ja-JP');
-                const shelterName = item.shelter ? `🏠 ${item.shelter}` : '';
+                const shelterName = item.organizations ? `🏠 ${item.organizations.name}` : '';
 
                 const deleteBtnHtml = user ? `
-                    <button onclick="deleteNewsPost(${item.id})" class="text-[11px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2.5 py-1 rounded-lg transition">
+                    <button onclick="deleteNewsPost('${item.id}')" class="text-[11px] bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold px-2.5 py-1 rounded-lg transition">
                         🗑️ 削除
                     </button>
                 ` : '';
@@ -1845,11 +1901,11 @@
 
             const { error } = await window.supabaseClient.from('news_posts').insert([{
                 title: document.getElementById('news-title').value,
-                shelter: document.getElementById('news-shelter').value,
+                organization_id: document.getElementById('news-shelter').value || null,
                 category: document.getElementById('news-category').value,
                 content: document.getElementById('news-content').value,
                 image_url: document.getElementById('news-image-url').value,
-                user_id: user ? user.id : null
+                author_id: user ? user.id : null
             }]);
 
             if (error) {
@@ -1869,359 +1925,361 @@
             document.getElementById('manualModal').classList.remove('hidden');
         };
 
-        window.openPolicyModal = function(type) {
-            const titleEl = document.getElementById('policyModalTitle');
-            const contentEl = document.getElementById('policyModalContent');
+window.openPolicyModal = function(type) {
+const titleEl = document.getElementById('policyModalTitle');
+const contentEl = document.getElementById('policyModalContent');
 
-            if (type === 'terms') {
-                titleEl.innerText = "利用規約";
-                contentEl.innerHTML = `
-<p class="font-bold text-stone-800">【RescuCat 利用規約】</p>
+if (type === 'terms') {
+titleEl.innerText = "利用規約";
+contentEl.innerHTML = `
+<p class="font-bold text-stone-800"></p>
 <p><strong>第1条（目的）</strong><br>本プラットフォームは、保護ネコの里親募集、活動支援、およびボランティアと支援者のマッチングを目的とします。</p>
 <p><strong>第2条（里親応募に関する注意・禁止事項）</strong><br>1. 応募者は、真実かつ正確な情報を提供してエントリーを行うものとします。<br>2. 営利目的、転売目的、動物虐待を目的とした応募は固く禁止します。</p>
 <p><strong>第3条（免責事項）</strong><br>本サービスは、ユーザー間で生じたトラブル等について一切の責任を負いません。</p>`;
-            } else if (type === 'privacy') {
-                titleEl.innerText = "プライバシーポリシー";
-                contentEl.innerHTML = `
-<p class="font-bold text-stone-800">【RescuCat プライバシーポリシー】</p>
+} else if (type === 'privacy') {
+titleEl.innerText = "プライバシーポリシー";
+contentEl.innerHTML = `
+<p class="font-bold text-stone-800"></p>
 <p><strong>1. 個人情報の収集・利用目的</strong><br>本サービスでは、里親応募の際に、お名前・メールアドレス・電話番号等の個人情報を収集し、保護主からの連絡・譲渡手続きにのみ利用します。</p>
 <p><strong>2. 管理と保護</strong><br>ご提供いただいた個人情報はデータベース上で厳重に保護されます。</p>`;
-            } else if (type === 'tokusho') {
-                titleEl.innerText = "特定商取引法に基づく表記";
-                contentEl.innerHTML = `
-<p class="font-bold text-stone-800">【特定商取引法に基づく表記】</p>
+} else if (type === 'tokusho') {
+titleEl.innerText = "特定商取引法に基づく表記";
+contentEl.innerHTML = `
+<p class="font-bold text-stone-800"></p>
 <p><strong>事業者の名称:</strong> 保護ねこ支援 RescuCat 運営事務局</p>
 <p><strong>連絡先メールアドレス:</strong> support@resducat.example.com</p>
 <p><strong>販売価格・支援金額:</strong> 各支援決済画面（500円、1,000円、3,000円）に表示</p>
 <p><strong>代金の支払時期・方法:</strong> クレジットカード決済（Stripeによる即時決済）</p>
 <p><strong>役務または商品の提供時期:</strong> 支援金決済完了後、直ちに保護ネコ活動資金として計上されます。</p>
 <p><strong>返品・キャンセルについて:</strong> 支援金（寄付）の性質上、決済完了後の返金・キャンセルはお受けできません。</p>`;
-            }
-            document.getElementById('policyModal').classList.remove('hidden');
-        };
+}
+document.getElementById('policyModal').classList.remove('hidden');
+};
 
-        function updateGlobalMeter() {
-            const globalCurrent = catsData.reduce((sum, cat) => sum + (cat.current_amount || 0), 0);
-            document.getElementById('globalAmount').innerText = globalCurrent.toLocaleString() + '円';
-            document.getElementById('globalProgressBar').style.width = Math.min(100, Math.round((globalCurrent / 200000) * 100)) + '%';
-        }
+function updateGlobalMeter() {
+const globalCurrent = catsData.reduce((sum, cat) => sum + (cat.current_amount || 0), 0);
+document.getElementById('globalAmount').innerText = globalCurrent.toLocaleString() + '円';
+document.getElementById('globalProgressBar').style.width = Math.min(100, Math.round((globalCurrent / 200000) * 100)) + '%';
+}
 
-        function updateDashboardStats() {
-            document.getElementById('dashCatCount').innerText = catsData.length + '頭';
-            document.getElementById('dashTotalAmount').innerText = catsData.reduce((sum, c) => sum + (c.current_amount || 0), 0).toLocaleString() + '円';
-            document.getElementById('dashAdoptedCount').innerText = catsData.filter(c => c.status === '譲渡決定').length + '匹';
-            document.getElementById('dashUrgentCount').innerText = catsData.filter(c => c.is_urgent).length + '件';
-        }
+function updateDashboardStats() {
+document.getElementById('dashCatCount').innerText = catsData.length + '頭';
+document.getElementById('dashTotalAmount').innerText = catsData.reduce((sum, c) => sum + (c.current_amount || 0), 0).toLocaleString() + '円';
+document.getElementById('dashAdoptedCount').innerText = catsData.filter(c => c.status === 'adopted').length + '匹';
+document.getElementById('dashUrgentCount').innerText = catsData.filter(c => c.is_urgent).length + '件';
+}
 
-        function toggleFav(id) {
-            if (favorites.includes(id)) favorites = favorites.filter(fId => fId !== id);
-            else favorites.push(id);
-            
-            localStorage.setItem('rescue_cat_favorites', JSON.stringify(favorites));
-            document.getElementById('favBadge').innerText = favorites.length;
-            renderCats(catsData);
-        }
+function toggleFav(id) {
+if (favorites.includes(id)) favorites = favorites.filter(fId => fId!== id);
+else favorites.push(id);
 
-        window.scrollToFavCats = function() {
-            filterCats('fav');
-            const section = document.getElementById('catSearchSection');
-            if (section) section.scrollIntoView({ behavior: 'smooth' });
-        };
+localStorage.setItem('rescue_cat_favorites', JSON.stringify(favorites));
+document.getElementById('favBadge').innerText = favorites.length;
+renderCats(catsData);
+}
 
-        function filterCats(type) {
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.className = "filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1";
-            });
-            const activeBtn = document.getElementById(`btn-filter-${type}`);
-            if (activeBtn) {
-                activeBtn.className = "filter-btn active-filter bg-amber-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm flex items-center gap-1";
-            }
+window.scrollToFavCats = function() {
+filterCats('fav');
+const section = document.getElementById('catSearchSection');
+if (section) section.scrollIntoView({ behavior: 'smooth'});
+};
 
-            if (type === 'all') renderCats(catsData);
-            else if (type === 'video') renderCats(catsData.filter(c => c.has_video || (c.video_url && c.video_url.trim() !== "")));
-            else if (type === 'kitten') renderCats(catsData.filter(c => c.is_kitten));
-            else if (type === 'urgent') renderCats(catsData.filter(c => c.is_urgent));
-            else if (type === 'adopted') renderCats(catsData.filter(c => c.status === '譲渡決定'));
-            else if (type === 'fav') renderCats(catsData.filter(c => favorites.includes(c.id)));
-        }
+function filterCats(type) {
+document.querySelectorAll('.filter-btn').forEach(btn => {
+btn.className = "filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1";
+});
+const activeBtn = document.getElementById(`btn-filter-${type}`);
+if (activeBtn) {
+activeBtn.className = "filter-btn active-filter bg-amber-800 text-white px-4 py-2 rounded-full whitespace-nowrap shadow-sm flex items-center gap-1";
+}
 
-        window.toggleAuthForm = function() {
-            const form = document.getElementById('auth-section');
-            form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'block' : 'none';
-        };
+if (type === 'all') renderCats(catsData);
+else if (type === 'video') renderCats(catsData.filter(c => c.has_video || (c.video_url && c.video_url.trim()!== "")));
+else if (type === 'kitten') renderCats(catsData.filter(c => c.is_kitten));
+else if (type === 'urgent') renderCats(catsData.filter(c => c.is_urgent));
+else if (type === 'adopted') renderCats(catsData.filter(c => c.status === 'adopted'));
+else if (type === 'fav') renderCats(catsData.filter(c => favorites.includes(c.id)));
+}
 
-        window.switchAuthTab = function(mode) {
-            const loginForm = document.getElementById('login-form-container');
-            const signupForm = document.getElementById('signup-form-container');
-            if (mode === 'login') {
-                loginForm.style.display = 'block';
-                signupForm.style.display = 'none';
-            } else {
-                loginForm.style.display = 'none';
-                signupForm.style.display = 'block';
-            }
-        };
+window.toggleAuthForm = function() {
+const form = document.getElementById('auth-section');
+form.style.display = (form.style.display === 'none' || form.style.display === '')? 'block': 'none';
+};
 
-        window.handleLogin = async function() {
-            if (!window.supabaseClient) return;
-            const { error } = await window.supabaseClient.auth.signInWithPassword({
-                email: document.getElementById('login-email').value,
-                password: document.getElementById('login-password').value
-            });
-            if (error) {
-                showToast('ログイン失敗: ' + error.message, "error");
-            } else {
-                showToast('ログイン成功しました！🐾');
-                checkUserSession();
-            }
-        };
+window.switchAuthTab = function(mode) {
+const loginForm = document.getElementById('login-form-container');
+const signupForm = document.getElementById('signup-form-container');
+if (mode === 'login') {
+loginForm.style.display = 'block';
+signupForm.style.display = 'none';
+} else {
+loginForm.style.display = 'none';
+signupForm.style.display = 'block';
+}
+};
 
-        async function setupRealtimeListeners() {
-            if (!window.supabaseClient) return;
-            const { data: { session } } = await window.supabaseClient.auth.getSession();
-            if (!session || !session.user) return;
+window.handleLogin = async function() {
+if (!window.supabaseClient) return;
+const { error} = await window.supabaseClient.auth.signInWithPassword({
+email: document.getElementById('login-email').value,
+password: document.getElementById('login-password').value
+});
+if (error) {
+showToast('ログイン失敗: ' + error.message, "error");
+} else {
+showToast('ログイン成功しました！🐾');
+checkUserSession();
+}
+};
 
-            const { data: myCats } = await window.supabaseClient
-                .from('cats')
-                .select('id')
-                .eq('user_id', session.user.id);
+async function setupRealtimeListeners() {
+if (!window.supabaseClient) return;
+const { data: { session}} = await window.supabaseClient.auth.getSession();
+if (!session ||!session.user) return;
 
-            if (!myCats || myCats.length === 0) return;
-            const catIds = myCats.map(c => c.id);
+const { data: myCats} = await window.supabaseClient
+.from('cats')
+.select('id')
+.eq('created_by', session.user.id);
 
-            window.supabaseClient
-                .channel('public:private_cat_messages')
-                .on(
-                    'postgres_changes',
-                    { event: 'INSERT', schema: 'public', table: 'private_cat_messages' },
-                    (payload) => {
-                        if (catIds.includes(payload.new.cat_id)) {
-                            showToast("💌 新しい非公開メッセージが届きました！");
-                            fetchVolunteerPrivateMessages();
-                        }
-                    }
-                )
-                .subscribe();
+if (!myCats || myCats.length === 0) return;
+const catIds = myCats.map(c => c.id);
 
-            window.supabaseClient
-                .channel('public:adoption_applications')
-                .on(
-                    'postgres_changes',
-                    { event: 'INSERT', schema: 'public', table: 'adoption_applications' },
-                    (payload) => {
-                        if (catIds.includes(payload.new.cat_id)) {
-                            showToast("🏠 新しい里親・お見合い応募が届きました！");
-                            fetchApplications();
-                        }
-                    }
-                )
-                .subscribe();
-        }
+window.supabaseClient
+.channel('public:inquiries')
+.on(
+'postgres_changes',
+{ event: 'INSERT', schema: 'public', table: 'inquiries'},
+(payload) => {
+if (payload.new.kind === 'about_cat' && catIds.includes(payload.new.cat_id)) {
+showToast("💌 新しい非公開メッセージが届きました！");
+fetchVolunteerPrivateMessages();
+}
+}
+)
+.subscribe();
 
-        window.handleSignUp = async function() {
-            if (!window.supabaseClient) return;
-            const { error } = await window.supabaseClient.auth.signUp({
-                email: document.getElementById('signup-email').value,
-                password: document.getElementById('signup-password').value
-            });
-            if (error) {
-                showToast('新規登録失敗: ' + error.message, "error");
-            } else {
-                showToast('新規登録が完了しました！');
-                checkUserSession();
-            }
-        };
+window.supabaseClient
+.channel('public:adoption_applications')
+.on(
+'postgres_changes',
+{ event: 'INSERT', schema: 'public', table: 'adoption_applications'},
+(payload) => {
+if (catIds.includes(payload.new.cat_id)) {
+showToast("🏠 新しい里親・お見合い応募が届きました！");
+fetchApplications();
+}
+}
+)
+.subscribe();
+}
 
-        window.handleLogout = async function() {
-            await window.supabaseClient.auth.signOut();
-            showToast('ログアウトしました');
-            checkUserSession();
-        };
+window.handleSignUp = async function() {
+if (!window.supabaseClient) return;
+const { error} = await window.supabaseClient.auth.signUp({
+email: document.getElementById('signup-email').value,
+password: document.getElementById('signup-password').value
+});
+if (error) {
+showToast('新規登録失敗: ' + error.message, "error");
+} else {
+showToast('新規登録が完了しました！');
+checkUserSession();
+}
+};
 
-        if (typeof window.rescueCatDonationAmount === 'undefined') {
-            window.rescueCatDonationAmount = 1000;
-        }
+window.handleLogout = async function() {
+await window.supabaseClient.auth.signOut();
+showToast('ログアウトしました');
+checkUserSession();
+};
 
-        window.selectAmount = function(amount, btnElement) {
-            window.rescueCatDonationAmount = amount;
-            const input = document.getElementById('customAmount');
-            if (input) input.value = amount;
+if (typeof window.rescueCatDonationAmount === 'undefined') {
+window.rescueCatDonationAmount = 1000;
+}
 
-            document.querySelectorAll('.tip-preset-btn').forEach(btn => {
-                btn.classList.remove('active');
-            });
+window.selectAmount = function(amount, btnElement) {
+window.rescueCatDonationAmount = amount;
+const input = document.getElementById('customAmount');
+if (input) input.value = amount;
 
-            if (btnElement) {
-                btnElement.classList.add('active');
-            }
-        };
+document.querySelectorAll('.tip-preset-btn').forEach(btn => {
+btn.classList.remove('active');
+});
 
-        window.openTipModal = function(id) { 
-            currentSelectedCatId = id;
-            document.getElementById('tipModal').classList.remove('hidden'); 
-        };
+if (btnElement) {
+btnElement.classList.add('active');
+}
+};
 
-        window.submitTip = function() {
-            const stripeLinks = {
-                500: "https://buy.stripe.com/00wdRbetL8rvceL8Nvcs801",
-                1000: "https://buy.stripe.com/fZu5kF99rePTgv11l3cs800",
-                3000: "https://buy.stripe.com/eVqcN70CVbDH1A7bZHcs802"
-            };
-            let amount = window.rescueCatDonationAmount || 1000;
-            let targetUrl = stripeLinks[amount] || stripeLinks[1000];
-            
-            if (currentSelectedCatId) {
-                localStorage.setItem('pending_tip_cat_id', currentSelectedCatId);
-            }
+window.openTipModal = function(id) {
+currentSelectedCatId = id;
+document.getElementById('tipModal').classList.remove('hidden');
+};
 
-            showToast(`🐾 ${amount.toLocaleString()}円の推し活支援ページへ移動します。`);
-            setTimeout(() => {
-                window.location.href = targetUrl;
-            }, 1000);
-        };
+window.submitTip = function() {
+const stripeLinks = {
+500: "https://buy.stripe.com/00wdRbetL8rvceL8Nvcs801",
+1000: "https://buy.stripe.com/fZu5kF99rePTgv11l3cs800",
+3000: "https://buy.stripe.com/eVqcN70CVbDH1A7bZHcs802"
+};
+let amount = window.rescueCatDonationAmount || 1000;
+let targetUrl = stripeLinks[amount] || stripeLinks[1000];
 
-        async function checkPaymentSuccess() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const isSuccess = urlParams.get('payout_success');
-            const amountStr = urlParams.get('amount');
+if (currentSelectedCatId) {
+localStorage.setItem('pending_tip_cat_id', currentSelectedCatId);
+}
 
-            if (isSuccess === 'true' && amountStr) {
-                const addedAmount = parseInt(amountStr, 10) || 0;
-                const catId = localStorage.getItem('pending_tip_cat_id');
+showToast(`🐾 ${amount.toLocaleString()}円の推し活支援ページへ移動します。`);
+setTimeout(() => {
+window.location.href = targetUrl;
+}, 1000);
+};
 
-                if (catId && addedAmount > 0 && window.supabaseClient) {
-                                    if (catId && addedAmount > 0 && window.supabaseClient) {
-                    // ▼▼▼ 【変更後】セキュリティ的に安全なRPC関数を使用 ▼▼▼
-                    const { error: rpcErr } = await window.supabaseClient.rpc('increment_cat_amount', {
-                        target_cat_id: parseInt(catId, 10),
-                        add_amount: addedAmount
-                    });
+async function checkPaymentSuccess() {
+const urlParams = new URLSearchParams(window.location.search);
+const isSuccess = urlParams.get('payout_success');
+const amountStr = urlParams.get('amount');
 
-                    if (!rpcErr) {
-                        showToast(`🎉 推し活支援（${addedAmount.toLocaleString()}円）が完了しました！ありがとう！`);
-                        localStorage.removeItem('pending_tip_cat_id');
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                        fetchCats();
-                    } else {
-                        showToast("⚠️ 支援金額の反映に失敗しました: " + rpcErr.message, "error");
-                    }
-                }
+if (isSuccess === 'true' && amountStr) {
+const addedAmount = parseInt(amountStr, 10) || 0;
+const catId = localStorage.getItem('pending_tip_cat_id');
 
-                }
-            }
-        }
+if (catId && addedAmount > 0 && window.supabaseClient) {
+// ▼▼▼ セキュリティ的に安全なRPC関数を使用（uuid 版） ▼▼▼
+const { error: rpcErr} = await window.supabaseClient.rpc('increment_cat_amount', {
+target_cat_id: catId,
+add_amount: addedAmount
+});
 
-        async function checkUserSession() {
-            if (!window.supabaseClient) return;
-            const { data: { session } } = await window.supabaseClient.auth.getSession();
-            isLoggedIn = !!session;
-            document.getElementById('admin-add-cat-section').classList.toggle('hidden', !session);
-            document.getElementById('volunteerDashboard').classList.toggle('hidden', !session);
-            document.getElementById('addNewsBtn').classList.toggle('hidden', !session);
-            document.getElementById('login-form-container').style.display = session ? 'none' : 'block';
-            document.getElementById('signup-form-container').style.display = 'none';
-            document.getElementById('logout-section').style.display = session ? 'block' : 'none';
+if (!rpcErr) {
+// 寄付履歴（donations）にも1行残す（失敗しても本処理は止めない）
+const cat = catsData.find(c => c.id === catId);
+await window.supabaseClient.from('donations').insert([{
+cat_id: catId,
+organization_id: cat? (cat.organization_id || null): null,
+amount: addedAmount,
+status: 'paid',
+provider: 'stripe'
+}]);
 
-            if (session) {
-                fetchApplications();
-                fetchVolunteerPrivateMessages();
-                setupRealtimeListeners();
-            }
-        }
+showToast(`🎉 推し活支援（${addedAmount.toLocaleString()}円）が完了しました！ありがとう！`);
+localStorage.removeItem('pending_tip_cat_id');
+window.history.replaceState({}, document.title, window.location.pathname);
+fetchCats();
+} else {
+showToast("⚠️ 支援金額の反映に失敗しました: " + rpcErr.message, "error");
+}
+}
+}
+}
 
-        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+async function checkUserSession() {
+if (!window.supabaseClient) return;
+const { data: { session}} = await window.supabaseClient.auth.getSession();
+isLoggedIn =!!session;
+document.getElementById('admin-add-cat-section').classList.toggle('hidden',!session);
+document.getElementById('volunteerDashboard').classList.toggle('hidden',!session);
+document.getElementById('addNewsBtn').classList.toggle('hidden',!session);
+document.getElementById('login-form-container').style.display = session? 'none': 'block';
+document.getElementById('signup-form-container').style.display = 'none';
+document.getElementById('logout-section').style.display = session? 'block': 'none';
 
-        window.openModal = function(id) {
-            const modal = document.getElementById(id);
-            if (modal) modal.classList.remove('hidden');
-        };
+if (session) {
+fetchApplications();
+fetchVolunteerPrivateMessages();
+setupRealtimeListeners();
+}
+}
 
-        window.deleteCat = async function() {
-            if (!currentSelectedCatId) {
-                showToast("⚠️ 削除するネコちゃんが選択されていません。", "error");
-                return;
-            }
+function closeModal(id) { document.getElementById(id).classList.add('hidden');}
 
-            if (!confirm("本当にこのネコちゃんの情報を削除しますか？\n（※この操作は元に戻せません）")) return;
-            if (!window.supabaseClient) {
-                showToast("⚠️ データベースに接続されていません。", "error");
-                return;
-            }
+window.openModal = function(id) {
+const modal = document.getElementById(id);
+if (modal) modal.classList.remove('hidden');
+};
 
-            const { error } = await window.supabaseClient
-                .from('cats')
-                .delete()
-                .eq('id', currentSelectedCatId);
+window.deleteCat = async function() {
+if (!currentSelectedCatId) {
+showToast("⚠️ 削除するネコちゃんが選択されていません。", "error");
+return;
+}
 
-            if (error) {
-                showToast("削除エラー: " + error.message, "error");
-            } else {
-                showToast("🗑️ ネコちゃんの情報を削除しました。");
-                closeModal('updatesModal');
-                await fetchCats();
-            }
-        };
+if (!confirm("本当にこのネコちゃんの情報を削除しますか？\n（※この操作は元に戻せません）")) return;
+if (!window.supabaseClient) {
+showToast("⚠️ データベースに接続されていません。", "error");
+return;
+}
 
-        window.addEventListener('DOMContentLoaded', () => {
-            checkUserSession();
-            fetchCats();
-            fetchNews();
-            checkPaymentSuccess();
+const { error} = await window.supabaseClient
+.from('cats')
+.delete()
+.eq('id', currentSelectedCatId);
 
-            const favBadge = document.getElementById('favBadge');
-            if (favBadge) favBadge.innerText = favorites.length;
+if (error) {
+showToast("削除エラー: " + error.message, "error");
+} else {
+showToast("🗑️ ネコちゃんの情報を削除しました。");
+closeModal('updatesModal');
+await fetchCats();
+}
+};
 
-            const rememberedShelter = localStorage.getItem('rescue_cat_shelter');
-            if (rememberedShelter) {
-                const shelterInput = document.getElementById('cat-shelter');
-                if (shelterInput) shelterInput.value = rememberedShelter;
-            }
-        });
+window.addEventListener('DOMContentLoaded', () => {
+checkUserSession();
+loadOrganizations();
+fetchCats();
+fetchNews();
+checkPaymentSuccess();
 
-        window.deleteNewsPost = async function(newsId) {
-            if (!confirm("本当にこのお知らせ・レポートを削除しますか？\n（※この操作は元に戻せません）")) return;
-            if (!window.supabaseClient) {
-                showToast("⚠️ データベースに接続されていません。", "error");
-                return;
-            }
+const favBadge = document.getElementById('favBadge');
+if (favBadge) favBadge.innerText = favorites.length;
+});
 
-            const { error } = await window.supabaseClient
-                .from('news_posts')
-                .delete()
-                .eq('id', newsId);
+window.deleteNewsPost = async function(newsId) {
+if (!confirm("本当にこのお知らせ・レポートを削除しますか？\n（※この操作は元に戻せません）")) return;
+if (!window.supabaseClient) {
+showToast("⚠️ データベースに接続されていません。", "error");
+return;
+}
 
-            if (error) {
-                showToast("削除エラー: " + error.message, "error");
-            } else {
-                showToast("🗑️ お知らせ・レポートを削除しました。");
-                fetchNews();
-            }
-        };
+const { error} = await window.supabaseClient
+.from('news_posts')
+.delete()
+.eq('id', newsId);
 
-        window.switchDashboardTab = function(tab) {
-            const appList = document.getElementById('volunteerApplicationsList');
-            const msgList = document.getElementById('volunteerPrivMsgList');
-            const btnApp = document.getElementById('dashTabAppBtn');
-            const btnMsg = document.getElementById('dashTabMsgBtn');
+if (error) {
+showToast("削除エラー: " + error.message, "error");
+} else {
+showToast("🗑️ お知らせ・レポートを削除しました。");
+fetchNews();
+}
+};
 
-            if (tab === 'applications') {
-                appList.classList.remove('hidden');
-                msgList.classList.add('hidden');
-                btnApp.className = "font-extrabold text-white bg-white/20 px-3 py-1 rounded-lg transition whitespace-nowrap";
-                btnMsg.className = "font-bold text-white/70 hover:text-white px-3 py-1 rounded-lg transition whitespace-nowrap";
-            } else {
-                appList.classList.add('hidden');
-                msgList.classList.remove('hidden');
-                btnMsg.className = "font-extrabold text-white bg-white/20 px-3 py-1 rounded-lg transition whitespace-nowrap";
-                btnApp.className = "font-bold text-white/70 hover:text-white px-3 py-1 rounded-lg transition whitespace-nowrap";
-            }
-        };
+window.switchDashboardTab = function(tab) {
+const appList = document.getElementById('volunteerApplicationsList');
+const msgList = document.getElementById('volunteerPrivMsgList');
+const btnApp = document.getElementById('dashTabAppBtn');
+const btnMsg = document.getElementById('dashTabMsgBtn');
 
-        window.refreshDashboardData = function() {
-            fetchApplications();
-            fetchVolunteerPrivateMessages();
-            showToast("ダッシュボードのデータを更新しました！");
-        };
-    </script>
+if (tab === 'applications') {
+appList.classList.remove('hidden');
+msgList.classList.add('hidden');
+btnApp.className = "font-extrabold text-white bg-white/20 px-3 py-1 rounded-lg transition whitespace-nowrap";
+btnMsg.className = "font-bold text-white/70 hover:text-white px-3 py-1 rounded-lg transition whitespace-nowrap";
+} else {
+appList.classList.add('hidden');
+msgList.classList.remove('hidden');
+btnMsg.className = "font-extrabold text-white bg-white/20 px-3 py-1 rounded-lg transition whitespace-nowrap";
+btnApp.className = "font-bold text-white/70 hover:text-white px-3 py-1 rounded-lg transition whitespace-nowrap";
+}
+};
+
+window.refreshDashboardData = function() {
+fetchApplications();
+fetchVolunteerPrivateMessages();
+showToast("ダッシュボードのデータを更新しました！");
+};
+</script>
 </body>
 </html>
