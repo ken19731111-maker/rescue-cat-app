@@ -203,9 +203,13 @@
                 </div>
                 <div>
                     <label class="block text-stone-600 mb-1">所属団体・グループ名 <span class="text-rose-500">*</span></label>
-                    <select id="cat-shelter" required class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none bg-white">
+                    <select id="cat-shelter" required onchange="toggleNewOrgInput('cat-shelter', 'cat-new-shelter-wrap', 'cat-new-shelter')" class="w-full border border-stone-300 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none bg-white">
                         <option value="">団体を選択してください</option>
                     </select>
+                    <div id="cat-new-shelter-wrap" class="hidden mt-2">
+                        <input type="text" id="cat-new-shelter" placeholder="新しい団体名を入力（例: ねこハウス）" class="w-full border border-amber-400 rounded-lg p-2 focus:ring-2 focus:ring-amber-500 outline-none bg-amber-50">
+                        <p class="text-[10px] text-stone-500 mt-1">※ 入力した団体名で仮登録され、その猫と紐づきます。住所などの詳細は後から RescueOps / Nekonote で追加できます。</p>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-stone-600 mb-1">年齢・推定月齢</label>
@@ -449,9 +453,14 @@
                 </div>
                 <div>
                     <label class="block text-stone-600 mb-1">所属団体・グループ名 <span class="text-rose-500">*</span></label>
-                    <select id="edit-cat-shelter" required class="w-full border border-stone-300 rounded p-2 outline-none bg-white">
+                    <select id="edit-cat-shelter" required onchange="toggleNewOrgInput('edit-cat-shelter', 'edit-cat-new-org-wrap')" class="w-full border border-stone-300 rounded p-2 outline-none bg-white">
                         <option value="">団体を選択してください</option>
                     </select>
+                </div>
+                <div id="edit-cat-new-org-wrap" class="hidden">
+                    <label class="block text-stone-600 mb-1">新しい団体名を入力</label>
+                    <input type="text" id="edit-cat-new-org-name" placeholder="例: ○○保護猫の会" class="w-full border border-stone-300 rounded p-2 outline-none">
+                    <p class="text-xs text-stone-400 mt-1">入力した団体名は団体リストに仮登録され、次回から選択できるようになります。</p>
                 </div>
                 <div>
                     <label class="block text-stone-600 mb-1">年齢・推定月齢</label>
@@ -912,9 +921,52 @@
             fill('edit-cat-shelter', '<option value="">団体を選択してください</option>');
             fill('news-shelter', '<option value="">🌐 全体向け（団体を指定しない）</option>');
 
+            // 猫の登録・編集では「新しい団体名を入力する」も選べるようにする
+            ['cat-shelter', 'edit-cat-shelter'].forEach(selectId => {
+                const sel = document.getElementById(selectId);
+                if (!sel) return;
+                const opt = document.createElement('option');
+                opt.value = '__new__';
+                opt.textContent = '＋ 新しい団体名を入力する';
+                sel.appendChild(opt);
+            });
+
             const rememberedOrgId = localStorage.getItem('rescue_cat_org_id');
             const catShelterSel = document.getElementById('cat-shelter');
             if (rememberedOrgId && catShelterSel) catShelterSel.value = rememberedOrgId;
+        }
+
+        /* 「＋ 新しい団体名を入力する」が選ばれたら入力欄を表示する */
+        window.toggleNewOrgInput = function(selectId, wrapId) {
+            const sel = document.getElementById(selectId);
+            const wrap = document.getElementById(wrapId);
+            if (!sel || !wrap) return;
+            wrap.classList.toggle('hidden', sel.value !== '__new__');
+        };
+
+        /* セレクトの値を organization_id に解決する。
+           '__new__' の場合は団体名を organizations へ仮登録してその id を返す */
+        async function resolveOrganizationId(selectId, inputId) {
+            const sel = document.getElementById(selectId);
+            if (!sel) return null;
+            if (sel.value !== '__new__') return sel.value || null;
+
+            const name = (document.getElementById(inputId)?.value || '').trim();
+            if (!name) throw new Error('新しい団体名を入力してください');
+
+            const existing = organizationsData.find(o => o.name === name);
+            if (existing) return existing.id;
+
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            const { data, error } = await window.supabaseClient
+                .from('organizations')
+                .insert([{ name: name, owner_user_id: user ? user.id : null }])
+                .select('id')
+                .single();
+            if (error) throw error;
+
+            await loadOrganizations();
+            return data.id;
         }
 
         /* ================= お問い合わせ送信（inquiries: kind=general） ================= */
@@ -1416,7 +1468,15 @@
 
             const videoUrl = document.getElementById('cat-video-url').value;
             const hasVideoCheck = document.getElementById('cat-has-video').checked;
-            const orgId = document.getElementById('cat-shelter').value || null;
+            let orgId;
+            try {
+                orgId = await resolveOrganizationId('cat-shelter', 'cat-new-shelter');
+            } catch (e) {
+                showToast("団体の登録エラー: " + e.message, "error");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "🐾 このネコちゃんを登録・公開する";
+                return;
+            }
 
             const { error } = await window.supabaseClient.from('cats').insert([{
                 name: document.getElementById('cat-name').value,
@@ -1441,6 +1501,7 @@
 
                 showToast("🎉 新しい推しネコちゃんを登録しました！");
                 document.getElementById('addCatForm').reset();
+                document.getElementById('cat-new-shelter-wrap').classList.add('hidden');
                 document.getElementById('compress-status').innerText = "";
                 
                 const rememberedOrgId = localStorage.getItem('rescue_cat_org_id');
@@ -1498,6 +1559,8 @@
 
             document.getElementById('edit-cat-name').value = cat.name || '';
             document.getElementById('edit-cat-shelter').value = cat.organization_id || '';
+            document.getElementById('edit-cat-new-org-wrap').classList.add('hidden');
+            document.getElementById('edit-cat-new-org-name').value = '';
             document.getElementById('edit-cat-age').value = cat.age_text || '';
             document.getElementById('edit-cat-target').value = cat.target_amount || 20000;
             document.getElementById('edit-cat-video-url').value = cat.video_url || '';
@@ -1523,9 +1586,19 @@
             const videoUrl = document.getElementById('edit-cat-video-url').value;
             const hasVideoCheck = document.getElementById('edit-cat-has-video').checked;
 
+            let editOrgId;
+            try {
+                editOrgId = await resolveOrganizationId('edit-cat-shelter', 'edit-cat-new-org-name');
+            } catch (e) {
+                showToast("団体の登録エラー: " + e.message, "error");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "✨ 変更を保存して更新する";
+                return;
+            }
+
             const updateData = {
                 name: document.getElementById('edit-cat-name').value,
-                organization_id: document.getElementById('edit-cat-shelter').value || null,
+                organization_id: editOrgId,
                 age_text: document.getElementById('edit-cat-age').value,
                 target_amount: parseInt(document.getElementById('edit-cat-target').value) || 20000,
                 video_url: videoUrl,
