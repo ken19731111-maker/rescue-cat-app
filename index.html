@@ -833,10 +833,17 @@
 <input type="email" id="login-email" name="email" autocomplete="email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
 <input type="password" id="login-password" name="password" autocomplete="current-password" placeholder="パスワード" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
 <button onclick="handleLogin()" style="width: 100%; padding: 8px; background: #3182ce; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">ログイン</button>
+<button onclick="handleForgotPassword()" style="width: 100%; padding: 4px; margin-top: 6px; background: none; color: #3182ce; border: none; cursor: pointer; font-size: 0.75rem; text-decoration: underline;">パスワードを忘れた方はこちら</button>
+</div>
+<div id="reset-password-container" style="display: none;">
+<p style="font-weight: bold; margin-bottom: 8px; color: #333;">🔑 新しいパスワードの設定</p>
+<p style="font-size: 0.75rem; color: #666; margin-bottom: 8px;">パスワード再設定用のリンクから開かれました。新しいパスワードを入力してください。</p>
+<input type="password" id="reset-password" name="new-password" autocomplete="new-password" placeholder="新しいパスワード (6文字以上)" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+<button onclick="handleResetPassword()" style="width: 100%; padding: 8px; background: #805ad5; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">パスワードを変更する</button>
 </div>
 <div id="signup-form-container" style="display: none;">
-<input type="email" id="signup-email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
-<input type="password" id="signup-password" placeholder="パスワード (6文字以上)" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+<input type="email" id="signup-email" name="email" autocomplete="email" placeholder="メールアドレス" style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
+<input type="password" id="signup-password" name="password" autocomplete="new-password" placeholder="パスワード (6文字以上)" style="width: 100%; padding: 8px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;" />
 <button onclick="handleSignUp()" style="width: 100%; padding: 8px; background: #38a169; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">新規登録する</button>
 </div>
 <div id="logout-section" style="display: none; text-align: center;">
@@ -2166,6 +2173,55 @@ await window.supabaseClient.auth.signOut();
 showToast('ログアウトしました');
 checkUserSession();
 };
+
+window.handleForgotPassword = async function() {
+if (!window.supabaseClient) return;
+const email = document.getElementById('login-email').value.trim();
+if (!email) {
+showToast('先にメールアドレスを入力してください', "error");
+return;
+}
+const { error } = await window.supabaseClient.auth.resetPasswordForEmail(email, {
+redirectTo: window.location.origin + '/'
+});
+if (error) {
+showToast('リセットメール送信失敗: ' + error.message, "error");
+} else {
+showToast('パスワード再設定用のメールを送信しました📩');
+}
+};
+
+window.showResetPasswordForm = function() {
+const section = document.getElementById('auth-section');
+if (!section) return;
+section.style.display = 'block';
+document.getElementById('login-form-container').style.display = 'none';
+document.getElementById('signup-form-container').style.display = 'none';
+document.getElementById('logout-section').style.display = 'none';
+document.getElementById('reset-password-container').style.display = 'block';
+section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+
+window.handleResetPassword = async function() {
+if (!window.supabaseClient) return;
+const { error } = await window.supabaseClient.auth.updateUser({
+password: document.getElementById('reset-password').value
+});
+if (error) {
+showToast('パスワード変更失敗: ' + error.message, "error");
+} else {
+showToast('パスワードを変更しました。新しいパスワードでログインしてください🐾');
+await window.supabaseClient.auth.signOut();
+window.location.href = window.location.origin + '/';
+}
+};
+
+if (window.supabaseClient) {
+window.supabaseClient.auth.onAuthStateChange((event) => {
+if (event === 'PASSWORD_RECOVERY') showResetPasswordForm();
+});
+if (window.location.hash.includes('type=recovery')) showResetPasswordForm();
+}
 
 if (typeof window.rescueCatDonationAmount === 'undefined') {
 window.rescueCatDonationAmount = 1000;
