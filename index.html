@@ -277,6 +277,11 @@
                 <span class="font-bold whitespace-nowrap text-amber-900">🏠 団体別:</span>
                 <div id="shelterButtons" class="flex gap-1 overflow-x-auto"></div>
             </div>
+            <!-- 対象しぼり込みバナー（にゃんスタ等からの直リンク時） -->
+            <div id="targetCatBanner" class="hidden items-center justify-between gap-3 bg-amber-50 border border-amber-300 rounded-xl px-4 py-2.5">
+                <p id="targetCatBannerText" class="text-xs font-bold text-amber-900"></p>
+                <button type="button" onclick="clearTargetCat()" class="text-xs font-bold bg-white border border-amber-300 text-amber-800 rounded-full px-3 py-1 whitespace-nowrap">× すべて表示</button>
+            </div>
         </section>
 
         <!-- 保護ネコカード一覧 -->
@@ -1443,6 +1448,8 @@
         }
 
         window.filterCatsByShelter = function(shelterName) {
+            const b = document.getElementById('targetCatBanner');
+            if (b) { b.classList.add('hidden'); b.classList.remove('flex'); }
             renderCats(catsData.filter(c => orgNameOf(c) === shelterName));
         }
 
@@ -2089,6 +2096,11 @@ if (section) section.scrollIntoView({ behavior: 'smooth'});
 };
 
 function filterCats(type) {
+if (type !== 'target') {
+const b = document.getElementById('targetCatBanner');
+if (b) { b.classList.add('hidden'); b.classList.remove('flex'); }
+targetCatId = null;
+}
 document.querySelectorAll('.filter-btn').forEach(btn => {
 btn.className = "filter-btn bg-white text-stone-700 border border-amber-200 px-4 py-2 rounded-full whitespace-nowrap flex items-center gap-1";
 });
@@ -2103,6 +2115,7 @@ else if (type === 'kitten') renderCats(catsData.filter(c => c.is_kitten));
 else if (type === 'urgent') renderCats(catsData.filter(c => c.is_urgent));
 else if (type === 'adopted') renderCats(catsData.filter(c => c.status === 'adopted'));
 else if (type === 'fav') renderCats(catsData.filter(c => favorites.includes(c.id)));
+else if (type === 'target') renderCats(catsData.filter(c => c.id === targetCatId));
 }
 
 window.toggleAuthForm = function() {
@@ -2379,7 +2392,8 @@ await fetchCats();
 }
 };
 
-/* にゃんスタグラム等からの猫直リンク（?cat=<id> / ?cat=<id>&action=tip） */
+/* にゃんスタグラム等からの猫直リンク（?cat=<id>）：お気に入り絞り込みと同じ要領で、その猫のカードだけを表示する */
+let targetCatId = null;
 let deepLinkHandled = false;
 async function handleCatDeepLink() {
 if (deepLinkHandled) return;
@@ -2391,9 +2405,21 @@ await new Promise(r => setTimeout(r, 200));
 }
 deepLinkHandled = true;
 const cat = (catsData || []).find(c => c.id === catId);
-if (!cat) return;
-if (params.get('action') === 'tip') openTipModal(catId);
-else openUpdatesModal(catId);
+if (!cat) { showToast('その猫は見つかりませんでした', 'error'); return; }
+targetCatId = catId;
+const banner = document.getElementById('targetCatBanner');
+if (banner) {
+document.getElementById('targetCatBannerText').textContent = `🐱 「${cat.name}」だけを表示中`;
+banner.classList.remove('hidden'); banner.classList.add('flex');
+}
+filterCats('target');
+const sec = document.getElementById('catSearchSection');
+if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+}
+function clearTargetCat() {
+targetCatId = null;
+history.replaceState({}, '', window.location.pathname);
+filterCats('all');
 }
 window.addEventListener('DOMContentLoaded', handleCatDeepLink);
 
