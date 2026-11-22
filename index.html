@@ -2379,6 +2379,24 @@ await fetchCats();
 }
 };
 
+/* にゃんスタグラム等からの猫直リンク（?cat=<id> / ?cat=<id>&action=tip） */
+let deepLinkHandled = false;
+async function handleCatDeepLink() {
+if (deepLinkHandled) return;
+const params = new URLSearchParams(window.location.search);
+const catId = params.get('cat');
+if (!catId) { deepLinkHandled = true; return; }
+for (let i = 0; i < 50 && (!catsData || catsData.length === 0); i++) {
+await new Promise(r => setTimeout(r, 200));
+}
+deepLinkHandled = true;
+const cat = (catsData || []).find(c => c.id === catId);
+if (!cat) return;
+if (params.get('action') === 'tip') openTipModal(catId);
+else openUpdatesModal(catId);
+}
+window.addEventListener('DOMContentLoaded', handleCatDeepLink);
+
 window.addEventListener('DOMContentLoaded', () => {
 checkUserSession();
 loadOrganizations();
