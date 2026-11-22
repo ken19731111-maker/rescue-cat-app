@@ -905,17 +905,25 @@
             if (!window.supabaseClient) return;
             const { data, error } = await window.supabaseClient
                 .from('organizations')
-                .select('id, name')
+                .select('id, name, owner_user_id')
                 .order('name');
             if (error || !data) return;
             organizationsData = data;
 
-            const fill = (selectId, firstOptionHtml) => {
+            // 投稿系セレクトには「自分の団体」だけを出す（運営adminは全団体）。
+            // 他団体を選ぶとRLSで保存が弾かれるため、選択肢自体を絞る。
+            const { data: { user } } = await window.supabaseClient.auth.getUser();
+            const isAdmin = !!(user && user.app_metadata && user.app_metadata.role === 'admin');
+            const myOrgs = user ? organizationsData.filter(o => o.owner_user_id === user.id) : [];
+            const visibleOrgs = isAdmin ? organizationsData : myOrgs;
+            const canCreateOrg = isAdmin || (user && myOrgs.length === 0);
+
+            const fill = (selectId, firstOptionHtml, list) => {
                 const sel = document.getElementById(selectId);
                 if (!sel) return;
                 const current = sel.value;
                 sel.innerHTML = firstOptionHtml;
-                organizationsData.forEach(org => {
+                list.forEach(org => {
                     const opt = document.createElement('option');
                     opt.value = org.id;
                     opt.textContent = org.name;
@@ -924,19 +932,21 @@
                 if (current) sel.value = current;
             };
 
-            fill('cat-shelter', '<option value="">団体を選択してください</option>');
-            fill('edit-cat-shelter', '<option value="">団体を選択してください</option>');
-            fill('news-shelter', '<option value="">🌐 全体向け（団体を指定しない）</option>');
+            fill('cat-shelter', '<option value="">団体を選択してください</option>', visibleOrgs);
+            fill('edit-cat-shelter', '<option value="">団体を選択してください</option>', visibleOrgs);
+            fill('news-shelter', '<option value="">🌐 全体向け（団体を指定しない）</option>', visibleOrgs);
 
-            // 猫の登録・編集では「新しい団体名を入力する」も選べるようにする
-            ['cat-shelter', 'edit-cat-shelter'].forEach(selectId => {
+            // 猫の登録・編集では「新しい団体名を入力する」も選べるようにする（ログイン時のみ）
+            if (canCreateOrg) {
+              ['cat-shelter', 'edit-cat-shelter'].forEach(selectId => {
                 const sel = document.getElementById(selectId);
                 if (!sel) return;
                 const opt = document.createElement('option');
                 opt.value = '__new__';
                 opt.textContent = '＋ 新しい団体名を入力する';
                 sel.appendChild(opt);
-            });
+              });
+            }
 
             const rememberedOrgId = localStorage.getItem('rescue_cat_org_id');
             const catShelterSel = document.getElementById('cat-shelter');
@@ -2233,6 +2243,7 @@ window.location.href = window.location.origin + '/';
 if (window.supabaseClient) {
 window.supabaseClient.auth.onAuthStateChange((event) => {
 if (event === 'PASSWORD_RECOVERY') showResetPasswordForm();
+if (event === 'SIGNED_IN') loadOrganizations();
 });
 if (window.location.hash.includes('type=recovery')) showResetPasswordForm();
 }
