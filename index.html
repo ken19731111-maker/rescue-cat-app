@@ -887,6 +887,7 @@
         function orgNameOf(cat) { return (cat && cat.organizations && cat.organizations.name) || '保護活動者'; }
 
         let catsData = [];
+        const NO_IMAGE_PLACEHOLDER = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600"><rect width="800" height="600" fill="#fdf3e3"/><text x="400" y="265" font-size="120" text-anchor="middle">🐾</text><text x="400" y="375" font-size="46" font-weight="bold" fill="#92400e" text-anchor="middle" font-family="sans-serif">写真は準備中だよ</text><text x="400" y="430" font-size="27" fill="#b45309" text-anchor="middle" font-family="sans-serif">この子の写真はまだ登録されていません</text></svg>');
         let organizationsData = [];
         let favorites = JSON.parse(localStorage.getItem('rescue_cat_favorites') || '[]');
         let currentSelectedCatId = null;
@@ -1397,7 +1398,7 @@
                 grid.innerHTML += `
                     <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-amber-100 flex flex-col justify-between">
                         <div class="relative">
-                            <img src="${cat.image_url || 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&auto=format&fit=crop'}" alt="${cat.name}" class="w-full h-48 object-cover">
+                            <img src="${cat.image_url || NO_IMAGE_PLACEHOLDER}" alt="${cat.name}" class="w-full h-48 object-cover">
                             <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap">
                                 ${hasVideo ? '<span class="bg-rose-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full shadow">🎥 動画あり</span>' : ''}
                                 <span class="${statusBadgeClass} text-[11px] font-bold px-2 py-0.5 rounded-full shadow">${statusLabel(status)}</span>
