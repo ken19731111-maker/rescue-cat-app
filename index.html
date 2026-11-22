@@ -1480,8 +1480,21 @@
                     canvas.width = width;
                     canvas.height = height;
                     canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-                    document.getElementById(targetInputId).value = canvas.toDataURL('image/jpeg', 0.7);
-                    statusEl.innerText = "✨ 圧縮完了！";
+                    canvas.toBlob(async (blob) => {
+                        try {
+                            if (!blob || !window.supabaseClient) throw new Error('no blob');
+                            statusEl.innerText = "⏳ アップロード中...";
+                            const path = 'uploads/' + Date.now() + '-' + Math.random().toString(36).slice(2, 10) + '.jpg';
+                            const { error: upErr } = await window.supabaseClient.storage.from('cat-images').upload(path, blob, { contentType: 'image/jpeg' });
+                            if (upErr) throw upErr;
+                            const { data: pub } = window.supabaseClient.storage.from('cat-images').getPublicUrl(path);
+                            document.getElementById(targetInputId).value = pub.publicUrl;
+                            statusEl.innerText = "✨ アップロード完了！";
+                        } catch (e) {
+                            document.getElementById(targetInputId).value = canvas.toDataURL('image/jpeg', 0.7);
+                            statusEl.innerText = "✨ 圧縮完了！";
+                        }
+                    }, 'image/jpeg', 0.7);
                 };
                 img.src = e.target.result;
             };
