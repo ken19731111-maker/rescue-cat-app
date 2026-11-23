@@ -475,8 +475,25 @@
                     <label class="block text-stone-600 mb-1">支援目標金額 (円)</label>
                     <input type="number" id="edit-cat-target" class="w-full border border-stone-300 rounded p-2 outline-none">
                 </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">性別</label>
+                    <select id="edit-cat-sex" class="w-full border border-stone-300 rounded p-2 outline-none bg-white">
+                        <option value="">不明</option>
+                        <option value="オス">オス</option>
+                        <option value="メス">メス</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-stone-600 mb-1">💉 次回ワクチン・通院日</label>
+                    <input type="date" id="edit-cat-next-medical" class="w-full border border-stone-300 rounded p-2 outline-none">
+                </div>
+                <div class="md:col-span-2">
+                    <label class="block text-stone-600 mb-1">🩺 医療メモ</label>
+                    <input type="text" id="edit-cat-medical-notes" placeholder="例: ワクチン接種済み、避妊手術予定" class="w-full border border-stone-300 rounded p-2 outline-none">
+                </div>
                 <div class="md:col-span-2">
                     <label class="block text-stone-600 mb-1">写真変更 (変更する場合のみアップロード)</label>
+                    <img id="edit-cat-current-img" class="hidden w-full max-h-40 object-cover rounded-lg mb-2" alt="現在の写真">
                     <input type="file" accept="image/*" onchange="processImage(event, 'edit-cat-image-url', 'edit-compress-status')" class="w-full text-xs text-stone-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:bg-amber-100 file:text-amber-800">
                     <input type="hidden" id="edit-cat-image-url">
                     <p id="edit-compress-status" class="text-[10px] text-amber-700 font-bold mt-1"></p>
@@ -1583,7 +1600,15 @@
             const adminStatusBox = document.getElementById('admin-status-box');
 
             const { data: { user } } = await window.supabaseClient.auth.getUser();
-            const isOwner = user && cat.created_by && user.id === cat.created_by;
+            let isOwner = !!(user && cat.created_by && user.id === cat.created_by);
+            if (user && !isOwner && cat.organization_id) {
+                // RescueOpsで登録された猫は created_by が空のため、所属団体のオーナーでも編集できるようにする
+                const { data: orgRow } = await window.supabaseClient.from('organizations').select('owner_user_id').eq('id', cat.organization_id).maybeSingle();
+                if (orgRow && orgRow.owner_user_id === user.id) isOwner = true;
+            }
+            if (user && !isOwner) {
+                try { if (await checkIsAdmin()) isOwner = true; } catch (e) { /* noop */ }
+            }
 
             if (isOwner) {
                 adminUpdateBox.classList.remove('hidden');
@@ -1607,6 +1632,11 @@
             document.getElementById('edit-cat-new-org-wrap').classList.add('hidden');
             document.getElementById('edit-cat-new-org-name').value = '';
             document.getElementById('edit-cat-age').value = cat.age_text || '';
+            document.getElementById('edit-cat-sex').value = (cat.sex && cat.sex !== '不明') ? cat.sex : '';
+            document.getElementById('edit-cat-next-medical').value = cat.next_medical_date || '';
+            document.getElementById('edit-cat-medical-notes').value = cat.medical_notes || '';
+            const curImg = document.getElementById('edit-cat-current-img');
+            if (cat.image_url) { curImg.src = cat.image_url; curImg.classList.remove('hidden'); } else { curImg.classList.add('hidden'); curImg.removeAttribute('src'); }
             document.getElementById('edit-cat-target').value = cat.target_amount || 20000;
             document.getElementById('edit-cat-video-url').value = cat.video_url || '';
             document.getElementById('edit-cat-message').value = cat.message || '';
@@ -1650,7 +1680,10 @@
                 message: document.getElementById('edit-cat-message').value,
                 has_video: hasVideoCheck || !!(videoUrl && videoUrl.trim() !== ""),
                 is_kitten: document.getElementById('edit-cat-is-kitten').checked,
-                is_urgent: document.getElementById('edit-cat-is-urgent').checked
+                is_urgent: document.getElementById('edit-cat-is-urgent').checked,
+                sex: document.getElementById('edit-cat-sex').value || null,
+                next_medical_date: document.getElementById('edit-cat-next-medical').value || null,
+                medical_notes: document.getElementById('edit-cat-medical-notes').value || null
             };
 
             if (newImg) {
